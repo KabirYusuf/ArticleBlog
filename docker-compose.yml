@@ -1,0 +1,64 @@
+version: '3'
+services:
+    backend:
+        build:
+            context: ./backend
+            dockerfile: Dockerfile
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        ports:
+            - '${BACKEND_PORT:-8000}:80'
+        networks:
+            - levelup
+        depends_on:
+            - pgsql
+    frontend:
+        build:
+            context: ./frontend
+            dockerfile: Dockerfile
+        volumes:
+            - ./frontend:/home/node/app
+            - /home/node/app/node_modules
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        ports:
+            - "${FRONTEND_PORT:-80}:8080"
+        networks:
+            - levelup
+        depends_on:
+            - backend
+    pgsql:
+        image: 'postgres:15'
+        ports:
+            - '${FORWARD_DB_PORT:-5432}:5432'
+        environment:
+            PGPASSWORD: '${DB_PASSWORD:-secret}'
+            POSTGRES_DB: '${DB_DATABASE}'
+            POSTGRES_USER: '${DB_USERNAME}'
+            POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
+        volumes:
+            - 'levelup-pgsql:/var/lib/postgresql/data'
+            - './backend/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
+        networks:
+            - levelup
+        healthcheck:
+            test:
+                - CMD
+                - pg_isready
+                - '-q'
+                - '-d'
+                - '${DB_DATABASE}'
+                - '-U'
+                - '${DB_USERNAME}'
+            retries: 3
+            timeout: 5s
+networks:
+    levelup:
+        driver: bridge
+volumes:
+    levelup-pgsql:
+        driver: local
+    node_modules:
+        driver: local
+        driver_opts:
+            location: ./frontend/node_modules
