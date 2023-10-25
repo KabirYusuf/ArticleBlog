@@ -1,13 +1,17 @@
+<script setup>
+import { RouterView } from "vue-router";
+</script>
+
 <template>
   <header>
    Header
   </header>
 
   <main>
-    <TheWelcome />
+    <RouterView />
   </main>
 </template>
 
-<style scoped>
-
+<style lang="scss">
+@import "@/assets/main.scss";
 </style>
