@@ -2,14 +2,19 @@ package dev.levelupschool.backend;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "articles", schema = "public")
-class Article {
-    private @Id
+public class Article {
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
     private String title;
     private String content;
+
+    @OneToMany(mappedBy = "article", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Comment> comments;
 
     public Article(String title, String content) {
         this.title = title;
@@ -43,8 +48,12 @@ class Article {
         this.content = content;
     }
 
+    public List<Comment> getComments() {
+        return comments;
+    }
+
     @Override
     public String toString() {
-        return String.format("Employee[id=%d, title='%s', content='%s']", id, title, content);
+        return String.format("Article[id=%d, title='%s', content='%s']", id, title, content);
     }
 }

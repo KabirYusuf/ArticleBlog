@@ -25,6 +25,9 @@ class BackendApplicationTests {
     @Autowired
     private ArticleRepository articleRepository;
 
+    @Autowired
+    private CommentRepository commentRepository;
+
     @Test
     void contextLoads() {
     }
@@ -43,4 +46,17 @@ class BackendApplicationTests {
             .andExpect(jsonPath("$[0].title", is("test title 1")));
     }
 
+    @Test
+    public void givenComment_whenGetArticle_thenReturnCommentsArray() throws Exception {
+        var article = articleRepository.save(new Article("test title", "test content 1"));
+
+        commentRepository.save(new Comment("test comment", article));
+
+        mvc.perform(
+                get("/articles/{id}", article.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.comments", hasSize(1)));
+    }
 }
