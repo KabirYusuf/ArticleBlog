@@ -1,4 +1,4 @@
-package dev.levelupschool.backend;
+package dev.levelupschool.backend.data.model;
 
 import jakarta.persistence.*;
 
@@ -13,15 +13,27 @@ public class Article {
     private String title;
     private String content;
 
-    @OneToMany(mappedBy = "article", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "article", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Comment> comments;
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    private Author author;
 
-    public Article(String title, String content) {
-        this.title = title;
-        this.content = content;
+    public Author getAuthor() {
+        return author;
     }
 
-    protected Article() {
+    public void setAuthor(Author author) {
+        this.author = author;
+    }
+
+    public Article(String title, String content, Author author) {
+        this.title = title;
+        this.content = content;
+        this.author = author;
+    }
+
+    public Article() {
     }
 
     public Long getId() {
