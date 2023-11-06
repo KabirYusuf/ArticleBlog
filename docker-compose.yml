@@ -1,18 +1,5 @@
 version: '3'
 services:
-    backend:
-        platform: 'linux/x86_64'
-        build:
-            context: ./backend
-            dockerfile: Dockerfile
-        extra_hosts:
-            - 'host.docker.internal:host-gateway'
-        ports:
-            - '${BACKEND_PORT:-8000}:80'
-        networks:
-            - levelup
-        depends_on:
-            - pgsql
     frontend:
         build:
             context: ./frontend
@@ -36,7 +23,6 @@ services:
             POSTGRES_USER: '${DB_USERNAME}'
             POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
         volumes:
-            - 'levelup-pgsql:/var/lib/postgresql/data'
             - './backend/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
         networks:
             - levelup
@@ -55,8 +41,6 @@ networks:
     levelup:
         driver: bridge
 volumes:
-    levelup-pgsql:
-        driver: local
     node_modules:
         driver: local
         driver_opts:
