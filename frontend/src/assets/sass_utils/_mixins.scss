@@ -1,0 +1,12 @@
+@mixin container{
+    padding: 25px 70px;
+    width: 100%;
+    margin: 0 auto;
+}
+@mixin tabletContainer{
+    padding: 20px 45px;
+}
+@mixin mobileContainer{
+    padding: 15px 35px;
+    margin: 0 auto;
+}
