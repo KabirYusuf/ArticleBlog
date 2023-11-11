@@ -2,10 +2,8 @@ package dev.levelupschool.backend.service.implementation;
 import dev.levelupschool.backend.data.dto.request.CreateAuthorRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateAuthorRequest;
 import dev.levelupschool.backend.data.model.Author;
-import dev.levelupschool.backend.data.repository.AuthorRepository;
 import dev.levelupschool.backend.service.interfaces.AuthorService;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,18 +18,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class LevelUpAuthorServiceTest {
     @Autowired
-    private AuthorRepository authorRepository;
-    @Autowired
     private AuthorService authorService;
     private CreateAuthorRequest createAuthorRequest;
     @BeforeEach
     void setUp(){
         createAuthorRequest = new CreateAuthorRequest();
-        createAuthorRequest.setName("Kabir Yusuf");
-    }
-    @AfterEach
-    void deleteDatabaseData(){
-        authorRepository.deleteAll();
+        createAuthorRequest.setFirstName("kabir");
+        createAuthorRequest.setLastName("yusuf");
     }
 
     @Test
@@ -64,14 +57,14 @@ class LevelUpAuthorServiceTest {
     @Test
     public void givenIHaveAnAuthor_whenIUpdateTheAuthor_theUpdateAuthorIsReturned(){
         authorService.createAuthor(createAuthorRequest);
-        String nameOfAuthorBeforeUpdatingAuthor = authorService.findAuthorById(1L).getName();
-        assertEquals("Kabir Yusuf", nameOfAuthorBeforeUpdatingAuthor);
+        String nameOfAuthorBeforeUpdatingAuthor = authorService.findAuthorById(1L).getFirstName();
+        assertEquals("Kabir", nameOfAuthorBeforeUpdatingAuthor);
 
         UpdateAuthorRequest updateAuthorRequest = new UpdateAuthorRequest();
-        updateAuthorRequest.setName("Luka Papez");
+        updateAuthorRequest.setLastName("papez");
 
         Author updatedAuthor = authorService.updateAuthor(updateAuthorRequest, 1L);
-        assertEquals("Luka Papez", updatedAuthor.getName());
+        assertEquals("Papez", updatedAuthor.getLastName());
     }
 
 }

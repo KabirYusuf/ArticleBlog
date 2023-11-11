@@ -6,5 +6,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class UpdateAuthorRequest {
-    private String name;
+    private String firstName;
+    private String lastName;
 }

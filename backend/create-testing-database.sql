@@ -1,6 +1,7 @@
 create table authors (
                          id          serial not null primary key,
-                         name    text        null default null
+                         first_name    text        null default null,
+                         last_name    text        null default null
 );
 
 create table articles (

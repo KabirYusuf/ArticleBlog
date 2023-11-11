@@ -15,7 +15,8 @@ public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+    private String firstName;
+    private String lastName;
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "author")
     private List<Article> articles;

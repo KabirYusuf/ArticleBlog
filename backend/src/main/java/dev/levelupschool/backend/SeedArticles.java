@@ -31,7 +31,8 @@ public class SeedArticles {
                     log.info("Seeding articles");
 
                     Author newAuthor = new Author();
-                    newAuthor.setName("Luka Papez");
+                    newAuthor.setFirstName("Luka");
+                    newAuthor.setLastName("Papez");
 
                     Author savedAuthor = authorRepository.save(newAuthor);
 

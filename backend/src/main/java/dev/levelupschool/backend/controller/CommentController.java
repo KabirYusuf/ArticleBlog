@@ -9,6 +9,7 @@ import dev.levelupschool.backend.exception.ModelNotFoundException;
 import dev.levelupschool.backend.data.model.Comment;
 import dev.levelupschool.backend.service.interfaces.ArticleService;
 import dev.levelupschool.backend.service.interfaces.CommentService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
