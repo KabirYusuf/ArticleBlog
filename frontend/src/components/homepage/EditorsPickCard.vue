@@ -2,7 +2,7 @@
     <div class="editorsCard">
         <img :src="cardImage" alt="Editor's Pick Image" class="editorsCard__image">
         <ul class="editorsCard__inner editorsCard_tagList">
-                <li class="editorsCard__tagListItem">
+                <li class="editorsCard__tagListItem editorsCard__tagListItem--pushRight">
                     {{ cardTag }}
                 </li>
         </ul>

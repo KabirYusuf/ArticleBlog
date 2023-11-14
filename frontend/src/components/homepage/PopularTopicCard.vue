@@ -1,7 +1,7 @@
 <template>
     <div class="cardContainer">
         <ul class="popularTopicCard__tagList">
-                <li class="popularTopicCard__tagListItem">
+                <li class="popularTopicCard__tagListItem popularTopicCard__tagListItem--pushRight">
                     {{ cardTagOne }}
                 </li>
                 <li class="popularTopicCard__tagListItem">
