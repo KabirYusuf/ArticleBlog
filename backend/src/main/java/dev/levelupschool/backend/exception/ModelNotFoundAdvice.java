@@ -14,4 +14,10 @@ public class ModelNotFoundAdvice {
     String modelNotFoundHandler(ModelNotFoundException exception) {
         return exception.getMessage();
     }
+
+    @ResponseBody
+    @ExceptionHandler(InterceptorException.class)
+    String interceptorExceptionHandler(InterceptorException interceptorException){
+        return  interceptorException.getMessage();
+    }
 }
