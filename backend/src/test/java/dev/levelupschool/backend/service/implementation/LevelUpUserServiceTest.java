@@ -32,20 +32,20 @@ class LevelUpUserServiceTest {
         int numberOfAuthorBeforeCreatingAnAuthor = userService.findAllUsers().size();
         assertEquals(0, numberOfAuthorBeforeCreatingAnAuthor);
 
-        userService.createUser(createUserRequest);
+        userService.registerUser(createUserRequest);
 
         int numberOfAuthorsAfterCreatingAnAuthor = userService.findAllUsers().size();
         assertEquals(1, numberOfAuthorsAfterCreatingAnAuthor);
     }
     @Test
     public void givenIHaveAuthors_whenIFindAnAuthorWithId_theAuthorWithThatIdIsReturned(){
-        userService.createUser(createUserRequest);
+        userService.registerUser(createUserRequest);
         User foundUser = userService.findUserById(1L);
         assertNotNull(foundUser);
     }
     @Test
     public void givenIHaveAuthors_whenIDeleteAnAuthor_theTableSizeOfAuthorDecreasesByOne(){
-        userService.createUser(createUserRequest);
+        userService.registerUser(createUserRequest);
         int numberOfAuthorsBeforeDeletingAnAuthor = userService.findAllUsers().size();
         assertEquals(1, numberOfAuthorsBeforeDeletingAnAuthor);
 
@@ -56,7 +56,7 @@ class LevelUpUserServiceTest {
     }
     @Test
     public void givenIHaveAnAuthor_whenIUpdateTheAuthor_theUpdateAuthorIsReturned(){
-        userService.createUser(createUserRequest);
+        userService.registerUser(createUserRequest);
         String nameOfAuthorBeforeUpdatingAuthor = userService.findUserById(1L).getFirstName();
         assertEquals("Kabir", nameOfAuthorBeforeUpdatingAuthor);
 

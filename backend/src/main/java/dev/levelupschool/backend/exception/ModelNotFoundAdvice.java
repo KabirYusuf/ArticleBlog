@@ -17,7 +17,20 @@ public class ModelNotFoundAdvice {
 
     @ResponseBody
     @ExceptionHandler(InterceptorException.class)
-    String interceptorExceptionHandler(InterceptorException interceptorException){
+    String handleInterceptorExceptionHandler(InterceptorException interceptorException){
         return  interceptorException.getMessage();
+    }
+
+    @ResponseBody
+    @ExceptionHandler(UserException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    String handleUserException(UserException userException) {
+        return userException.getMessage();
+    }
+    @ResponseBody
+    @ExceptionHandler(ConfigurationException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    String handleConfigurationException(ConfigurationException configurationException) {
+        return configurationException.getMessage();
     }
 }

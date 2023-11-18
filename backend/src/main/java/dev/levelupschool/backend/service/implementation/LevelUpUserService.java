@@ -1,36 +1,45 @@
 package dev.levelupschool.backend.service.implementation;
 
+import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
 import dev.levelupschool.backend.data.dto.request.CreateUserRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
+import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
 import dev.levelupschool.backend.data.dto.response.CreateUserResponse;
+import dev.levelupschool.backend.data.model.Role;
 import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.repository.UserRepository;
 import dev.levelupschool.backend.exception.ModelNotFoundException;
+import dev.levelupschool.backend.exception.UserException;
 import dev.levelupschool.backend.service.interfaces.UserService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class LevelUpUserService implements UserService {
     private final UserRepository userRepository;
-    public LevelUpUserService(UserRepository userRepository){
+    private final PasswordEncoder passwordEncoder;
+    public LevelUpUserService(
+        UserRepository userRepository,
+        PasswordEncoder passwordEncoder){
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
-    public CreateUserResponse createUser(CreateUserRequest createUserRequest) {
+    public User registerUser(AuthenticationRequest authenticationRequest) {
+        User foundUser = findUserByEmail(authenticationRequest.getEmail());
+        if (foundUser != null)throw new UserException("User with "+ authenticationRequest.getEmail()+ " already exist");
         User newUser = new User();
-        String firstName = covertNameFirstCharacterToUpperCase(createUserRequest.getFirstName());
-        String lastName = covertNameFirstCharacterToUpperCase(createUserRequest.getLastName());
-        newUser.setFirstName(firstName);
-        newUser.setLastName(lastName);
-        newUser.setEmail(createUserRequest.getEmail());
-        User savedUser = userRepository.save(newUser);
-        CreateUserResponse createUserResponse = new CreateUserResponse();
-        createUserResponse.setName(savedUser.getFirstName() + " " + savedUser.getLastName());
-        createUserResponse.setId(savedUser.getId());
-        return createUserResponse;
+        Set<Role> roleSet = new HashSet<>();
+        roleSet.add(Role.USER);
+        newUser.setEmail(authenticationRequest.getEmail());
+        newUser.setPassword(passwordEncoder.encode(authenticationRequest.getPassword()));
+        newUser.setRoles(roleSet);
+        return userRepository.save(newUser);
     }
 
     private String covertNameFirstCharacterToUpperCase(String name){
@@ -65,5 +74,12 @@ public class LevelUpUserService implements UserService {
         foundUser.setFirstName(firstName);
         foundUser.setLastName(lastName);
         return userRepository.save(foundUser);
+    }
+
+    @Override
+    public User findUserByEmail(String email) {
+        return userRepository
+            .findByEmailIgnoreCase(email)
+            .orElse(null);
     }
 }

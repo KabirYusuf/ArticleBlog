@@ -60,7 +60,7 @@ class UserControllerTest {
         createUserRequest = new CreateUserRequest();
         createUserRequest.setFirstName("kabir");
         createUserRequest.setLastName("yusuf");
-        userService.createUser(createUserRequest);
+        userService.registerUser(createUserRequest);
     }
 
 

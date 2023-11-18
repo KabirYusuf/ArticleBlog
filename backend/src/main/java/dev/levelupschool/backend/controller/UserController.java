@@ -1,6 +1,8 @@
 package dev.levelupschool.backend.controller;
+import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
 import dev.levelupschool.backend.data.dto.request.CreateUserRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
+import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
 import dev.levelupschool.backend.data.dto.response.CreateUserResponse;
 import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.service.interfaces.UserService;
@@ -19,8 +21,8 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<CreateUserResponse> createAuthor(@RequestBody CreateUserRequest createUserRequest){
-        return new ResponseEntity<>(userService.createUser(createUserRequest), HttpStatus.CREATED);
+    public ResponseEntity<User> createAuthor(@RequestBody AuthenticationRequest authenticationRequest){
+        return new ResponseEntity<>(userService.registerUser(authenticationRequest), HttpStatus.CREATED);
     }
     @GetMapping
     public ResponseEntity<List<User>> getAllAuthors(){

@@ -1,6 +1,7 @@
 package dev.levelupschool.backend;
 
 import dev.levelupschool.backend.data.model.Article;
+import dev.levelupschool.backend.data.model.Role;
 import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.model.Comment;
 import dev.levelupschool.backend.data.repository.ArticleRepository;
@@ -12,6 +13,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Configuration
 @Profile("dev")
@@ -30,9 +35,16 @@ public class SeedArticles {
                 if (articleRepository.count() == 0) {
                     log.info("Seeding articles");
 
+                    Set<Role> roleSet = new HashSet<>();
+
+                    roleSet.add(Role.USER);
+                    roleSet.add(Role.ADMIN);
                     User newUser = new User();
                     newUser.setFirstName("Luka");
                     newUser.setLastName("Papez");
+                    newUser.setEmail("luka@gmail.com");
+                    newUser.setPassword(new BCryptPasswordEncoder().encode("12345"));
+                    newUser.setRoles(roleSet);
 
                     User savedUser = userRepository.save(newUser);
 
