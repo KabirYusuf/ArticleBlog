@@ -3,9 +3,9 @@ package dev.levelupschool.backend.service.implementation;
 import dev.levelupschool.backend.data.dto.request.AddCommentRequest;
 import dev.levelupschool.backend.data.dto.request.CreateArticleRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateCommentRequest;
-import dev.levelupschool.backend.data.model.Author;
+import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.model.Comment;
-import dev.levelupschool.backend.data.repository.AuthorRepository;
+import dev.levelupschool.backend.data.repository.UserRepository;
 import dev.levelupschool.backend.exception.ModelNotFoundException;
 import dev.levelupschool.backend.service.interfaces.ArticleService;
 import dev.levelupschool.backend.service.interfaces.CommentService;
@@ -28,14 +28,14 @@ class LevelUpCommentServiceTest {
     @Autowired
     private ArticleService articleService;
     @Autowired
-    private AuthorRepository authorRepository;
+    private UserRepository userRepository;
     private CreateArticleRequest createArticleRequest;
     private AddCommentRequest addCommentRequest;
 
     @BeforeEach
     void setUp(){
-        Author author = new Author();
-        authorRepository.save(author);
+        User user = new User();
+        userRepository.save(user);
         createArticleRequest = new CreateArticleRequest();
         createArticleRequest.setTitle("Article title");
         createArticleRequest.setContent("Article content");

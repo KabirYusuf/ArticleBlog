@@ -1,10 +1,10 @@
 package dev.levelupschool.backend;
 
 import dev.levelupschool.backend.data.model.Article;
-import dev.levelupschool.backend.data.model.Author;
+import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.model.Comment;
 import dev.levelupschool.backend.data.repository.ArticleRepository;
-import dev.levelupschool.backend.data.repository.AuthorRepository;
+import dev.levelupschool.backend.data.repository.UserRepository;
 import dev.levelupschool.backend.data.repository.CommentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ public class SeedArticles {
     CommandLineRunner init(
         ArticleRepository articleRepository,
         CommentRepository commentRepository,
-        AuthorRepository authorRepository
+        UserRepository userRepository
     ) {
         return new CommandLineRunner() {
             @Override
@@ -30,16 +30,16 @@ public class SeedArticles {
                 if (articleRepository.count() == 0) {
                     log.info("Seeding articles");
 
-                    Author newAuthor = new Author();
-                    newAuthor.setFirstName("Luka");
-                    newAuthor.setLastName("Papez");
+                    User newUser = new User();
+                    newUser.setFirstName("Luka");
+                    newUser.setLastName("Papez");
 
-                    Author savedAuthor = authorRepository.save(newAuthor);
+                    User savedUser = userRepository.save(newUser);
 
-                    var article1 = articleRepository.save(new Article("test title 1", "test content 1", savedAuthor));
-                    articleRepository.save(new Article("test title 2", "test content 2", savedAuthor));
+                    var article1 = articleRepository.save(new Article("test title 1", "test content 1", savedUser));
+                    articleRepository.save(new Article("test title 2", "test content 2", savedUser));
 
-                    commentRepository.save(new Comment("test comment", article1, savedAuthor));
+                    commentRepository.save(new Comment("test comment", article1, savedUser));
                 }
             }
         };

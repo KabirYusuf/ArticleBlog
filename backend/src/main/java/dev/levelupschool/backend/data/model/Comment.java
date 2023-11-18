@@ -1,7 +1,6 @@
 package dev.levelupschool.backend.data.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import dev.levelupschool.backend.data.model.Article;
 import jakarta.persistence.*;
 
 @Entity
@@ -18,13 +17,13 @@ public class Comment {
 
     private String content;
     @ManyToOne
-    @JoinColumn(name = "author_id")
-    private Author author;
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    public Comment(String content, Article article, Author author) {
+    public Comment(String content, Article article, User user) {
         this.content = content;
         this.article = article;
-        this.author = author;
+        this.user = user;
     }
 
     public Comment() {
@@ -42,12 +41,12 @@ public class Comment {
         return content;
     }
 
-    public Author getAuthor() {
-        return author;
+    public User getAuthor() {
+        return user;
     }
 
-    public void setAuthor(Author author) {
-        this.author = author;
+    public void setAuthor(User user) {
+        this.user = user;
     }
 
     public void setContent(String content) {

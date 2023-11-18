@@ -1,9 +1,9 @@
 package dev.levelupschool.backend.controller;
 
-import dev.levelupschool.backend.data.dto.request.CreateAuthorRequest;
-import dev.levelupschool.backend.data.dto.request.UpdateAuthorRequest;
-import dev.levelupschool.backend.data.repository.AuthorRepository;
-import dev.levelupschool.backend.service.interfaces.AuthorService;
+import dev.levelupschool.backend.data.dto.request.CreateUserRequest;
+import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
+import dev.levelupschool.backend.data.repository.UserRepository;
+import dev.levelupschool.backend.service.interfaces.UserService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -29,14 +29,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Testcontainers
 @ActiveProfiles("test-container")
 @Sql(scripts = "classpath:reset-database.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-class AuthorControllerTest {
+class UserControllerTest {
     @Autowired
     private MockMvc mvc;
     @Autowired
-    private AuthorRepository authorRepository;
+    private UserRepository userRepository;
     @Autowired
-    private AuthorService authorService;
-    private CreateAuthorRequest createAuthorRequest;
+    private UserService userService;
+    private CreateUserRequest createUserRequest;
 
     @Container
     @ServiceConnection
@@ -56,18 +56,18 @@ class AuthorControllerTest {
 
     @BeforeEach
     void setUp(){
-        authorRepository.deleteAll();
-        createAuthorRequest = new CreateAuthorRequest();
-        createAuthorRequest.setFirstName("kabir");
-        createAuthorRequest.setLastName("yusuf");
-        authorService.createAuthor(createAuthorRequest);
+        userRepository.deleteAll();
+        createUserRequest = new CreateUserRequest();
+        createUserRequest.setFirstName("kabir");
+        createUserRequest.setLastName("yusuf");
+        userService.createUser(createUserRequest);
     }
 
 
     @Test
     public void givenAuthors_whenGetAuthors_thenReturnJsonArray() throws Exception {
         mvc.perform(
-                get("/authors")
+                get("/users")
                     .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(1)))
@@ -79,7 +79,7 @@ class AuthorControllerTest {
     @Test
     public void givenAuthor_whenGetAuthorWithId_thenReturnJsonOfThatSpecificAuthor() throws Exception {
         mvc.perform(
-                get("/authors/1")
+                get("/users/1")
             )
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.firstName").value("Kabir"))
@@ -88,43 +88,43 @@ class AuthorControllerTest {
 
     @Test
     public void givenAuthor_whenDeleteAuthorWithId_then200IsReturnedAsStatusCode() throws Exception {
-        Assertions.assertEquals(1, authorService.findAllAuthors().size());
-       mvc.perform(delete("/authors/1"))
+        Assertions.assertEquals(1, userService.findAllUsers().size());
+       mvc.perform(delete("/users/1"))
             .andExpect(status().is2xxSuccessful());
-        Assertions.assertEquals(0, authorService.findAllAuthors().size());
+        Assertions.assertEquals(0, userService.findAllUsers().size());
     }
     @Test
     public void givenACreateAuthorRequest_whenAuthorIsCreated_theNumberOfAuthorsIncreasesByOne() throws Exception {
-        Assertions.assertEquals(1, authorService.findAllAuthors().size());
+        Assertions.assertEquals(1, userService.findAllUsers().size());
 
-        CreateAuthorRequest createAuthorRequest1 = new CreateAuthorRequest();
-        createAuthorRequest1.setFirstName("Luka");
-        createAuthorRequest1.setLastName("domagoj");
+        CreateUserRequest createUserRequest1 = new CreateUserRequest();
+        createUserRequest1.setFirstName("Luka");
+        createUserRequest1.setLastName("domagoj");
         mvc.perform(
-            post("/authors")
+            post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(createAuthorRequest1))
+                .content(asJsonString(createUserRequest1))
         )
             .andExpect(jsonPath("$.name").value("Luka Domagoj"))
             .andExpect(status().isCreated());
 
-        Assertions.assertEquals(2, authorService.findAllAuthors().size());
+        Assertions.assertEquals(2, userService.findAllUsers().size());
     }
     @Test
     void givenUpdateAuthorRequest_whenAuthorIsUpdated_authorIsUpdatedInDatabase() throws Exception {
-        Assertions.assertEquals("Kabir", authorService.findAuthorById(1L).getFirstName());
+        Assertions.assertEquals("Kabir", userService.findUserById(1L).getFirstName());
 
-        UpdateAuthorRequest updateAuthorRequest = new UpdateAuthorRequest();
-        updateAuthorRequest.setFirstName("Marko");
-        updateAuthorRequest.setLastName("James");
+        UpdateUserRequest updateUserRequest = new UpdateUserRequest();
+        updateUserRequest.setFirstName("Marko");
+        updateUserRequest.setLastName("James");
 
        mvc.perform(
-           put("/authors/1")
+           put("/users/1")
                .contentType(MediaType.APPLICATION_JSON)
-               .content(asJsonString(updateAuthorRequest))
+               .content(asJsonString(updateUserRequest))
        )
            .andExpect(status().isOk());
-       Assertions.assertEquals("Marko", authorService.findAuthorById(1L).getFirstName());
+       Assertions.assertEquals("Marko", userService.findUserById(1L).getFirstName());
     }
 
 }

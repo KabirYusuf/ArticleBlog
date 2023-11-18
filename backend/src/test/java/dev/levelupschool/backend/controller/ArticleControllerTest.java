@@ -3,9 +3,9 @@ package dev.levelupschool.backend.controller;
 import dev.levelupschool.backend.data.dto.request.CreateArticleRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateArticleRequest;
 import dev.levelupschool.backend.data.model.Article;
-import dev.levelupschool.backend.data.model.Author;
+import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.repository.ArticleRepository;
-import dev.levelupschool.backend.data.repository.AuthorRepository;
+import dev.levelupschool.backend.data.repository.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,15 +37,15 @@ class ArticleControllerTest {
     private ArticleRepository articleRepository;
 
     @Autowired
-    private AuthorRepository authorRepository;
+    private UserRepository userRepository;
     @Test
     void contextLoads() {
     }
     @BeforeEach
     void setUp(){
-        Author author = new Author();
-        authorRepository.save(author);
-        var article = new Article("test title 1", "test content 1", author);
+        User user = new User();
+        userRepository.save(user);
+        var article = new Article("test title 1", "test content 1", user);
 
         articleRepository.save(article);
     }

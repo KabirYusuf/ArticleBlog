@@ -4,11 +4,11 @@ import dev.levelupschool.backend.data.dto.request.CreateArticleRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateArticleRequest;
 import dev.levelupschool.backend.data.dto.response.CreateArticleResponse;
 import dev.levelupschool.backend.data.model.Article;
-import dev.levelupschool.backend.data.model.Author;
+import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.repository.ArticleRepository;
 import dev.levelupschool.backend.exception.ModelNotFoundException;
 import dev.levelupschool.backend.service.interfaces.ArticleService;
-import dev.levelupschool.backend.service.interfaces.AuthorService;
+import dev.levelupschool.backend.service.interfaces.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,20 +16,20 @@ import java.util.List;
 @Service
 public class LevelUpArticleService implements ArticleService {
     private final ArticleRepository articleRepository;
-    private final AuthorService authorService;
+    private final UserService userService;
     public LevelUpArticleService(
         ArticleRepository articleRepository,
-        AuthorService authorService){
+        UserService userService){
         this.articleRepository = articleRepository;
-        this.authorService = authorService;
+        this.userService = userService;
     }
     @Override
     public CreateArticleResponse createArticle(CreateArticleRequest createArticleRequest) {
-        Author fondAuthor = authorService.findAuthorById(createArticleRequest.getAuthorId());
+        User fondUser = userService.findUserById(createArticleRequest.getAuthorId());
         Article newArticle = new Article(
             createArticleRequest.getTitle(),
             createArticleRequest.getContent(),
-            fondAuthor);
+                fondUser);
 
         Article savedArticle = articleRepository.save(newArticle);
 
