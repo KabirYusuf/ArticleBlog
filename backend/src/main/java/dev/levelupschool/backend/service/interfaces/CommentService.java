@@ -8,9 +8,9 @@ import dev.levelupschool.backend.data.model.Comment;
 import java.util.List;
 
 public interface CommentService {
-    AddCommentResponse addComment(AddCommentRequest addCommentRequest);
+    AddCommentResponse addComment(AddCommentRequest addCommentRequest, String authHeader);
     List<Comment> findAllComments();
     Comment findCommentById(Long commentId);
-    Comment updateComment(UpdateCommentRequest updateCommentRequest, Long commentId);
-    void deleteComment(Long commentId);
+    Comment updateComment(UpdateCommentRequest updateCommentRequest, Long commentId, String authHeader);
+    void deleteComment(Long commentId, String authHeader);
 }

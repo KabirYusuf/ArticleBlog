@@ -13,9 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "users", schema = "public", indexes = {
-    @Index(name = "index_email", columnList = "email", unique = true)
-})
+@Table(name = "users", schema = "public")
 @Setter
 @Getter
 public class User {
@@ -24,7 +22,6 @@ public class User {
     private Long id;
     private String firstName;
     private String lastName;
-    @Column(unique = true)
     private String email;
     @JsonIgnore
     private String password;

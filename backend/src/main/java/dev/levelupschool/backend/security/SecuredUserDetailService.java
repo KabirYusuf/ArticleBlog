@@ -18,6 +18,6 @@ public class SecuredUserDetailService implements UserDetailsService {
         return userRepository
             .findUsersByEmailIgnoreCase(username)
             .map(SecuredUser::new)
-            .orElseThrow(()-> new UserException("A user with " + username + " not found"));
+            .orElseThrow(()-> new UserException("Username/Password is incorrect"));
     }
 }

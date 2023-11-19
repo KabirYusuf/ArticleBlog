@@ -9,6 +9,7 @@ import dev.levelupschool.backend.exception.ModelNotFoundException;
 import dev.levelupschool.backend.data.model.Comment;
 import dev.levelupschool.backend.service.interfaces.ArticleService;
 import dev.levelupschool.backend.service.interfaces.CommentService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,17 +38,27 @@ public class CommentController {
     }
 
     @PostMapping
-    public ResponseEntity<AddCommentResponse> store(@RequestBody AddCommentRequest addCommentRequest) {
-        return new ResponseEntity<>(commentService.addComment(addCommentRequest), HttpStatus.CREATED);
+    public ResponseEntity<AddCommentResponse> store(
+        @RequestBody AddCommentRequest addCommentRequest,
+        HttpServletRequest httpServletRequest) {
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        return new ResponseEntity<>(commentService.addComment(addCommentRequest, authHeader), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Comment> update(@RequestBody UpdateCommentRequest updateCommentRequest, @PathVariable Long id) {
-        return ResponseEntity.ok(commentService.updateComment(updateCommentRequest, id));
+    public ResponseEntity<Comment> update(
+        @RequestBody UpdateCommentRequest updateCommentRequest,
+        @PathVariable Long id,
+        HttpServletRequest httpServletRequest) {
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        return ResponseEntity.ok(commentService.updateComment(updateCommentRequest, id, authHeader));
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        commentService.deleteComment(id);
+    public void delete(
+        @PathVariable Long id,
+        HttpServletRequest httpServletRequest) {
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        commentService.deleteComment(id, authHeader);
     }
 }

@@ -1,11 +1,9 @@
 package dev.levelupschool.backend.controller;
 import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
-import dev.levelupschool.backend.data.dto.request.CreateUserRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
-import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
-import dev.levelupschool.backend.data.dto.response.CreateUserResponse;
 import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.service.interfaces.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +29,12 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<User> getAuthorById(@PathVariable("id") Long id){
         return ResponseEntity.ok(userService.findUserById(id));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<User> getUser(HttpServletRequest httpServletRequest){
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        return ResponseEntity.ok(userService.getUser(authHeader));
     }
     @PutMapping("/{id}")
     public ResponseEntity<User> updateAuthor(@RequestBody UpdateUserRequest updateUserRequest, @PathVariable("id") Long id){

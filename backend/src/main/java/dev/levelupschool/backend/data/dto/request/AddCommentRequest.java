@@ -8,5 +8,4 @@ import lombok.Setter;
 public class AddCommentRequest {
     private Long articleId;
     private String content;
-    private Long authorId;
 }

@@ -1,11 +1,12 @@
 package dev.levelupschool.backend.service.implementation;
 
+import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
 import dev.levelupschool.backend.data.dto.request.CreateArticleRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateArticleRequest;
+import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
 import dev.levelupschool.backend.data.model.Article;
-import dev.levelupschool.backend.data.model.User;
-import dev.levelupschool.backend.data.repository.UserRepository;
 import dev.levelupschool.backend.exception.ModelNotFoundException;
+import dev.levelupschool.backend.service.auth.AuthenticationService;
 import dev.levelupschool.backend.service.interfaces.ArticleService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,18 +21,27 @@ import static org.junit.jupiter.api.Assertions.*;
 class LevelUpArticleServiceTest {
     @Autowired
     private ArticleService articleService;
+
     @Autowired
-    private UserRepository userRepository;
+    private AuthenticationService authenticationService;
+
     private CreateArticleRequest createArticleRequest;
+    private String authHeader;
 
     @BeforeEach
     void setup(){
-        User user = new User();
-        userRepository.save(user);
+        AuthenticationRequest authenticationRequest = new AuthenticationRequest();
+        authenticationRequest.setEmail("kabir@gmail.com");
+        authenticationRequest.setPassword("12345");
+        authenticationService.register(authenticationRequest);
+
+        AuthenticationResponse authenticationResponse = authenticationService.login(authenticationRequest);
+
+        authHeader = "Bearer " + authenticationResponse.getToken();
+
         createArticleRequest = new CreateArticleRequest();
         createArticleRequest.setTitle("Article title");
         createArticleRequest.setContent("Article content");
-        createArticleRequest.setAuthorId(1L);
     }
     @Test
     public void givenCreateArticleRequest_whenArticleSave_articleTableRecordsIncreasesByOne(){
@@ -39,7 +49,7 @@ class LevelUpArticleServiceTest {
 
         assertEquals(0, numberOfArticlesBeforeCreatingAnArticle);
 
-        articleService.createArticle(createArticleRequest);
+        articleService.createArticle(createArticleRequest, authHeader);
 
         int numberOfArticlesAfterCreatingNewArticle = articleService.findAllArticle().size();
 
@@ -48,7 +58,7 @@ class LevelUpArticleServiceTest {
 
     @Test
     public void givenAnArticle_whenIFindArticleById_articleWithThatIdIsReturned(){
-        articleService.createArticle(createArticleRequest);
+        articleService.createArticle(createArticleRequest, authHeader);
 
         Article foundArticle = articleService.findArticleById(1L);
 
@@ -57,12 +67,12 @@ class LevelUpArticleServiceTest {
 
     @Test
     public void givenAnArticle_whenIFindArticleWithIncorrectId_exceptionIsThrown(){
-        articleService.createArticle(createArticleRequest);
+        articleService.createArticle(createArticleRequest, authHeader);
         assertThrows(ModelNotFoundException.class, ()-> articleService.findArticleById(3L));
     }
     @Test
     public void givenIHaveAnArticle_whenArticleIsUpdated_theUpdatedArticleIsSavedAndReturned(){
-        articleService.createArticle(createArticleRequest);
+        articleService.createArticle(createArticleRequest, authHeader);
 
         String articleTitleBeforeUpdate = "Article title";
         assertEquals(articleTitleBeforeUpdate, articleService.findArticleById(1L).getTitle());
@@ -71,7 +81,7 @@ class LevelUpArticleServiceTest {
         updateArticleRequest.setContent("Updated article content");
         updateArticleRequest.setTitle("updated article title");
 
-        Article updatedArticle = articleService.updateArticle(updateArticleRequest, 1L);
+        Article updatedArticle = articleService.updateArticle(updateArticleRequest, 1L, authHeader);
         assertEquals("updated article title", updatedArticle.getTitle());
         String articleTitleAfterUpdate = "updated article title";
         assertEquals(articleTitleAfterUpdate, articleService.findArticleById(1L).getTitle());
@@ -80,11 +90,11 @@ class LevelUpArticleServiceTest {
 
     @Test
     public void givenThereAnArticleWithId1_whenArticleIsDeleted_theSizeOfArticleTableRecodeReducesByOne(){
-        articleService.createArticle(createArticleRequest);
+        articleService.createArticle(createArticleRequest, authHeader);
         int numberOfArticlesBeforeDeletingAnArticle = articleService.findAllArticle().size();
         assertEquals(1, numberOfArticlesBeforeDeletingAnArticle);
 
-        articleService.deleteArticle(1L);
+        articleService.deleteArticle(1L, authHeader);
 
         int numberOfArticlesAfterDeletingAnArticle = articleService.findAllArticle().size();
         assertEquals(0, numberOfArticlesAfterDeletingAnArticle);

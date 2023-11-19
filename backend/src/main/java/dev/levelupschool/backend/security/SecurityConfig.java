@@ -4,6 +4,7 @@ import dev.levelupschool.backend.data.model.Role;
 import dev.levelupschool.backend.exception.SecurityException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -35,15 +36,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity){
         try {
-            httpSecurity.csrf()
+            httpSecurity
+                .csrf()
                 .disable()
                 .exceptionHandling(exceptionHandlingConfigurer -> {
                     exceptionHandlingConfigurer.authenticationEntryPoint(authenticationEntryPoint);
                     exceptionHandlingConfigurer.accessDeniedHandler(accessDeniedHandler);
                 })
                 .authorizeHttpRequests((authz) -> authz
-                    .requestMatchers("/app-usage").hasAuthority(Role.ADMIN.name())
-                    .requestMatchers("/**").permitAll()
+                    .requestMatchers(HttpMethod.GET,"/auth/**", "/articles", "/comments").permitAll()
+                    .requestMatchers("/app-usage/**").hasAuthority(Role.ADMIN.name())
                     .anyRequest().authenticated()
                 )
                 .sessionManagement(session-> session

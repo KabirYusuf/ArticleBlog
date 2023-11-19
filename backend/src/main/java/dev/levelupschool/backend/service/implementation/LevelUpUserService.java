@@ -10,7 +10,9 @@ import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.repository.UserRepository;
 import dev.levelupschool.backend.exception.ModelNotFoundException;
 import dev.levelupschool.backend.exception.UserException;
+import dev.levelupschool.backend.security.JwtService;
 import dev.levelupschool.backend.service.interfaces.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +21,19 @@ import java.util.List;
 import java.util.Set;
 
 @Service
+@Slf4j
 public class LevelUpUserService implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
+    private final JwtService jwtService;
     public LevelUpUserService(
         UserRepository userRepository,
-        PasswordEncoder passwordEncoder){
+        PasswordEncoder passwordEncoder,
+        JwtService jwtService){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -81,5 +88,13 @@ public class LevelUpUserService implements UserService {
         return userRepository
             .findByEmailIgnoreCase(email)
             .orElse(null);
+    }
+
+    @Override
+    public User getUser(String authHeader) {
+        String jwt = authHeader.substring(7);
+        String email = jwtService.extractUsername(jwt);
+        return userRepository.findUsersByEmailIgnoreCase(email)
+            .orElseThrow(()-> new UserException("User not found"));
     }
 }

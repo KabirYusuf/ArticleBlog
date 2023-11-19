@@ -18,4 +18,6 @@ public interface UserService {
 
     User findUserByEmail(String email);
 
+    User getUser(String authHeader);
+
 }

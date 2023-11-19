@@ -41,11 +41,11 @@ public class Comment {
         return content;
     }
 
-    public User getAuthor() {
+    public User getUser() {
         return user;
     }
 
-    public void setAuthor(User user) {
+    public void setUser(User user) {
         this.user = user;
     }
 

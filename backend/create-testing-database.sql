@@ -8,7 +8,7 @@ CREATE TABLE users (
                        updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
                        is_verified BOOLEAN DEFAULT FALSE
 );
-CREATE INDEX index_email ON users (email);
+CREATE INDEX upper_email_idx ON users (UPPER(email));
 
 
 CREATE TABLE user_roles (
@@ -38,7 +38,7 @@ CREATE TABLE tokens (
                         user_id INTEGER NOT NULL,
                         is_revoked BOOLEAN DEFAULT FALSE
 );
-CREATE INDEX index_hashed_token ON tokens (hashed_token);
+CREATE INDEX upper_hashed_token_idx ON tokens ( upper(hashed_token));
 
 
 

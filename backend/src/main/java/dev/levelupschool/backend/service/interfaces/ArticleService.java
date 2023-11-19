@@ -8,12 +8,12 @@ import dev.levelupschool.backend.data.model.Article;
 import java.util.List;
 
 public interface ArticleService {
-    CreateArticleResponse createArticle(CreateArticleRequest createArticleRequest);
+    CreateArticleResponse createArticle(CreateArticleRequest createArticleRequest, String authHeader);
     List<Article> findAllArticle();
 
     Article findArticleById(Long articleId);
 
-    Article updateArticle(UpdateArticleRequest updateArticleRequest, Long articleId);
+    Article updateArticle(UpdateArticleRequest updateArticleRequest, Long articleId, String authHeader);
 
-    void deleteArticle(Long articleId);
+    void deleteArticle(Long articleId, String authHeader);
 }

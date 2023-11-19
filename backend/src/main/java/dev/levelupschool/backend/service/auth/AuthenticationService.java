@@ -11,6 +11,7 @@ import dev.levelupschool.backend.service.interfaces.TokenService;
 import dev.levelupschool.backend.service.interfaces.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -54,7 +55,7 @@ public class AuthenticationService {
                     authenticationRequest.getPassword()
                 )
             );
-        }catch (BadCredentialsException badCredentialsException){
+        }catch (InternalAuthenticationServiceException | BadCredentialsException internalAuthenticationServiceException){
             throw new UserException("Username/Password is incorrect");
         }
 

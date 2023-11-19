@@ -8,5 +8,4 @@ import lombok.Setter;
 public class CreateArticleRequest {
     private String title;
     private String content;
-    private Long authorId;
 }

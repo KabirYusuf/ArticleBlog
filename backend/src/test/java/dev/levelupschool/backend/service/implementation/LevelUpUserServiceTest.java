@@ -1,5 +1,5 @@
 package dev.levelupschool.backend.service.implementation;
-import dev.levelupschool.backend.data.dto.request.CreateUserRequest;
+import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
 import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.service.interfaces.UserService;
@@ -19,33 +19,23 @@ import static org.junit.jupiter.api.Assertions.*;
 class LevelUpUserServiceTest {
     @Autowired
     private UserService userService;
-    private CreateUserRequest createUserRequest;
+    private AuthenticationRequest authenticationRequest;
     @BeforeEach
     void setUp(){
-        createUserRequest = new CreateUserRequest();
-        createUserRequest.setFirstName("kabir");
-        createUserRequest.setLastName("yusuf");
+        authenticationRequest = new AuthenticationRequest();
+        authenticationRequest.setEmail("kabir@gmail.com");
+        authenticationRequest.setPassword("1234");
     }
 
-    @Test
-    public void givenCreateAuthorRequest_whenICreateAuthor_theTableSizeOfAuthorIncreasesByOne(){
-        int numberOfAuthorBeforeCreatingAnAuthor = userService.findAllUsers().size();
-        assertEquals(0, numberOfAuthorBeforeCreatingAnAuthor);
-
-        userService.registerUser(createUserRequest);
-
-        int numberOfAuthorsAfterCreatingAnAuthor = userService.findAllUsers().size();
-        assertEquals(1, numberOfAuthorsAfterCreatingAnAuthor);
-    }
     @Test
     public void givenIHaveAuthors_whenIFindAnAuthorWithId_theAuthorWithThatIdIsReturned(){
-        userService.registerUser(createUserRequest);
+        userService.registerUser(authenticationRequest);
         User foundUser = userService.findUserById(1L);
         assertNotNull(foundUser);
     }
     @Test
     public void givenIHaveAuthors_whenIDeleteAnAuthor_theTableSizeOfAuthorDecreasesByOne(){
-        userService.registerUser(createUserRequest);
+        userService.registerUser(authenticationRequest);
         int numberOfAuthorsBeforeDeletingAnAuthor = userService.findAllUsers().size();
         assertEquals(1, numberOfAuthorsBeforeDeletingAnAuthor);
 
@@ -56,9 +46,9 @@ class LevelUpUserServiceTest {
     }
     @Test
     public void givenIHaveAnAuthor_whenIUpdateTheAuthor_theUpdateAuthorIsReturned(){
-        userService.registerUser(createUserRequest);
+        userService.registerUser(authenticationRequest);
         String nameOfAuthorBeforeUpdatingAuthor = userService.findUserById(1L).getFirstName();
-        assertEquals("Kabir", nameOfAuthorBeforeUpdatingAuthor);
+        assertNull(nameOfAuthorBeforeUpdatingAuthor);
 
         UpdateUserRequest updateUserRequest = new UpdateUserRequest();
         updateUserRequest.setLastName("papez");

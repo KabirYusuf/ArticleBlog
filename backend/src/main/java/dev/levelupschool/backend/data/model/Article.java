@@ -19,11 +19,11 @@ public class Article {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public User getAuthor() {
+    public User getUser() {
         return user;
     }
 
-    public void setAuthor(User user) {
+    public void setUser(User user) {
         this.user = user;
     }
 

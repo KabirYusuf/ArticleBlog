@@ -5,9 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "tokens", schema = "public", indexes = {
-    @Index(name = "index_hashedToken", columnList = "hashedToken")
-})
+@Table(name = "tokens", schema = "public")
 @Setter
 @Getter
 public class Token {
