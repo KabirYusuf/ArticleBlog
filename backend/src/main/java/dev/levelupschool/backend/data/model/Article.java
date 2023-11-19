@@ -1,11 +1,13 @@
 package dev.levelupschool.backend.data.model;
 
 import jakarta.persistence.*;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.util.List;
 
 @Entity
 @Table(name = "articles", schema = "public")
+@Relation(collectionRelation = "items")
 public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

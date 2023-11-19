@@ -44,7 +44,8 @@ public class SecurityConfig {
                     exceptionHandlingConfigurer.accessDeniedHandler(accessDeniedHandler);
                 })
                 .authorizeHttpRequests((authz) -> authz
-                    .requestMatchers(HttpMethod.GET,"/auth/**", "/articles", "/comments").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/articles", "/comments").permitAll()
+                    .requestMatchers("/auth/**").permitAll()
                     .requestMatchers("/app-usage/**").hasAuthority(Role.ADMIN.name())
                     .anyRequest().authenticated()
                 )

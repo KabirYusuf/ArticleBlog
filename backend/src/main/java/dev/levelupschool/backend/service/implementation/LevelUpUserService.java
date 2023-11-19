@@ -13,6 +13,8 @@ import dev.levelupschool.backend.exception.UserException;
 import dev.levelupschool.backend.security.JwtService;
 import dev.levelupschool.backend.service.interfaces.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -62,9 +64,9 @@ public class LevelUpUserService implements UserService {
     }
 
     @Override
-    public List<User> findAllUsers() {
+    public Page<User> findAllUsers(Pageable pageable) {
         return userRepository
-            .findAll();
+            .findAll(pageable);
     }
 
     @Override

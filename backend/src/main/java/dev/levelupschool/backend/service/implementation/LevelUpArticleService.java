@@ -10,6 +10,8 @@ import dev.levelupschool.backend.exception.ModelNotFoundException;
 import dev.levelupschool.backend.exception.UserException;
 import dev.levelupschool.backend.service.interfaces.ArticleService;
 import dev.levelupschool.backend.service.interfaces.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,9 +46,9 @@ public class LevelUpArticleService implements ArticleService {
     }
 
     @Override
-    public List<Article> findAllArticle() {
+    public Page<Article> findAllArticle(Pageable pageable) {
         return articleRepository
-            .findAll();
+            .findAll(pageable);
     }
 
     @Override

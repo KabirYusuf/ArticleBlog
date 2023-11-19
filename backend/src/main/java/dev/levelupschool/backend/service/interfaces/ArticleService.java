@@ -4,12 +4,14 @@ import dev.levelupschool.backend.data.dto.request.CreateArticleRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateArticleRequest;
 import dev.levelupschool.backend.data.dto.response.CreateArticleResponse;
 import dev.levelupschool.backend.data.model.Article;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface ArticleService {
     CreateArticleResponse createArticle(CreateArticleRequest createArticleRequest, String authHeader);
-    List<Article> findAllArticle();
+    Page<Article> findAllArticle(Pageable pageable);
 
     Article findArticleById(Long articleId);
 

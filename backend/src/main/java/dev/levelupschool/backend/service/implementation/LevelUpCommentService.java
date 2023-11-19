@@ -12,6 +12,8 @@ import dev.levelupschool.backend.exception.UserException;
 import dev.levelupschool.backend.service.interfaces.ArticleService;
 import dev.levelupschool.backend.service.interfaces.UserService;
 import dev.levelupschool.backend.service.interfaces.CommentService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,9 +47,9 @@ public class LevelUpCommentService implements CommentService {
     }
 
     @Override
-    public List<Comment> findAllComments() {
+    public Page<Comment> findAllComments(Pageable pageable) {
         return commentRepository
-            .findAll();
+            .findAll(pageable);
     }
 
     @Override

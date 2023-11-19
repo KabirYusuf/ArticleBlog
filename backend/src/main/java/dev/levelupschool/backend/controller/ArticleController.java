@@ -5,7 +5,12 @@ import dev.levelupschool.backend.data.dto.request.UpdateArticleRequest;
 import dev.levelupschool.backend.data.dto.response.CreateArticleResponse;
 import dev.levelupschool.backend.data.model.Article;
 import dev.levelupschool.backend.service.interfaces.ArticleService;
+import dev.levelupschool.backend.util.ArticleResourceAssembler;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,14 +21,21 @@ import java.util.List;
 @RequestMapping("/articles")
 public class ArticleController {
     private final ArticleService articleService;
+    private final ArticleResourceAssembler articleResourceAssembler;
 
-    public ArticleController(ArticleService articleService) {
+    public ArticleController(
+        ArticleService articleService,
+        ArticleResourceAssembler articleResourceAssembler) {
         this.articleService = articleService;
+        this.articleResourceAssembler = articleResourceAssembler;
     }
 
     @GetMapping
-    public ResponseEntity<List<Article>> index() {
-        return ResponseEntity.ok(articleService.findAllArticle());
+    public ResponseEntity<PagedModel<EntityModel<Article>>> index(Pageable pageable) {
+        Page<Article> articles = articleService.findAllArticle(pageable);
+        PagedModel<EntityModel<Article>> pagedModel = articleResourceAssembler.toPagedModel(articles, pageable);
+
+        return ResponseEntity.ok(pagedModel);
     }
 
     @GetMapping("/{id}")
