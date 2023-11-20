@@ -32,13 +32,13 @@ create table comments (
     user_id integer not null references users
 );
 
-CREATE TABLE tokens (
+CREATE TABLE verification_tokens (
                         id SERIAL NOT NULL PRIMARY KEY,
-                        hashed_token TEXT NOT NULL,
+                        token TEXT NOT NULL,
                         user_id INTEGER NOT NULL,
-                        is_revoked BOOLEAN DEFAULT FALSE
+                        expired_at TIMESTAMP WITHOUT TIME ZONE
 );
-CREATE INDEX upper_hashed_token_idx ON tokens ( upper(hashed_token));
+CREATE INDEX upper_token_idx ON verification_tokens ( upper(token));
 
 
 

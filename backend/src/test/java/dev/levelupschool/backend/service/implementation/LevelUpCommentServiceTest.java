@@ -6,6 +6,7 @@ import dev.levelupschool.backend.data.dto.request.CreateArticleRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateCommentRequest;
 import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
 import dev.levelupschool.backend.data.model.Comment;
+import dev.levelupschool.backend.data.repository.CommentRepository;
 import dev.levelupschool.backend.exception.ModelNotFoundException;
 import dev.levelupschool.backend.service.auth.AuthenticationService;
 import dev.levelupschool.backend.service.interfaces.ArticleService;
@@ -30,6 +31,8 @@ class LevelUpCommentServiceTest {
     private ArticleService articleService;
     @Autowired
     private AuthenticationService authenticationService;
+    @Autowired
+    private CommentRepository commentRepository;
     private CreateArticleRequest createArticleRequest;
     private AddCommentRequest addCommentRequest;
 
@@ -59,11 +62,11 @@ class LevelUpCommentServiceTest {
     @Test
     public void givenCommentRequest_whenCommentIsAdded_theRecordSizeOfCommentIncreasesByOne(){
         articleService.createArticle(createArticleRequest, authHeader);
-        int numberOfContentsInCommentTableBeforeAddingComment = commentService.findAllComments().size();
+        int numberOfContentsInCommentTableBeforeAddingComment = commentRepository.findAll().size();
         assertEquals(0, numberOfContentsInCommentTableBeforeAddingComment);
         commentService.addComment(addCommentRequest, authHeader);
 
-        int numberOfCommentsInCommentTableAfterAddingAComment = commentService.findAllComments().size();
+        int numberOfCommentsInCommentTableAfterAddingAComment = commentRepository.findAll().size();
         assertEquals(1, numberOfCommentsInCommentTableAfterAddingAComment);
     }
     @Test
@@ -80,11 +83,11 @@ class LevelUpCommentServiceTest {
     }
     @Test
     public void givenIHaveComment_whenIFindAllComments_theSizeOfCommentsReturnedIsEqualToTheNumberOfCommentsIAdded(){
-        int sizeOfCommentsBeforeAddingComment = commentService.findAllComments().size();
+        int sizeOfCommentsBeforeAddingComment = commentRepository.findAll().size();
         assertEquals(0, sizeOfCommentsBeforeAddingComment);
         articleService.createArticle(createArticleRequest, authHeader);
         commentService.addComment(addCommentRequest, authHeader);
-        int sizeOfCommentsAfterAddingComment = commentService.findAllComments().size();
+        int sizeOfCommentsAfterAddingComment = commentRepository.findAll().size();
         assertEquals(1, sizeOfCommentsAfterAddingComment);
     }
     @Test
@@ -104,21 +107,21 @@ class LevelUpCommentServiceTest {
     public void givenIHaveAComment_whenIDeleteTheComment_TheSizeOfRecordInCommentTableReducesByOne(){
         articleService.createArticle(createArticleRequest, authHeader);
         commentService.addComment(addCommentRequest, authHeader);
-        int sizeOfCommentsBeforeDeletingTheComment = commentService.findAllComments().size();
+        int sizeOfCommentsBeforeDeletingTheComment = commentRepository.findAll().size();
         assertEquals(1, sizeOfCommentsBeforeDeletingTheComment);
         commentService.deleteComment(1L, authHeader);
         articleService.findArticleById(1L);
-        int sizeOfCommentsAfterDeletingComment = commentService.findAllComments().size();
+        int sizeOfCommentsAfterDeletingComment = commentRepository.findAll().size();
         assertEquals(0, sizeOfCommentsAfterDeletingComment);
     }
     @Test
     public void givenThereIsAnArticleWithComment_whenArticleIsDeleted_allTheArticleCommentsGetDeleted(){
         articleService.createArticle(createArticleRequest, authHeader);
         commentService.addComment(addCommentRequest, authHeader);
-        int sizeOfCommentsBeforeDeletingArticle = commentService.findAllComments().size();
+        int sizeOfCommentsBeforeDeletingArticle = commentRepository.findAll().size();
         assertEquals(1, sizeOfCommentsBeforeDeletingArticle);
         articleService.deleteArticle(1L, authHeader);
-        int sizeOfCommentsAfterDeletingArticle = commentService.findAllComments().size();
+        int sizeOfCommentsAfterDeletingArticle = commentRepository.findAll().size();
         assertEquals(0, sizeOfCommentsAfterDeletingArticle);
     }
 }

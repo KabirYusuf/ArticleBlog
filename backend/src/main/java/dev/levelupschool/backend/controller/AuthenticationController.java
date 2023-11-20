@@ -1,8 +1,10 @@
 package dev.levelupschool.backend.controller;
 
 import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
+import dev.levelupschool.backend.data.dto.request.VerifyUserRequest;
 import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
 import dev.levelupschool.backend.service.auth.AuthenticationService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,14 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest authenticationRequest){
         return ResponseEntity.ok(authenticationService.login(authenticationRequest));
+    }
+
+    @PutMapping("/verify")
+    public ResponseEntity<String> verifyUser(
+        @RequestBody VerifyUserRequest verifyUserRequest,
+        HttpServletRequest httpServletRequest){
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        return ResponseEntity.ok(authenticationService.verifyEmail(verifyUserRequest, authHeader));
     }
 
 }

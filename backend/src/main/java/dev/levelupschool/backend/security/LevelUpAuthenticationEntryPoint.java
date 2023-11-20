@@ -5,6 +5,7 @@ import dev.levelupschool.backend.util.Serializer;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
+@Slf4j
 public class LevelUpAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(
@@ -24,6 +26,7 @@ public class LevelUpAuthenticationEntryPoint implements AuthenticationEntryPoint
 
         response.setStatus(HttpStatus.FORBIDDEN.value());
         response.setContentType("application/json");
+        log.info("Entry Point");
         Map<String, Object> data = new HashMap<>();
         data.put("Status", false);
         data.put("Message", authException.getMessage());

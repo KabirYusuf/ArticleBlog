@@ -6,6 +6,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,8 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class JwtService {
-    private String secretKey = "my32characterultrasecureandultraLongsecret124632432";
+    @Value("${JWT_SECRET}")
+    private String secretKey;
 
 
     public String extractUsername(String token){
@@ -63,7 +65,6 @@ public class JwtService {
     }
 
     public Key getSignKey(){
-        log.info(secretKey);
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }

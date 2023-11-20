@@ -45,6 +45,7 @@ public class SeedArticles {
                     newUser.setEmail("luka@gmail.com");
                     newUser.setPassword(new BCryptPasswordEncoder().encode("12345"));
                     newUser.setRoles(roleSet);
+                    newUser.setVerified(true);
 
                     User savedUser = userRepository.save(newUser);
 

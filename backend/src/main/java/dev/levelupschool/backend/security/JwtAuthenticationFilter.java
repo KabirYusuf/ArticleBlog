@@ -1,11 +1,13 @@
 package dev.levelupschool.backend.security;
 
-import dev.levelupschool.backend.exception.ConfigurationException;
 import dev.levelupschool.backend.exception.SecurityException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,35 +36,53 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         HttpServletResponse response,
         FilterChain filterChain)  {
 
-        final String authHeader = request.getHeader("Authorization");
-        final String jwt;
-        final String username;
+        try{
+            final String authHeader = request.getHeader("Authorization");
+            final String jwt;
+            final String username;
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")){
+            if (authHeader == null || !authHeader.startsWith("Bearer ")){
+                try {
+                    filterChain.doFilter(request, response);
+                    return;
+                } catch (IOException | ServletException e) {
+                    throw new SecurityException(e.getMessage());
+                }
+            }
+
+            jwt = authHeader.substring(7);
+            username = jwtService.extractUsername(jwt);
+
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null){
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+                if (jwtService.isTokenValid(jwt, userDetails)){
+                    UsernamePasswordAuthenticationToken authenticationToken =
+                        new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                        );
+                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                }
+            }
+        }catch (ExpiredJwtException e) {
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
             try {
-                filterChain.doFilter(request, response);
-                return;
-            } catch (IOException | ServletException e) {
-                throw new SecurityException(e.getMessage());
+                response.getWriter().write("Expired JWT token");
+            } catch (IOException ex) {
+                throw new SecurityException(ex.getMessage());
             }
-        }
-
-        jwt = authHeader.substring(7);
-        username = jwtService.extractUsername(jwt);
-
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null){
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-            if (jwtService.isTokenValid(jwt, userDetails)){
-                UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities()
-                    );
-                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            return;
+        }catch (SignatureException e) {
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            try {
+                response.getWriter().write("Invalid JWT signature");
+            } catch (IOException ex) {
+                throw new SecurityException(ex.getMessage());
             }
+            return;
         }
         try {
             filterChain.doFilter(request, response);

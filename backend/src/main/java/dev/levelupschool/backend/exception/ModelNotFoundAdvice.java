@@ -33,4 +33,11 @@ public class ModelNotFoundAdvice {
     String handleConfigurationException(ConfigurationException configurationException) {
         return configurationException.getMessage();
     }
+
+    @ResponseBody
+    @ExceptionHandler(SecurityException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    String handleSecurityException(SecurityException securityException) {
+        return securityException.getMessage();
+    }
 }

@@ -2,6 +2,7 @@ package dev.levelupschool.backend.service.implementation;
 import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
 import dev.levelupschool.backend.data.model.User;
+import dev.levelupschool.backend.data.repository.UserRepository;
 import dev.levelupschool.backend.service.interfaces.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +20,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class LevelUpUserServiceTest {
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserRepository userRepository;
     private AuthenticationRequest authenticationRequest;
     @BeforeEach
     void setUp(){
@@ -36,12 +39,12 @@ class LevelUpUserServiceTest {
     @Test
     public void givenIHaveAuthors_whenIDeleteAnAuthor_theTableSizeOfAuthorDecreasesByOne(){
         userService.registerUser(authenticationRequest);
-        int numberOfAuthorsBeforeDeletingAnAuthor = userService.findAllUsers().size();
+        int numberOfAuthorsBeforeDeletingAnAuthor = userRepository.findAll().size();
         assertEquals(1, numberOfAuthorsBeforeDeletingAnAuthor);
 
         userService.deleteUser(1L);
 
-        int numberOfAuthorsAfterDeletingAnAuthor = userService.findAllUsers().size();
+        int numberOfAuthorsAfterDeletingAnAuthor = userRepository.findAll().size();
         assertEquals(0, numberOfAuthorsAfterDeletingAnAuthor);
     }
     @Test

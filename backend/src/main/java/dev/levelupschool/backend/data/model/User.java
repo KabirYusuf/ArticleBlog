@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -16,6 +17,7 @@ import java.util.Set;
 @Table(name = "users", schema = "public")
 @Setter
 @Getter
+@Relation(collectionRelation = "items")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

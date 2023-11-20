@@ -2,9 +2,11 @@ package dev.levelupschool.backend.data.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import org.springframework.hateoas.server.core.Relation;
 
 @Entity
 @Table(name = "comments", schema = "public")
+@Relation(collectionRelation = "items")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

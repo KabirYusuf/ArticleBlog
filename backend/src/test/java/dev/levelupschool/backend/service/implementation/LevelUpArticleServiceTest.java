@@ -5,6 +5,7 @@ import dev.levelupschool.backend.data.dto.request.CreateArticleRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateArticleRequest;
 import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
 import dev.levelupschool.backend.data.model.Article;
+import dev.levelupschool.backend.data.repository.ArticleRepository;
 import dev.levelupschool.backend.exception.ModelNotFoundException;
 import dev.levelupschool.backend.service.auth.AuthenticationService;
 import dev.levelupschool.backend.service.interfaces.ArticleService;
@@ -21,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class LevelUpArticleServiceTest {
     @Autowired
     private ArticleService articleService;
+    @Autowired
+    private ArticleRepository articleRepository;
 
     @Autowired
     private AuthenticationService authenticationService;
@@ -45,13 +48,13 @@ class LevelUpArticleServiceTest {
     }
     @Test
     public void givenCreateArticleRequest_whenArticleSave_articleTableRecordsIncreasesByOne(){
-        int numberOfArticlesBeforeCreatingAnArticle = articleService.findAllArticle().size();
+        int numberOfArticlesBeforeCreatingAnArticle = articleRepository.findAll().size();
 
         assertEquals(0, numberOfArticlesBeforeCreatingAnArticle);
 
         articleService.createArticle(createArticleRequest, authHeader);
 
-        int numberOfArticlesAfterCreatingNewArticle = articleService.findAllArticle().size();
+        int numberOfArticlesAfterCreatingNewArticle = articleRepository.findAll().size();
 
         assertEquals(1, numberOfArticlesAfterCreatingNewArticle);
     }
@@ -91,12 +94,12 @@ class LevelUpArticleServiceTest {
     @Test
     public void givenThereAnArticleWithId1_whenArticleIsDeleted_theSizeOfArticleTableRecodeReducesByOne(){
         articleService.createArticle(createArticleRequest, authHeader);
-        int numberOfArticlesBeforeDeletingAnArticle = articleService.findAllArticle().size();
+        int numberOfArticlesBeforeDeletingAnArticle = articleRepository.findAll().size();
         assertEquals(1, numberOfArticlesBeforeDeletingAnArticle);
 
         articleService.deleteArticle(1L, authHeader);
 
-        int numberOfArticlesAfterDeletingAnArticle = articleService.findAllArticle().size();
+        int numberOfArticlesAfterDeletingAnArticle = articleRepository.findAll().size();
         assertEquals(0, numberOfArticlesAfterDeletingAnArticle);
     }
 }
