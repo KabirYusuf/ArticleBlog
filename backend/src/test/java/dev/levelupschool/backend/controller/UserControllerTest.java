@@ -4,6 +4,7 @@ import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
 
 import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
 import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
+import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.repository.UserRepository;
 import dev.levelupschool.backend.service.auth.AuthenticationService;
 import dev.levelupschool.backend.service.interfaces.UserService;
@@ -65,6 +66,12 @@ class UserControllerTest {
         authenticationRequest.setEmail("kabir@gmail.com");
         authenticationRequest.setPassword("12345");
         authenticationService.register(authenticationRequest);
+
+        User foundUser = userRepository.findById(1L).get();
+
+        foundUser.setVerified(true);
+
+        userRepository.save(foundUser);
 
         AuthenticationResponse authenticationResponse = authenticationService.login(authenticationRequest);
 

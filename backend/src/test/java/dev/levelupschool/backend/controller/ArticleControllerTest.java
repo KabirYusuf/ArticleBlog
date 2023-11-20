@@ -1,10 +1,12 @@
 package dev.levelupschool.backend.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
 import dev.levelupschool.backend.data.dto.request.CreateArticleRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateArticleRequest;
 import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
 import dev.levelupschool.backend.data.model.Article;
+import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.repository.ArticleRepository;
 import dev.levelupschool.backend.data.repository.UserRepository;
 import dev.levelupschool.backend.service.auth.AuthenticationService;
@@ -51,6 +53,12 @@ class ArticleControllerTest {
         authenticationRequest.setEmail("kabir@gmail.com");
         authenticationRequest.setPassword("12345");
         authenticationService.register(authenticationRequest);
+
+        User foundUser = userRepository.findById(1L).get();
+
+        foundUser.setVerified(true);
+
+        userRepository.save(foundUser);
 
         AuthenticationResponse authenticationResponse = authenticationService.login(authenticationRequest);
 
@@ -145,6 +153,70 @@ class ArticleControllerTest {
             .andExpect(status().isCreated());
 
         Assertions.assertEquals(2, articleRepository.findAll().size());
+    }
+
+    @Test
+    public void testThatAUserCannotUpdateArticleCreatedByAnotherUser() throws Exception {
+        AuthenticationRequest authenticationRequestForSecondUser = new AuthenticationRequest();
+        authenticationRequestForSecondUser.setEmail("seconUser@gmail.com");
+        authenticationRequestForSecondUser.setPassword("1234");
+        authenticationService.register(authenticationRequestForSecondUser);
+
+        User foundUser = userRepository.findById(2L).get();
+
+        foundUser.setVerified(true);
+
+        userRepository.save(foundUser);
+
+        AuthenticationResponse authenticationResponse = authenticationService.login(authenticationRequestForSecondUser);
+
+        String authHeaderForSecondUser = "Bearer " + authenticationResponse.getToken();
+
+
+        Assertions.assertEquals("test title 1", articleRepository.findById(1L).get().getTitle());
+        Assertions.assertEquals("test content 1", articleRepository.findById(1L).get().getContent());
+
+        UpdateArticleRequest updateArticleRequest = new UpdateArticleRequest();
+        updateArticleRequest.setTitle("updated title");
+        updateArticleRequest.setContent("updated content");
+
+        mvc.perform(
+                put("/articles/1")
+                    .header("Authorization", authHeaderForSecondUser)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(asJsonString(updateArticleRequest))
+            )
+                .andExpect(status().is4xxClientError());
+
+        Assertions.assertEquals("test title 1", articleRepository.findById(1L).get().getTitle());
+        Assertions.assertEquals("test content 1", articleRepository.findById(1L).get().getContent());
+    }
+
+    @Test
+    public void testThatUserCannotDeleteArticleCreatedByAnotherUser() throws Exception {
+        AuthenticationRequest authenticationRequestForSecondUser = new AuthenticationRequest();
+        authenticationRequestForSecondUser.setEmail("seconUser@gmail.com");
+        authenticationRequestForSecondUser.setPassword("1234");
+        authenticationService.register(authenticationRequestForSecondUser);
+
+        User foundUser = userRepository.findById(2L).get();
+
+        foundUser.setVerified(true);
+
+        userRepository.save(foundUser);
+
+        AuthenticationResponse authenticationResponse = authenticationService.login(authenticationRequestForSecondUser);
+
+        String authHeaderForSecondUser = "Bearer " + authenticationResponse.getToken();
+
+        Assertions.assertEquals(1, articleRepository.findAll().size());
+        mvc.perform(
+                delete("/articles/1")
+                    .header("Authorization", authHeaderForSecondUser)
+            )
+            .andExpect(status().is4xxClientError());
+
+        Assertions.assertEquals(1, articleRepository.findAll().size());
     }
 
 }

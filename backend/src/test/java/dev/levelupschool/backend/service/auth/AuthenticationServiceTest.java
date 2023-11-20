@@ -2,6 +2,7 @@ package dev.levelupschool.backend.service.auth;
 
 import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
 import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
+import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.repository.UserRepository;
 import dev.levelupschool.backend.exception.UserException;
 import lombok.extern.slf4j.Slf4j;
@@ -68,6 +69,12 @@ class AuthenticationServiceTest {
     public void testThatWhenAUserLogsInWithValidCredentials_JwtIsReturned(){
         authenticationService.register(authenticationRequest);
 
+        User foundUser = userRepository.findById(1L).get();
+
+        foundUser.setVerified(true);
+
+        userRepository.save(foundUser);
+
         authenticationResponse = authenticationService.login(authenticationRequest);
 
         assertNotNull(authenticationResponse);
@@ -79,7 +86,14 @@ class AuthenticationServiceTest {
     void testThatWhenAUserTriesToLoginWithAnIncorrectEmail_ExceptionIsThrown(){
         authenticationService.register(authenticationRequest);
 
+        User foundUser = userRepository.findById(1L).get();
+
+        foundUser.setVerified(true);
+
+        userRepository.save(foundUser);
+
         authenticationRequest.setEmail("invalidEmail@gmail.com");
+
 
         assertThrows(UserException.class, ()-> authenticationService.login(authenticationRequest));
     }
@@ -87,6 +101,12 @@ class AuthenticationServiceTest {
     @Test
     void testThatWhenAUserTriesToLoginWithAnIncorrectPassword_ExceptionIsThrown(){
         authenticationService.register(authenticationRequest);
+
+        User foundUser = userRepository.findById(1L).get();
+
+        foundUser.setVerified(true);
+
+        userRepository.save(foundUser);
 
         authenticationRequest.setPassword("InvalidPassword");
 

@@ -1,8 +1,7 @@
 package dev.levelupschool.backend.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
-import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
+import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.repository.UserRepository;
 import dev.levelupschool.backend.service.auth.AuthenticationService;
 import org.junit.jupiter.api.Assertions;
@@ -18,7 +17,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static dev.levelupschool.backend.util.Serializer.asJsonString;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -68,6 +66,14 @@ class AuthenticationControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(authenticationRequest))
         );
+
+        User foundUser = userRepository.findById(1L).get();
+
+        foundUser.setVerified(true);
+
+        userRepository.save(foundUser);
+
+
         mvc.perform(
                 post("/auth/login")
                     .contentType(MediaType.APPLICATION_JSON)

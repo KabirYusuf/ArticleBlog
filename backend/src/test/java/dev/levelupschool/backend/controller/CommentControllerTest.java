@@ -1,5 +1,6 @@
 package dev.levelupschool.backend.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import dev.levelupschool.backend.data.dto.request.AddCommentRequest;
 import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateCommentRequest;
@@ -56,6 +57,12 @@ class CommentControllerTest {
         authenticationRequest.setEmail("kabir@gmail.com");
         authenticationRequest.setPassword("12345");
         authenticationService.register(authenticationRequest);
+
+        User foundUser = userRepository.findById(1L).get();
+
+        foundUser.setVerified(true);
+
+        userRepository.save(foundUser);
 
         AuthenticationResponse authenticationResponse = authenticationService.login(authenticationRequest);
 
@@ -145,6 +152,64 @@ class CommentControllerTest {
         )
             .andExpect(status().isOk());
         Assertions.assertEquals("Updated Comment", commentRepository.findById(1L).get().getContent());
+    }
+
+    @Test
+    public void testThatAUserCannotUpdateCommentCreatedByAnotherUser() throws Exception {
+        AuthenticationRequest authenticationRequestForSecondUser = new AuthenticationRequest();
+        authenticationRequestForSecondUser.setEmail("seconUser@gmail.com");
+        authenticationRequestForSecondUser.setPassword("1234");
+        authenticationService.register(authenticationRequestForSecondUser);
+
+        User foundUser = userRepository.findById(2L).get();
+
+        foundUser.setVerified(true);
+
+        userRepository.save(foundUser);
+
+        AuthenticationResponse authenticationResponse = authenticationService.login(authenticationRequestForSecondUser);
+
+        String authHeaderForSecondUser = "Bearer " + authenticationResponse.getToken();
+
+        Assertions.assertEquals("test comment", commentRepository.findById(1L).get().getContent());
+
+        UpdateCommentRequest updateCommentRequest = new UpdateCommentRequest();
+        updateCommentRequest.setContent("Updated Comment");
+
+        mvc.perform(
+                put("/comments/1")
+                    .header("Authorization", authHeaderForSecondUser)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(asJsonString(updateCommentRequest))
+            )
+            .andExpect(status().is4xxClientError());
+        Assertions.assertEquals("test comment", commentRepository.findById(1L).get().getContent());
+    }
+
+    @Test
+    public void testThatAUserCannotDeleteCommentCreatedByAnotherUser() throws Exception {
+        AuthenticationRequest authenticationRequestForSecondUser = new AuthenticationRequest();
+        authenticationRequestForSecondUser.setEmail("seconUser@gmail.com");
+        authenticationRequestForSecondUser.setPassword("1234");
+        authenticationService.register(authenticationRequestForSecondUser);
+
+        User foundUser = userRepository.findById(2L).get();
+
+        foundUser.setVerified(true);
+
+        userRepository.save(foundUser);
+
+        AuthenticationResponse authenticationResponse = authenticationService.login(authenticationRequestForSecondUser);
+
+        String authHeaderForSecondUser = "Bearer " + authenticationResponse.getToken();
+
+        Assertions.assertEquals(1, commentRepository.findAll().size());
+        mvc.perform(
+                delete("/comments/1")
+                    .header("Authorization", authHeaderForSecondUser)
+            )
+            .andExpect(status().is4xxClientError());
+        Assertions.assertEquals(1, commentRepository.findAll().size());
     }
 
 }

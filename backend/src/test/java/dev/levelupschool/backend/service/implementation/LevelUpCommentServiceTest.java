@@ -6,8 +6,11 @@ import dev.levelupschool.backend.data.dto.request.CreateArticleRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateCommentRequest;
 import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
 import dev.levelupschool.backend.data.model.Comment;
+import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.repository.CommentRepository;
+import dev.levelupschool.backend.data.repository.UserRepository;
 import dev.levelupschool.backend.exception.ModelNotFoundException;
+import dev.levelupschool.backend.exception.UserException;
 import dev.levelupschool.backend.service.auth.AuthenticationService;
 import dev.levelupschool.backend.service.interfaces.ArticleService;
 import dev.levelupschool.backend.service.interfaces.CommentService;
@@ -33,6 +36,9 @@ class LevelUpCommentServiceTest {
     private AuthenticationService authenticationService;
     @Autowired
     private CommentRepository commentRepository;
+
+    @Autowired
+    private UserRepository userRepository;
     private CreateArticleRequest createArticleRequest;
     private AddCommentRequest addCommentRequest;
 
@@ -44,6 +50,12 @@ class LevelUpCommentServiceTest {
         authenticationRequest.setEmail("kabir@gmail.com");
         authenticationRequest.setPassword("12345");
         authenticationService.register(authenticationRequest);
+
+        User foundUser = userRepository.findById(1L).get();
+
+        foundUser.setVerified(true);
+
+        userRepository.save(foundUser);
 
         AuthenticationResponse authenticationResponse = authenticationService.login(authenticationRequest);
 
@@ -123,5 +135,64 @@ class LevelUpCommentServiceTest {
         articleService.deleteArticle(1L, authHeader);
         int sizeOfCommentsAfterDeletingArticle = commentRepository.findAll().size();
         assertEquals(0, sizeOfCommentsAfterDeletingArticle);
+    }
+
+    @Test
+    public void testThatAUserCannotDeleteCommentMadeByAnotherUser(){
+        AuthenticationRequest authenticationRequestForSecondUser = new AuthenticationRequest();
+        authenticationRequestForSecondUser.setEmail("seconUser@gmail.com");
+        authenticationRequestForSecondUser.setPassword("1234");
+        authenticationService.register(authenticationRequestForSecondUser);
+
+        User foundUser = userRepository.findById(2L).get();
+
+        foundUser.setVerified(true);
+
+        userRepository.save(foundUser);
+
+        AuthenticationResponse authenticationResponse = authenticationService.login(authenticationRequestForSecondUser);
+
+        String authHeaderForSecondUser = "Bearer " + authenticationResponse.getToken();
+        articleService.createArticle(createArticleRequest, authHeader);
+
+        articleService.createArticle(createArticleRequest, authHeader);
+        commentService.addComment(addCommentRequest, authHeader);
+        int sizeOfCommentsBeforeDeletingTheComment = commentRepository.findAll().size();
+        assertEquals(1, sizeOfCommentsBeforeDeletingTheComment);
+        assertThrows(UserException.class, ()-> commentService.deleteComment(1L, authHeaderForSecondUser));
+
+        int sizeOfCommentsAfterDeletingComment = commentRepository.findAll().size();
+        assertEquals(1, sizeOfCommentsAfterDeletingComment);
+    }
+
+    @Test
+    public void testThatAUserCannotUpdateCommentPostedByAnotherUser(){
+        AuthenticationRequest authenticationRequestForSecondUser = new AuthenticationRequest();
+        authenticationRequestForSecondUser.setEmail("seconUser@gmail.com");
+        authenticationRequestForSecondUser.setPassword("1234");
+        authenticationService.register(authenticationRequestForSecondUser);
+
+        User foundUser = userRepository.findById(2L).get();
+
+        foundUser.setVerified(true);
+
+        userRepository.save(foundUser);
+
+        AuthenticationResponse authenticationResponse = authenticationService.login(authenticationRequestForSecondUser);
+
+        String authHeaderForSecondUser = "Bearer " + authenticationResponse.getToken();
+
+        articleService.createArticle(createArticleRequest, authHeader);
+        commentService.addComment(addCommentRequest, authHeader);
+
+        String contentOfCommentBeforeUpdate = commentService.findCommentById(1L).getContent();
+        assertEquals("article comment", contentOfCommentBeforeUpdate);
+
+        UpdateCommentRequest updateCommentRequest = new UpdateCommentRequest();
+        updateCommentRequest.setContent("updated content");
+
+        assertThrows(UserException.class, ()-> commentService.updateComment(updateCommentRequest, 1L, authHeaderForSecondUser));
+        assertEquals("article comment", commentRepository.findById(1L).get().getContent());
+
     }
 }
