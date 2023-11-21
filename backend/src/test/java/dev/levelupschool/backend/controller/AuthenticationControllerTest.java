@@ -46,11 +46,11 @@ class AuthenticationControllerTest {
         registrationRequest = new RegistrationRequest();
         registrationRequest.setUsername("kaybee");
         registrationRequest.setEmail("k@gmail.com");
-        registrationRequest.setPassword("12345");
+        registrationRequest.setPassword("a12345A45@");
 
         authenticationRequest = new AuthenticationRequest();
-        authenticationRequest.setUsername("kabir@gmail.com");
-        authenticationRequest.setPassword("12345");
+        authenticationRequest.setUsername("kaybee");
+        authenticationRequest.setPassword("a12345A45@");
 
     }
 

@@ -54,7 +54,7 @@ class ArticleControllerTest {
         registrationRequest = new RegistrationRequest();
         registrationRequest.setUsername("kaybee");
         registrationRequest.setEmail("k@gmail.com");
-        registrationRequest.setPassword("12345");
+        registrationRequest.setPassword("12345abA@qw");
         authenticationService.register(registrationRequest);
 
         User foundUser = userRepository.findById(1L).get();
@@ -65,15 +65,13 @@ class ArticleControllerTest {
 
         AuthenticationRequest authenticationRequest = new AuthenticationRequest();
         authenticationRequest.setUsername("kaybee");
-        authenticationRequest.setPassword("12345");
+        authenticationRequest.setPassword("12345abA@qw");
 
         AuthenticationResponse authenticationResponse = authenticationService.login(authenticationRequest);
 
         authHeader = "Bearer " + authenticationResponse.getToken();
 
-        CreateArticleRequest createArticleRequest = new CreateArticleRequest();
-        createArticleRequest.setTitle("Article title");
-        createArticleRequest.setContent("Article content");
+
 
 
 
@@ -167,12 +165,12 @@ class ArticleControllerTest {
         RegistrationRequest registrationRequestForSecondUser = new RegistrationRequest();
         registrationRequestForSecondUser.setEmail("kabir@gmail.com");
         registrationRequestForSecondUser.setUsername("kaybeeTwo");
-        registrationRequestForSecondUser.setPassword("12345");
+        registrationRequestForSecondUser.setPassword("12345&980aA");
         authenticationService.register(registrationRequestForSecondUser);
 
         AuthenticationRequest authenticationRequestForSecondUser = new AuthenticationRequest();
         authenticationRequestForSecondUser.setUsername("kaybeeTwo");
-        authenticationRequestForSecondUser.setPassword("12345");
+        authenticationRequestForSecondUser.setPassword("12345&980aA");
 
         User foundUser = userRepository.findById(2L).get();
 

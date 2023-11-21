@@ -44,7 +44,7 @@ public class SeedArticles {
                     newUser.setLastName("Papez");
                     newUser.setEmail("luka@gmail.com");
                     newUser.setUsername("lpapez");
-                    newUser.setPassword(new BCryptPasswordEncoder().encode("12345"));
+                    newUser.setPassword(new BCryptPasswordEncoder().encode("Abc123@lp"));
                     newUser.setRoles(roleSet);
                     newUser.setVerified(true);
 
