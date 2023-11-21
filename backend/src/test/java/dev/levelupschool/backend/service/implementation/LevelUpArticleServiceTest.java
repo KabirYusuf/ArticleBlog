@@ -2,6 +2,7 @@ package dev.levelupschool.backend.service.implementation;
 
 import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
 import dev.levelupschool.backend.data.dto.request.CreateArticleRequest;
+import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateArticleRequest;
 import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
 import dev.levelupschool.backend.data.model.Article;
@@ -36,12 +37,20 @@ class LevelUpArticleServiceTest {
     private CreateArticleRequest createArticleRequest;
     private String authHeader;
 
+    private RegistrationRequest registrationRequest;
+
     @BeforeEach
     void setup(){
+        registrationRequest = new RegistrationRequest();
+        registrationRequest.setEmail("kabir@gmail.com");
+        registrationRequest.setUsername("kaybee");
+        registrationRequest.setPassword("12345");
+
         AuthenticationRequest authenticationRequest = new AuthenticationRequest();
-        authenticationRequest.setEmail("kabir@gmail.com");
+        authenticationRequest.setUsername("kaybee");
         authenticationRequest.setPassword("12345");
-        authenticationService.register(authenticationRequest);
+
+        authenticationService.register(registrationRequest);
 
         User foundUser = userRepository.findById(1L).get();
 
@@ -115,10 +124,15 @@ class LevelUpArticleServiceTest {
     }
     @Test
     public void testThatAUserCannotDeleteArticleCreatedByAnotherUser(){
+        RegistrationRequest registrationRequestForSecondUser = new RegistrationRequest();
+        registrationRequestForSecondUser.setEmail("kabir@gmail.com");
+        registrationRequestForSecondUser.setUsername("kaybeeTwo");
+        registrationRequestForSecondUser.setPassword("12345");
+        authenticationService.register(registrationRequestForSecondUser);
+
         AuthenticationRequest authenticationRequestForSecondUser = new AuthenticationRequest();
-        authenticationRequestForSecondUser.setEmail("seconUser@gmail.com");
-        authenticationRequestForSecondUser.setPassword("1234");
-        authenticationService.register(authenticationRequestForSecondUser);
+        authenticationRequestForSecondUser.setUsername("kaybeeTwo");
+        authenticationRequestForSecondUser.setPassword("12345");
 
         User foundUser = userRepository.findById(2L).get();
 
@@ -142,10 +156,15 @@ class LevelUpArticleServiceTest {
 
     @Test
     public void testThatUserCannotUpdateArticleCreatedByAnotherUser(){
+        RegistrationRequest registrationRequestForSecondUser = new RegistrationRequest();
+        registrationRequestForSecondUser.setEmail("kabir@gmail.com");
+        registrationRequestForSecondUser.setUsername("kaybeeTwo");
+        registrationRequestForSecondUser.setPassword("12345");
+        authenticationService.register(registrationRequestForSecondUser);
+
         AuthenticationRequest authenticationRequestForSecondUser = new AuthenticationRequest();
-        authenticationRequestForSecondUser.setEmail("seconUser@gmail.com");
-        authenticationRequestForSecondUser.setPassword("1234");
-        authenticationService.register(authenticationRequestForSecondUser);
+        authenticationRequestForSecondUser.setUsername("kaybeeTwo");
+        authenticationRequestForSecondUser.setPassword("12345");
 
         User foundUser = userRepository.findById(2L).get();
 

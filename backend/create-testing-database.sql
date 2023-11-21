@@ -2,13 +2,14 @@ CREATE TABLE users (
                        id SERIAL NOT NULL PRIMARY KEY,
                        first_name TEXT NULL DEFAULT NULL,
                        last_name TEXT NULL DEFAULT NULL,
-                       email TEXT NOT NULL DEFAULT NULL UNIQUE,
+                       email TEXT NULL DEFAULT NULL,
+                       username TEXT NOT NULL DEFAULT NULL UNIQUE,
                        password TEXT NOT NULL DEFAULT NULL,
                        created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
                        updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
                        is_verified BOOLEAN DEFAULT FALSE
 );
-CREATE INDEX upper_email_idx ON users (UPPER(email));
+CREATE INDEX upper_username_idx ON users (UPPER(username));
 
 
 CREATE TABLE user_roles (

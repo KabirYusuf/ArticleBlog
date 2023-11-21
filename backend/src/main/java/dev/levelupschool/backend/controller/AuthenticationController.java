@@ -1,6 +1,7 @@
 package dev.levelupschool.backend.controller;
 
 import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
+import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.request.VerifyUserRequest;
 import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
 import dev.levelupschool.backend.service.auth.AuthenticationService;
@@ -17,8 +18,8 @@ public class AuthenticationController {
         this.authenticationService = authenticationService;
     }
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody AuthenticationRequest authenticationRequest){
-        return  new ResponseEntity<>(authenticationService.register(authenticationRequest), HttpStatus.CREATED);
+    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegistrationRequest registrationRequest){
+        return  new ResponseEntity<>(authenticationService.register(registrationRequest), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")

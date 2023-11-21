@@ -9,7 +9,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.hateoas.server.core.Relation;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -25,6 +24,7 @@ public class User {
     private String firstName;
     private String lastName;
     private String email;
+    private String username;
     @JsonIgnore
     private String password;
     @ElementCollection(fetch = FetchType.EAGER)

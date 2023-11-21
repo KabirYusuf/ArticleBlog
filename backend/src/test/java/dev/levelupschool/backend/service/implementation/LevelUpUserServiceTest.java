@@ -1,5 +1,6 @@
 package dev.levelupschool.backend.service.implementation;
 import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
+import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
 import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.repository.UserRepository;
@@ -23,22 +24,26 @@ class LevelUpUserServiceTest {
     @Autowired
     private UserRepository userRepository;
     private AuthenticationRequest authenticationRequest;
+
+    private RegistrationRequest registrationRequest;
     @BeforeEach
     void setUp(){
-        authenticationRequest = new AuthenticationRequest();
-        authenticationRequest.setEmail("kabir@gmail.com");
-        authenticationRequest.setPassword("1234");
+        registrationRequest = new RegistrationRequest();
+        registrationRequest.setEmail("kabir@gmail.com");
+        registrationRequest.setUsername("kaybee");
+        registrationRequest.setPassword("12345");
+
     }
 
     @Test
     public void givenIHaveAuthors_whenIFindAnAuthorWithId_theAuthorWithThatIdIsReturned(){
-        userService.registerUser(authenticationRequest);
+        userService.registerUser(registrationRequest);
         User foundUser = userService.findUserById(1L);
         assertNotNull(foundUser);
     }
     @Test
     public void givenIHaveAuthors_whenIDeleteAnAuthor_theTableSizeOfAuthorDecreasesByOne(){
-        userService.registerUser(authenticationRequest);
+        userService.registerUser(registrationRequest);
         int numberOfAuthorsBeforeDeletingAnAuthor = userRepository.findAll().size();
         assertEquals(1, numberOfAuthorsBeforeDeletingAnAuthor);
 
@@ -49,7 +54,7 @@ class LevelUpUserServiceTest {
     }
     @Test
     public void givenIHaveAnAuthor_whenIUpdateTheAuthor_theUpdateAuthorIsReturned(){
-        userService.registerUser(authenticationRequest);
+        userService.registerUser(registrationRequest);
         String nameOfAuthorBeforeUpdatingAuthor = userService.findUserById(1L).getFirstName();
         assertNull(nameOfAuthorBeforeUpdatingAuthor);
 

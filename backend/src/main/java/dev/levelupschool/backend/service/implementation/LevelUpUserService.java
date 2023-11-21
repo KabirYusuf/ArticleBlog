@@ -1,10 +1,8 @@
 package dev.levelupschool.backend.service.implementation;
 
 import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
-import dev.levelupschool.backend.data.dto.request.CreateUserRequest;
+import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
-import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
-import dev.levelupschool.backend.data.dto.response.CreateUserResponse;
 import dev.levelupschool.backend.data.model.Role;
 import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.repository.UserRepository;
@@ -19,7 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Service
@@ -39,15 +36,16 @@ public class LevelUpUserService implements UserService {
     }
 
     @Override
-    public User registerUser(AuthenticationRequest authenticationRequest) {
-        User foundUser = findUserByEmail(authenticationRequest.getEmail());
-        if (foundUser != null)throw new UserException("User with "+ authenticationRequest.getEmail()+ " already exist");
+    public User registerUser(RegistrationRequest registrationRequest) {
+        User foundUser = findUserByUsername(registrationRequest.getUsername());
+        if (foundUser != null)throw new UserException("User with "+ registrationRequest.getUsername()+ " already exist");
         User newUser = new User();
         Set<Role> roleSet = new HashSet<>();
         roleSet.add(Role.USER);
-        newUser.setEmail(authenticationRequest.getEmail());
-        newUser.setPassword(passwordEncoder.encode(authenticationRequest.getPassword()));
+        newUser.setUsername(registrationRequest.getUsername());
+        newUser.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
         newUser.setRoles(roleSet);
+        newUser.setEmail(registrationRequest.getEmail());
         return userRepository.save(newUser);
     }
 
@@ -86,9 +84,9 @@ public class LevelUpUserService implements UserService {
     }
 
     @Override
-    public User findUserByEmail(String email) {
+    public User findUserByUsername(String username) {
         return userRepository
-            .findByEmailIgnoreCase(email)
+            .findByUsernameIgnoreCase(username)
             .orElse(null);
     }
 
@@ -96,7 +94,7 @@ public class LevelUpUserService implements UserService {
     public User getUser(String authHeader) {
         String jwt = authHeader.substring(7);
         String email = jwtService.extractUsername(jwt);
-        return userRepository.findUsersByEmailIgnoreCase(email)
+        return userRepository.findUsersByUsernameIgnoreCase(email)
             .orElseThrow(()-> new UserException("User not found"));
     }
 }

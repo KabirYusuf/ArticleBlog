@@ -2,6 +2,7 @@ package dev.levelupschool.backend.service.auth;
 
 import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
 import dev.levelupschool.backend.data.dto.request.NotificationRequest;
+import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.request.VerifyUserRequest;
 import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
 import dev.levelupschool.backend.data.model.User;
@@ -51,12 +52,12 @@ public class AuthenticationService {
         this.levelUpEmailSenderService = levelUpEmailSenderService;
     }
 
-    public AuthenticationResponse register(AuthenticationRequest authenticationRequest){
-        User newUser = userService.registerUser(authenticationRequest);
+    public AuthenticationResponse register(RegistrationRequest registrationRequest){
+        User newUser = userService.registerUser(registrationRequest);
 
         VerificationToken verificationToken = verificationTokenService.createUniqueVerificationToken(newUser.getId());
 
-        sendVerificationToken(authenticationRequest.getEmail(), verificationToken.getToken());
+        sendVerificationToken(registrationRequest.getEmail(), verificationToken.getToken());
 
         AuthenticationResponse authenticationResponse = new AuthenticationResponse();
 
@@ -71,7 +72,7 @@ public class AuthenticationService {
         try{
             authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                    authenticationRequest.getEmail(),
+                    authenticationRequest.getUsername(),
                     authenticationRequest.getPassword()
                 )
             );
@@ -79,7 +80,7 @@ public class AuthenticationService {
             throw new UserException("Username/Password is incorrect");
         }
 
-        User foundUser = userService.findUserByEmail(authenticationRequest.getEmail());
+        User foundUser = userService.findUserByUsername(authenticationRequest.getUsername());
 
         String jwtToken = jwtService.generateToken(new SecuredUser(foundUser));
 

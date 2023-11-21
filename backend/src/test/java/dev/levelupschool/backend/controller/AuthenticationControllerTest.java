@@ -1,6 +1,7 @@
 package dev.levelupschool.backend.controller;
 
 import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
+import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.repository.UserRepository;
 import dev.levelupschool.backend.service.auth.AuthenticationService;
@@ -35,13 +36,20 @@ class AuthenticationControllerTest {
     @Autowired
     private UserRepository userRepository;
     private AuthenticationRequest authenticationRequest;
+
+    private RegistrationRequest registrationRequest;
     @Test
     void contextLoads() {
     }
     @BeforeEach
     void setUp() {
+        registrationRequest = new RegistrationRequest();
+        registrationRequest.setUsername("kaybee");
+        registrationRequest.setEmail("k@gmail.com");
+        registrationRequest.setPassword("12345");
+
         authenticationRequest = new AuthenticationRequest();
-        authenticationRequest.setEmail("kabir@gmail.com");
+        authenticationRequest.setUsername("kabir@gmail.com");
         authenticationRequest.setPassword("12345");
 
     }
@@ -52,7 +60,7 @@ class AuthenticationControllerTest {
         mvc.perform(
                 post("/auth/register")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(asJsonString(authenticationRequest))
+                    .content(asJsonString(registrationRequest))
             )
             .andExpect(status().isCreated());
 

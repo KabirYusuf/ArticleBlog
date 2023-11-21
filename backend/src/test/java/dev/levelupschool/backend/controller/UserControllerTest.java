@@ -2,6 +2,7 @@ package dev.levelupschool.backend.controller;
 
 import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
 
+import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
 import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
 import dev.levelupschool.backend.data.model.User;
@@ -42,6 +43,7 @@ class UserControllerTest {
     @Autowired
     private AuthenticationService authenticationService;
     private String authHeader;
+    private RegistrationRequest registrationRequest;
 
     @Container
     @ServiceConnection
@@ -62,10 +64,15 @@ class UserControllerTest {
     @BeforeEach
     void setUp(){
         userRepository.deleteAll();
-        AuthenticationRequest authenticationRequest = new AuthenticationRequest();
-        authenticationRequest.setEmail("kabir@gmail.com");
-        authenticationRequest.setPassword("12345");
-        authenticationService.register(authenticationRequest);
+        registrationRequest = new RegistrationRequest();
+        registrationRequest.setUsername("kaybee");
+        registrationRequest.setEmail("k@gmail.com");
+        registrationRequest.setPassword("1234567");
+        authenticationService.register(registrationRequest);
+        AuthenticationRequest authenticationRequest;
+        authenticationRequest = new AuthenticationRequest();
+        authenticationRequest.setUsername("kaybee");
+        authenticationRequest.setPassword("1234567");
 
         User foundUser = userRepository.findById(1L).get();
 

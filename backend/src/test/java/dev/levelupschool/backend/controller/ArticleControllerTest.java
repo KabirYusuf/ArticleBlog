@@ -1,8 +1,8 @@
 package dev.levelupschool.backend.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
 import dev.levelupschool.backend.data.dto.request.CreateArticleRequest;
+import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateArticleRequest;
 import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
 import dev.levelupschool.backend.data.model.Article;
@@ -41,6 +41,8 @@ class ArticleControllerTest {
     @Autowired
     private AuthenticationService authenticationService;
     private String authHeader;
+    private RegistrationRequest registrationRequest;
+
 
     @Autowired
     private UserRepository userRepository;
@@ -49,16 +51,21 @@ class ArticleControllerTest {
     }
     @BeforeEach
     void setUp(){
-        AuthenticationRequest authenticationRequest = new AuthenticationRequest();
-        authenticationRequest.setEmail("kabir@gmail.com");
-        authenticationRequest.setPassword("12345");
-        authenticationService.register(authenticationRequest);
+        registrationRequest = new RegistrationRequest();
+        registrationRequest.setUsername("kaybee");
+        registrationRequest.setEmail("k@gmail.com");
+        registrationRequest.setPassword("12345");
+        authenticationService.register(registrationRequest);
 
         User foundUser = userRepository.findById(1L).get();
 
         foundUser.setVerified(true);
 
         userRepository.save(foundUser);
+
+        AuthenticationRequest authenticationRequest = new AuthenticationRequest();
+        authenticationRequest.setUsername("kaybee");
+        authenticationRequest.setPassword("12345");
 
         AuthenticationResponse authenticationResponse = authenticationService.login(authenticationRequest);
 
@@ -157,10 +164,15 @@ class ArticleControllerTest {
 
     @Test
     public void testThatAUserCannotUpdateArticleCreatedByAnotherUser() throws Exception {
+        RegistrationRequest registrationRequestForSecondUser = new RegistrationRequest();
+        registrationRequestForSecondUser.setEmail("kabir@gmail.com");
+        registrationRequestForSecondUser.setUsername("kaybeeTwo");
+        registrationRequestForSecondUser.setPassword("12345");
+        authenticationService.register(registrationRequestForSecondUser);
+
         AuthenticationRequest authenticationRequestForSecondUser = new AuthenticationRequest();
-        authenticationRequestForSecondUser.setEmail("seconUser@gmail.com");
-        authenticationRequestForSecondUser.setPassword("1234");
-        authenticationService.register(authenticationRequestForSecondUser);
+        authenticationRequestForSecondUser.setUsername("kaybeeTwo");
+        authenticationRequestForSecondUser.setPassword("12345");
 
         User foundUser = userRepository.findById(2L).get();
 
@@ -194,10 +206,15 @@ class ArticleControllerTest {
 
     @Test
     public void testThatUserCannotDeleteArticleCreatedByAnotherUser() throws Exception {
+        RegistrationRequest registrationRequestForSecondUser = new RegistrationRequest();
+        registrationRequestForSecondUser.setEmail("kabir@gmail.com");
+        registrationRequestForSecondUser.setUsername("kaybeeTwo");
+        registrationRequestForSecondUser.setPassword("12345");
+        authenticationService.register(registrationRequestForSecondUser);
+
         AuthenticationRequest authenticationRequestForSecondUser = new AuthenticationRequest();
-        authenticationRequestForSecondUser.setEmail("seconUser@gmail.com");
-        authenticationRequestForSecondUser.setPassword("1234");
-        authenticationService.register(authenticationRequestForSecondUser);
+        authenticationRequestForSecondUser.setUsername("kaybeeTwo");
+        authenticationRequestForSecondUser.setPassword("12345");
 
         User foundUser = userRepository.findById(2L).get();
 

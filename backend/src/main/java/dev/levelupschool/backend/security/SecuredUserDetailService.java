@@ -16,7 +16,7 @@ public class SecuredUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository
-            .findUsersByEmailIgnoreCase(username)
+            .findUsersByUsernameIgnoreCase(username)
             .map(SecuredUser::new)
             .orElseThrow(()-> new UserException("Username/Password is incorrect"));
     }

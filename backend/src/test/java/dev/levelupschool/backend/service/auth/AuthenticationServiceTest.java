@@ -1,6 +1,7 @@
 package dev.levelupschool.backend.service.auth;
 
 import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
+import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
 import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.repository.UserRepository;
@@ -26,10 +27,17 @@ class AuthenticationServiceTest {
     private AuthenticationRequest authenticationRequest;
     private AuthenticationResponse authenticationResponse;
 
+    private RegistrationRequest registrationRequest;
+
     @BeforeEach
     void setUp(){
+        registrationRequest = new RegistrationRequest();
+        registrationRequest.setUsername("kaybee");
+        registrationRequest.setEmail("k@gmail.com");
+        registrationRequest.setPassword("1234567");
+
         authenticationRequest = new AuthenticationRequest();
-        authenticationRequest.setEmail("kabir@gmail.com");
+        authenticationRequest.setUsername("kaybee");
         authenticationRequest.setPassword("1234567");
 
         authenticationResponse = new AuthenticationResponse();
@@ -40,34 +48,35 @@ class AuthenticationServiceTest {
         int numberOfUsersBeforeRegistration = userRepository.findAll().size();
         assertEquals(0, numberOfUsersBeforeRegistration);
 
-        authenticationService.register(authenticationRequest);
+        authenticationService.register(registrationRequest);
 
         int numberOfUsersAfterRegistration = userRepository.findAll().size();
         assertEquals(1, numberOfUsersAfterRegistration);
     }
 
     @Test
-    public void testThatMoreThanOneUserCantUseTheSameEmailToRegister(){
+    public void testThatMoreThanOneUserCantUseTheSameUsernameToRegister(){
         int numberOfUsersBeforeRegistrationOfFirstUser = userRepository.findAll().size();
         assertEquals(0, numberOfUsersBeforeRegistrationOfFirstUser);
 
-        authenticationService.register(authenticationRequest);
+        authenticationService.register(registrationRequest);
 
         int numberOfUsersAfterRegistrationFirstUser = userRepository.findAll().size();
         assertEquals(1, numberOfUsersAfterRegistrationFirstUser);
 
-        AuthenticationRequest authenticationRequestOfSecondUser = new AuthenticationRequest();
-        authenticationRequestOfSecondUser.setEmail("kabir@gmail.com");
-        authenticationRequestOfSecondUser.setPassword("2345");
+        RegistrationRequest registrationRequestForAnotherUser = new RegistrationRequest();
+        registrationRequestForAnotherUser.setUsername("kaybee");
+        registrationRequestForAnotherUser.setEmail("k@gmail.com");
+        registrationRequestForAnotherUser.setPassword("1234567");
 
-        assertThrows(UserException.class, ()-> authenticationService.register(authenticationRequestOfSecondUser));
+        assertThrows(UserException.class, ()-> authenticationService.register(registrationRequestForAnotherUser));
 
         int numberOfUsersAfterSecondUserTriesToUseSameEmailAsTheFirstUser = userRepository.findAll().size();
         assertEquals(1, numberOfUsersAfterSecondUserTriesToUseSameEmailAsTheFirstUser);
     }
     @Test
     public void testThatWhenAUserLogsInWithValidCredentials_JwtIsReturned(){
-        authenticationService.register(authenticationRequest);
+        authenticationService.register(registrationRequest);
 
         User foundUser = userRepository.findById(1L).get();
 
@@ -83,8 +92,8 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    void testThatWhenAUserTriesToLoginWithAnIncorrectEmail_ExceptionIsThrown(){
-        authenticationService.register(authenticationRequest);
+    void testThatWhenAUserTriesToLoginWithAnIncorrectUsername_ExceptionIsThrown(){
+        authenticationService.register(registrationRequest);
 
         User foundUser = userRepository.findById(1L).get();
 
@@ -92,7 +101,7 @@ class AuthenticationServiceTest {
 
         userRepository.save(foundUser);
 
-        authenticationRequest.setEmail("invalidEmail@gmail.com");
+        authenticationRequest.setUsername("invalidEmailUsername");
 
 
         assertThrows(UserException.class, ()-> authenticationService.login(authenticationRequest));
@@ -100,7 +109,7 @@ class AuthenticationServiceTest {
 
     @Test
     void testThatWhenAUserTriesToLoginWithAnIncorrectPassword_ExceptionIsThrown(){
-        authenticationService.register(authenticationRequest);
+        authenticationService.register(registrationRequest);
 
         User foundUser = userRepository.findById(1L).get();
 

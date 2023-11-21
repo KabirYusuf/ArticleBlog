@@ -1,5 +1,6 @@
 package dev.levelupschool.backend.controller;
 import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
+import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
 import dev.levelupschool.backend.data.model.Article;
 import dev.levelupschool.backend.data.model.User;
@@ -29,8 +30,8 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> createAuthor(@RequestBody AuthenticationRequest authenticationRequest){
-        return new ResponseEntity<>(userService.registerUser(authenticationRequest), HttpStatus.CREATED);
+    public ResponseEntity<User> createAuthor(@RequestBody RegistrationRequest registrationRequest){
+        return new ResponseEntity<>(userService.registerUser(registrationRequest), HttpStatus.CREATED);
     }
 
     @GetMapping

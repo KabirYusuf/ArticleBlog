@@ -1,9 +1,6 @@
 package dev.levelupschool.backend.service.implementation;
 
-import dev.levelupschool.backend.data.dto.request.AddCommentRequest;
-import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
-import dev.levelupschool.backend.data.dto.request.CreateArticleRequest;
-import dev.levelupschool.backend.data.dto.request.UpdateCommentRequest;
+import dev.levelupschool.backend.data.dto.request.*;
 import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
 import dev.levelupschool.backend.data.model.Comment;
 import dev.levelupschool.backend.data.model.User;
@@ -42,14 +39,22 @@ class LevelUpCommentServiceTest {
     private CreateArticleRequest createArticleRequest;
     private AddCommentRequest addCommentRequest;
 
+    private RegistrationRequest registrationRequest;
+
     private String authHeader;
 
     @BeforeEach
     void setUp(){
+        registrationRequest = new RegistrationRequest();
+        registrationRequest.setEmail("kabir@gmail.com");
+        registrationRequest.setUsername("kaybee");
+        registrationRequest.setPassword("12345");
+
         AuthenticationRequest authenticationRequest = new AuthenticationRequest();
-        authenticationRequest.setEmail("kabir@gmail.com");
+        authenticationRequest.setUsername("kaybee");
         authenticationRequest.setPassword("12345");
-        authenticationService.register(authenticationRequest);
+
+        authenticationService.register(registrationRequest);
 
         User foundUser = userRepository.findById(1L).get();
 
@@ -139,10 +144,16 @@ class LevelUpCommentServiceTest {
 
     @Test
     public void testThatAUserCannotDeleteCommentMadeByAnotherUser(){
+        RegistrationRequest registrationRequestForSecondUser = new RegistrationRequest();
+        registrationRequestForSecondUser.setEmail("kabir@gmail.com");
+        registrationRequestForSecondUser.setUsername("kaybeeTwo");
+        registrationRequestForSecondUser.setPassword("12345");
+        authenticationService.register(registrationRequestForSecondUser);
+
         AuthenticationRequest authenticationRequestForSecondUser = new AuthenticationRequest();
-        authenticationRequestForSecondUser.setEmail("seconUser@gmail.com");
-        authenticationRequestForSecondUser.setPassword("1234");
-        authenticationService.register(authenticationRequestForSecondUser);
+        authenticationRequestForSecondUser.setUsername("kaybeeTwo");
+        authenticationRequestForSecondUser.setPassword("12345");
+
 
         User foundUser = userRepository.findById(2L).get();
 
@@ -167,10 +178,16 @@ class LevelUpCommentServiceTest {
 
     @Test
     public void testThatAUserCannotUpdateCommentPostedByAnotherUser(){
+        RegistrationRequest registrationRequestForSecondUser = new RegistrationRequest();
+        registrationRequestForSecondUser.setEmail("kabir@gmail.com");
+        registrationRequestForSecondUser.setUsername("kaybeeTwo");
+        registrationRequestForSecondUser.setPassword("12345");
+        authenticationService.register(registrationRequestForSecondUser);
+
         AuthenticationRequest authenticationRequestForSecondUser = new AuthenticationRequest();
-        authenticationRequestForSecondUser.setEmail("seconUser@gmail.com");
-        authenticationRequestForSecondUser.setPassword("1234");
-        authenticationService.register(authenticationRequestForSecondUser);
+        authenticationRequestForSecondUser.setUsername("kaybeeTwo");
+        authenticationRequestForSecondUser.setPassword("12345");
+
 
         User foundUser = userRepository.findById(2L).get();
 
