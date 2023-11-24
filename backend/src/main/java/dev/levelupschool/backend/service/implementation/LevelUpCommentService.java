@@ -11,6 +11,7 @@ import dev.levelupschool.backend.exception.ModelNotFoundException;
 import dev.levelupschool.backend.service.interfaces.ArticleService;
 import dev.levelupschool.backend.service.interfaces.AuthorService;
 import dev.levelupschool.backend.service.interfaces.CommentService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

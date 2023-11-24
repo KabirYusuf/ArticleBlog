@@ -21,12 +21,20 @@ public class LevelUpAuthorService implements AuthorService {
     @Override
     public CreateAuthorResponse createAuthor(CreateAuthorRequest createAuthorRequest) {
         Author newAuthor = new Author();
-        newAuthor.setName(createAuthorRequest.getName());
+        String firstName = covertNameFirstCharacterToUpperCase(createAuthorRequest.getFirstName());
+        String lastName = covertNameFirstCharacterToUpperCase(createAuthorRequest.getLastName());
+        newAuthor.setFirstName(firstName);
+        newAuthor.setLastName(lastName);
         Author savedAuthor = authorRepository.save(newAuthor);
         CreateAuthorResponse createAuthorResponse = new CreateAuthorResponse();
-        createAuthorResponse.setName(savedAuthor.getName());
+        createAuthorResponse.setName(savedAuthor.getFirstName() + " " + savedAuthor.getLastName());
         createAuthorResponse.setId(savedAuthor.getId());
         return createAuthorResponse;
+    }
+
+    private String covertNameFirstCharacterToUpperCase(String name){
+        if (name != null) return name.substring(0,1).toUpperCase() + name.substring(1);
+        return null;
     }
 
     @Override
@@ -51,7 +59,10 @@ public class LevelUpAuthorService implements AuthorService {
     @Override
     public Author updateAuthor(UpdateAuthorRequest updateAuthorRequest, Long authorId) {
         Author foundAuthor = findAuthorById(authorId);
-        foundAuthor.setName(updateAuthorRequest.getName());
+        String firstName = covertNameFirstCharacterToUpperCase(updateAuthorRequest.getFirstName());
+        String lastName = covertNameFirstCharacterToUpperCase(updateAuthorRequest.getLastName());
+        foundAuthor.setFirstName(firstName);
+        foundAuthor.setLastName(lastName);
         return authorRepository.save(foundAuthor);
     }
 }
