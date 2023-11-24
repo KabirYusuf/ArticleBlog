@@ -4,11 +4,9 @@ import dev.levelupschool.backend.data.dto.request.CreateArticleRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateArticleRequest;
 import dev.levelupschool.backend.data.model.Article;
 import dev.levelupschool.backend.data.model.Author;
-import dev.levelupschool.backend.data.repository.ArticleRepository;
 import dev.levelupschool.backend.data.repository.AuthorRepository;
 import dev.levelupschool.backend.exception.ModelNotFoundException;
 import dev.levelupschool.backend.service.interfaces.ArticleService;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +21,6 @@ class LevelUpArticleServiceTest {
     @Autowired
     private ArticleService articleService;
     @Autowired
-    private ArticleRepository articleRepository;
-    @Autowired
     private AuthorRepository authorRepository;
     private CreateArticleRequest createArticleRequest;
 
@@ -36,10 +32,6 @@ class LevelUpArticleServiceTest {
         createArticleRequest.setTitle("Article title");
         createArticleRequest.setContent("Article content");
         createArticleRequest.setAuthorId(1L);
-    }
-    @AfterEach
-    void deleteDatabaseRecord(){
-        articleRepository.deleteAll();
     }
     @Test
     public void givenCreateArticleRequest_whenArticleSave_articleTableRecordsIncreasesByOne(){

@@ -5,14 +5,11 @@ import dev.levelupschool.backend.data.dto.request.CreateArticleRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateCommentRequest;
 import dev.levelupschool.backend.data.model.Author;
 import dev.levelupschool.backend.data.model.Comment;
-import dev.levelupschool.backend.data.repository.ArticleRepository;
 import dev.levelupschool.backend.data.repository.AuthorRepository;
-import dev.levelupschool.backend.data.repository.CommentRepository;
 import dev.levelupschool.backend.exception.ModelNotFoundException;
 import dev.levelupschool.backend.service.interfaces.ArticleService;
 import dev.levelupschool.backend.service.interfaces.CommentService;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +28,6 @@ class LevelUpCommentServiceTest {
     @Autowired
     private ArticleService articleService;
     @Autowired
-    private CommentRepository commentRepository;
-    @Autowired
-    private ArticleRepository articleRepository;
-    @Autowired
     private AuthorRepository authorRepository;
     private CreateArticleRequest createArticleRequest;
     private AddCommentRequest addCommentRequest;
@@ -52,11 +45,6 @@ class LevelUpCommentServiceTest {
         addCommentRequest.setArticleId(1L);
         addCommentRequest.setContent("article comment");
         addCommentRequest.setAuthorId(1L);
-    }
-    @AfterEach
-    void clearArticleAndCommentDatabaseTable(){
-        articleRepository.deleteAll();
-        commentRepository.deleteAll();
     }
     @Test
     public void givenCommentRequest_whenCommentIsAdded_theRecordSizeOfCommentIncreasesByOne(){
