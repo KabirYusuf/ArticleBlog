@@ -7,7 +7,10 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.hateoas.server.core.Relation;
 
 import java.time.LocalDate;
+<<<<<<< HEAD
 import java.time.LocalDateTime;
+=======
+>>>>>>> 561af2f (fix: "resolving conflict between homework3 and storage branch")
 
 @Entity
 @Table(name = "comments", schema = "public")
@@ -24,6 +27,7 @@ public class Comment {
 
     private String content;
 
+<<<<<<< HEAD
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -37,6 +41,21 @@ public class Comment {
     }
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
+=======
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDate getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDate updatedAt) {
+>>>>>>> 561af2f (fix: "resolving conflict between homework3 and storage branch")
         this.updatedAt = updatedAt;
     }
 
@@ -45,9 +64,15 @@ public class Comment {
     private User user;
 
     @CreationTimestamp
+<<<<<<< HEAD
     private LocalDateTime createdAt;
     @LastModifiedDate
     private LocalDateTime updatedAt;
+=======
+    private LocalDate createdAt;
+    @LastModifiedDate
+    private LocalDate updatedAt;
+>>>>>>> 561af2f (fix: "resolving conflict between homework3 and storage branch")
 
     public Comment(String content, Article article, User user) {
         this.content = content;

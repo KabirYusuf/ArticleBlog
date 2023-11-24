@@ -7,6 +7,7 @@ import { login } from '../../utility/Auth'
 import Swal from 'sweetalert2'
 import { useUserStore } from '../../store/userStore'
 import { useRouter } from 'vue-router';
+import { handleErrors } from '../../utility/handleErrors';
 
 const userStore = useUserStore();
 const router = useRouter();
@@ -52,21 +53,10 @@ const handleSubmit = async () => {
         router.push('/');
 
     } catch (error) {
-        console.log(error.response);
-        if (!error.response.data.errors) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Unsuccessful',
-                text: error.response.data
-            });
-        } else {
-            if (error.response.data.errors['username']) {
-                usernameError.value = error.response.data.errors['username'];
-            }
-            if (error.response.data.errors['password']) {
-                passwordError.value = error.response.data.errors['password'];
-            }
-        }
+        handleErrors(error, {
+            username: usernameError,
+            password: passwordError
+        });
     }
 };
 

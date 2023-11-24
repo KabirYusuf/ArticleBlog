@@ -7,11 +7,19 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.hateoas.server.core.Relation;
 
 
+<<<<<<< HEAD
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import java.util.HashSet;
 
+=======
+import java.util.HashSet;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+>>>>>>> 561af2f (fix: "resolving conflict between homework3 and storage branch")
 import java.util.List;
 import java.util.Set;
 
@@ -88,6 +96,30 @@ public class Article {
         this.articleImage = articleImage;
     }
 
+<<<<<<< HEAD
+=======
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDate getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDate updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    @CreationTimestamp
+    private LocalDate createdAt;
+    @LastModifiedDate
+    private LocalDate updatedAt;
+
+>>>>>>> 561af2f (fix: "resolving conflict between homework3 and storage branch")
 
     public User getUser() {
         return user;

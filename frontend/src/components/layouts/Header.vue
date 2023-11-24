@@ -1,5 +1,5 @@
 <template>
-  <header class="header">
+  <header class="header" :style="{ backgroundImage: 'url(' + imageUrl + ')' }">
     <NavBar />
 
     <div class="headerText__container" v-if="!isCenter">
@@ -37,12 +37,16 @@
 
 import HambugerMenu from '../hamburger/HambugerMenu.vue'
 import NavBar from './NavBar.vue'
+import default_img from '@/assets/default_img.png';
+import {computed} from 'vue';
 
-defineProps(
+const props = defineProps(
   ['card', 'isCenter']
 )
 
-
+const imageUrl = computed(() => {
+    return props.card?.articleImage || default_img;
+});
 
 
 </script>
