@@ -1,89 +1,104 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import PopularTopicCard from '@/components/homepage/PopularTopicCard.vue';
 import EditorsPickCard from '@/components/homepage/EditorsPickCard.vue';
+import {getAllArticles} from '../utility/articleApiService';
 
-const cards = ref([
-  {
-    cardTitle: "Dream destinations to visit this year in Paris",
-    cardImage: "card_images/Blog Image.jpg",
-    cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data.",
-    cardAuthorImage: "author_images/Ellipse 4.jpg",
-    cardAuthorName: "By Jennifer Lawrence",
-    cardAuthorProfession: "Thinker & Designer",
-    cardTime: "08.08.2021",
-    cardTagOne: "ADVENTURE",
-    icon: "fas fa-gem"
-  },
-  {
-    cardTitle: "Dream destinations to visit this year in Paris",
-    cardImage: "card_images/BlogImage 2.jpg",
-    cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data.",
-    cardAuthorImage: "author_images/Ellipse2.jpg",
-    cardAuthorName: "By David Arthur",
-    cardAuthorProfession: "Designer",
-    cardTime: "08.08.2021",
-    cardTagOne: "BRAND",
-    cardTagTwo: "FASHION",
-    icon: "fas fa-gem"
-  },
-  {
-    cardTitle: "Dream destinations to visit this year in Paris",
-    cardImage: "card_images/BlogImage3.jpg",
-    cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data.",
-    cardAuthorImage: "author_images/Ellipse3.jpg",
-    cardAuthorName: "By Sarah Lawrence",
-    cardAuthorProfession: "Journalist",
-    cardTime: "08.08.2021",
-    cardTagOne: "ADVENTURE",
-  },
-  {
-    cardTitle: "Dream destinations to visit this year in Paris",
-    cardImage: "card_images/BlogImage4.jpg",
-    cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data.",
-    cardAuthorImage: "author_images/Ellipse 4.jpg",
-    cardAuthorName: "By Jennifer Lawrence",
-    cardAuthorProfession: "Thinker & Designer",
-    cardTime: "08.08.2021",
-    cardTagOne: "ADVENTURE",
-  },
-  {
-    cardTitle: "Art of seasons: 40+ Bright Illustrations by Nature",
-    cardImage: "card_images/BlogImage5.jpg",
-    cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data.",
-    cardAuthorImage: "author_images/Ellipse5.jpg",
-    cardAuthorName: "By David Tomas",
-    cardAuthorProfession: "Thinker",
-    cardTime: "08.08.2021",
-  },
-  {
-    cardTitle: "The Anatomy of a web page and Basics Elements",
-    cardImage: "card_images/BlogImage6.jpg",
-    cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data.",
-    cardAuthorImage: "author_images/Ellipse 4.jpg",
-    cardAuthorName: "By Jennifer Lawrence",
-    cardAuthorProfession: "Thinker & Designer",
-    cardTime: "08.08.2021",
-  },
-  {
-    cardTitle: "Types of Contrast in User Interface Design",
-    cardImage: "card_images/BlogImage7.jpg",
-    cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data.",
-    cardAuthorImage: "author_images/Ellipse7.jpg",
-    cardAuthorName: "By Andrey Edison",
-    cardAuthorProfession: "Thinker & Designer",
-    cardTime: "08.08.2021",
-  },
-  {
-    cardTitle: "Dream destinations to visit this year in Paris",
-    cardImage: "card_images/BlogImage8.jpg",
-    cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data.",
-    cardAuthorImage: "author_images/Ellipse8.jpg",
-    cardAuthorName: "By Sean Anderson",
-    cardAuthorProfession: "Thinker & Designer",
-    cardTime: "08.08.2021",
-  },
-]);
+// const cards = ref(getAllArticles);
+const cards = ref([]);
+
+onMounted(async () => {
+  try {
+    const articles = await getAllArticles();
+    console.log(articles._embedded.items)
+    cards.value = articles._embedded.items;
+  } catch (error) {
+    console.error('Error fetching articles:', error);
+  }
+});
+
+
+// const cards = ref([
+//   {
+//     cardTitle: "Dream destinations to visit this year in Paris",
+//     cardImage: "card_images/Blog Image.jpg",
+//     cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data.",
+//     cardAuthorImage: "author_images/Ellipse 4.jpg",
+//     cardAuthorName: "By Jennifer Lawrence",
+//     cardAuthorProfession: "Thinker & Designer",
+//     cardTime: "08.08.2021",
+//     cardTagOne: "ADVENTURE",
+//     icon: "fas fa-gem"
+//   },
+//   {
+//     cardTitle: "Dream destinations to visit this year in Paris",
+//     cardImage: "card_images/BlogImage 2.jpg",
+//     cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data.",
+//     cardAuthorImage: "author_images/Ellipse2.jpg",
+//     cardAuthorName: "By David Arthur",
+//     cardAuthorProfession: "Designer",
+//     cardTime: "08.08.2021",
+//     cardTagOne: "BRAND",
+//     cardTagTwo: "FASHION",
+//     icon: "fas fa-gem"
+//   },
+//   {
+//     cardTitle: "Dream destinations to visit this year in Paris",
+//     cardImage: "card_images/BlogImage3.jpg",
+//     cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data.",
+//     cardAuthorImage: "author_images/Ellipse3.jpg",
+//     cardAuthorName: "By Sarah Lawrence",
+//     cardAuthorProfession: "Journalist",
+//     cardTime: "08.08.2021",
+//     cardTagOne: "ADVENTURE",
+//   },
+//   {
+//     cardTitle: "Dream destinations to visit this year in Paris",
+//     cardImage: "card_images/BlogImage4.jpg",
+//     cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data.",
+//     cardAuthorImage: "author_images/Ellipse 4.jpg",
+//     cardAuthorName: "By Jennifer Lawrence",
+//     cardAuthorProfession: "Thinker & Designer",
+//     cardTime: "08.08.2021",
+//     cardTagOne: "ADVENTURE",
+//   },
+//   {
+//     cardTitle: "Art of seasons: 40+ Bright Illustrations by Nature",
+//     cardImage: "card_images/BlogImage5.jpg",
+//     cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data.",
+//     cardAuthorImage: "author_images/Ellipse5.jpg",
+//     cardAuthorName: "By David Tomas",
+//     cardAuthorProfession: "Thinker",
+//     cardTime: "08.08.2021",
+//   },
+//   {
+//     cardTitle: "The Anatomy of a web page and Basics Elements",
+//     cardImage: "card_images/BlogImage6.jpg",
+//     cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data.",
+//     cardAuthorImage: "author_images/Ellipse 4.jpg",
+//     cardAuthorName: "By Jennifer Lawrence",
+//     cardAuthorProfession: "Thinker & Designer",
+//     cardTime: "08.08.2021",
+//   },
+//   {
+//     cardTitle: "Types of Contrast in User Interface Design",
+//     cardImage: "card_images/BlogImage7.jpg",
+//     cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data.",
+//     cardAuthorImage: "author_images/Ellipse7.jpg",
+//     cardAuthorName: "By Andrey Edison",
+//     cardAuthorProfession: "Thinker & Designer",
+//     cardTime: "08.08.2021",
+//   },
+//   {
+//     cardTitle: "Dream destinations to visit this year in Paris",
+//     cardImage: "card_images/BlogImage8.jpg",
+//     cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data.",
+//     cardAuthorImage: "author_images/Ellipse8.jpg",
+//     cardAuthorName: "By Sean Anderson",
+//     cardAuthorProfession: "Thinker & Designer",
+//     cardTime: "08.08.2021",
+//   },
+// ]);
 
 const editorsPicks = ref([
   {
@@ -109,7 +124,6 @@ const editorsPicks = ref([
     cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data",
   },
 ]);
-
 </script>
 
 
@@ -129,17 +143,15 @@ const editorsPicks = ref([
         
                 <PopularTopicCard
                     v-for="(card, index) in cards"
-                    :key="index"
-                    :cardTitle="card.cardTitle"
-                    :cardImage="card.cardImage"
-                    :cardPara="card.cardPara"
-                    :cardAuthorImage="card.cardAuthorImage"
-                    :cardAuthorName="card.cardAuthorName"
-                    :cardAuthorProfession="card.cardAuthorProfession"
-                    :cardTime="card.cardTime"
-                    :cardTagOne="card.cardTagOne"
-                    :cardTagTwo="card.cardTagTwo"
-                    :icon="card.icon"
+                    :key="card.id"
+                    :cardTitle="card.title"
+                    
+                    
+                    :cardPara="card.content"
+            
+                    :cardAuthorName="card.user.firstName"
+                    
+                
                 />
                             
             </div>

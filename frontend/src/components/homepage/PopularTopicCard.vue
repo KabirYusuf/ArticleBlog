@@ -8,7 +8,8 @@
                     {{ cardTagTwo }}
                 </li>
         </ul>
-        <img :src="cardImage" alt="Popular Topic Image" class="card__image">
+        <!-- <img :src="cardImage" alt="Popular Topic Image" class="card__image"> -->
+        <img src="../../../public/card_images/BlogImage3.jpg" alt="image" class="card__image">
         <div class="card__info">
             <div class="cardTimeAndIcon">
                 <time class="card__time">{{ cardTime }}</time>

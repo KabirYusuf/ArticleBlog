@@ -10,7 +10,8 @@
       <li class="nav__listItem nav_listItem--pushRight"><a class="nav__listLink" href="#">Home</a></li>
       <li class="nav__listItem"><a class="nav__listLink" href="#">About</a></li>
       <li class="nav__listItem"><a class="nav__listLink" href="#">Article</a></li>
-      <li class="nav__listItem"><a class="nav__listLink" href="#">Sign in</a></li>
+      <li class="nav__listItem" @click="openModal"><a class="nav__listLink" href="#">Sign in</a></li>
+      <li class="nav__listItem"><a class="nav__listLink" href="#">Register</a></li>
     </ul>
    </nav>
     </div>
@@ -38,8 +39,24 @@
     </div>
    </div>
   </header>
+
+  <Modal>
+    <h1>
+      Modal
+    </h1>
+  </Modal>
+  
 </template>
 
 <script setup>
-  import HambugerMenu from '../hamburger/HambugerMenu.vue';
+import { defineComponent } from "vue";
+import Modal from "../modals/Modal.vue";
+import { useModalStore } from "@/store/modalStore";
+
+    const modalStore = useModalStore();
+
+    const openModal = () => {
+      modalStore.openModal();
+    };
+
 </script>
