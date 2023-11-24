@@ -2,7 +2,11 @@ package dev.levelupschool.backend.data.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.hateoas.server.core.Relation;
+
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "comments", schema = "public")
@@ -18,9 +22,31 @@ public class Comment {
     private Article article;
 
     private String content;
+
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDate getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDate updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @CreationTimestamp
+    private LocalDate createdAt;
+    @LastModifiedDate
+    private LocalDate updatedAt;
 
     public Comment(String content, Article article, User user) {
         this.content = content;

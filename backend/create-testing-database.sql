@@ -23,14 +23,18 @@ create table articles (
     id      serial not null primary key,
     title   text       null default null,
     content text       null default null,
-    user_id integer not null references users
+    user_id integer not null references users,
+    created_at DATE DEFAULT CURRENT_DATE,
+    updated_at DATE DEFAULT CURRENT_DATE
 );
 
 create table comments (
     id          serial not null primary key,
     article_id integer not null references articles,
     content    text        null default null,
-    user_id integer not null references users
+    user_id integer not null references users,
+    created_at DATE DEFAULT CURRENT_DATE,
+    updated_at DATE DEFAULT CURRENT_DATE
 );
 
 CREATE TABLE verification_tokens (
