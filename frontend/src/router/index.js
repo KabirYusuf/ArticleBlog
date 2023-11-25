@@ -2,11 +2,14 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
 import ViewAllArticles from '@/views/ViewAllArticles.vue';
 import ArticleView from '@/views/ArticleView.vue';
+<<<<<<< HEAD
 import MyProfile from '@/views/MyProfile.vue'
 import EditProfile from '@/views/EditProfile.vue'
 import AddArticle from '@/views/AddArticle.vue'
 import EditArticle from '@/views/EditArticle.vue'
 import { useUserStore } from "../store/userStore";
+=======
+>>>>>>> 19eb3cd (feat: implemented article view and routing)
 
 
 const router = createRouter({
@@ -28,6 +31,7 @@ const router = createRouter({
             path: '/article/:id',
             name: 'article',
             component: ArticleView,
+<<<<<<< HEAD
             meta: { requiresAuth: true }
           },
           {
@@ -53,6 +57,8 @@ const router = createRouter({
             name: 'edit-article',
             component: EditArticle,
             meta: { requiresAuth: true }
+=======
+>>>>>>> 19eb3cd (feat: implemented article view and routing)
           },
     ],
 });

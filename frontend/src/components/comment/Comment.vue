@@ -1,7 +1,7 @@
 <template>
     <div class="commentCard__container">
         <div class="comment__card">
-            <img src="../../../public/article-view.jpg" alt="User image" class="user__image" />
+            <img :src="userImageUrl" alt="User image" class="user__image" />
             <div class="comment__content">
                 <h4 class="commentUser__name">{{ fullName }}</h4>
                 <p class="comment__date">{{ comment?.createdAt }} - {{ comment?.timeFromCommentPost }}</p>
@@ -21,5 +21,9 @@ const fullName = computed(() => {
         return `${props.comment.user.firstName} ${props.comment.user.lastName}`;
     }
     return '';
+});
+
+const userImageUrl = computed(() => {
+    return props.comment?.user.userImage || '../../../public/profile-avatar.webp';
 });
 </script>

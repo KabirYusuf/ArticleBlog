@@ -24,8 +24,8 @@ create table articles (
     title   text       null default null,
     content text       null default null,
     user_id integer not null references users,
-    created_at DATE DEFAULT CURRENT_DATE,
-    updated_at DATE DEFAULT CURRENT_DATE
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 create table comments (
@@ -33,8 +33,8 @@ create table comments (
     article_id integer not null references articles,
     content    text        null default null,
     user_id integer not null references users,
-    created_at DATE DEFAULT CURRENT_DATE,
-    updated_at DATE DEFAULT CURRENT_DATE
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE verification_tokens (

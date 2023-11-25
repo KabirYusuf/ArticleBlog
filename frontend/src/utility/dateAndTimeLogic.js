@@ -25,5 +25,3 @@ export const timeSince = (date) => {
         return `${day} ${month}${year}`;
     }
 };
-
-

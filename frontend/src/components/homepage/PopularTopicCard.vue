@@ -8,7 +8,7 @@
                 <!-- {{ cardTagTwo }} -->
             </li>
         </ul>
-        <img src="../../../public/card_images/BlogImage3.jpg" alt="image" class="card__image">
+        <img :src="imageUrl" alt="image" class="card__image">
         <div class="card__info">
             <div class="cardTimeAndIcon">
                 <time class="card__time">{{ card?.createdAt }}</time>
@@ -18,7 +18,7 @@
             <p class="card__para">{{ card?.content }}</p>
 
             <div class="card__author">
-                <img src="../../../public/Image.jpg" alt="Author image" class="cardAuthor__image">
+                <img :src="userImageUrl" alt="Author image" class="cardAuthor__image">
                 <div class="cardAuthor">
                     <p class="cardAuthor__name">{{ card?.user.firstName }} {{ card?.user.lastName }}</p>
                     <p v-if="cardAuthorProfession" class="cardAcardAuthor--profession">Journalist</p>
@@ -35,6 +35,8 @@
 
 import { useRouter } from 'vue-router';
 import { handleArticleClick } from '../../utility/articleLogic'
+import {computed} from 'vue'
+import default_img from '@/assets/default_img.png';
 
 
 const router = useRouter();
@@ -47,5 +49,13 @@ const props = defineProps(
 const handleclickOfArticle = () => {
     handleArticleClick(props.card.id, router)
 }
+
+const userImageUrl = computed(() => {
+    return props.card?.user.userImage || '../../../public/profile-avatar.webp';
+});
+
+const imageUrl = computed(() => {
+    return props.card?.articleImage || default_img;
+});
 
 </script>

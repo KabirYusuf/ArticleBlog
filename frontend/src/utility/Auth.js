@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 
 export const http = axios.create({
@@ -11,4 +10,5 @@ export const register = async (data)=>{
 export const login = async (data) => {
     return await http.post('/auth/login', data)
 }
+
 

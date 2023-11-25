@@ -3,7 +3,7 @@
     <section class="viewAllArticle">
         <div class="viewAllArticle__content">
 
-            <PopularTopicCard v-for="(card) in cards.slice(0, 8)" :key="card.id" :card="card" />
+            <PopularTopicCard v-for="(card) in cards" :key="card.id" :card="card" />
 
         </div>
     </section>
