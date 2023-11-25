@@ -3,6 +3,8 @@ import { ref, onMounted, computed } from 'vue';
 import PopularTopicCard from '@/components/homepage/PopularTopicCard.vue';
 import EditorsPickCard from '@/components/homepage/EditorsPickCard.vue';
 import {getAllArticles} from '../utility/articleApiService';
+import Header from "@/components/layouts/Header.vue"
+import Footer from "@/components/layouts/Footer.vue"
 
 const rawCards = ref([]);
 
@@ -39,6 +41,13 @@ const cards = computed(() => {
   });
 });
 
+const lastCard = computed(() => {
+  return cards.value.length > 0 ? cards.value[cards.value.length - 1] : 'null';
+});
+
+
+
+
 
 const editorsPicks = ref([
   {
@@ -68,6 +77,12 @@ const editorsPicks = ref([
 
 
 <template>
+  <Header 
+  :title="lastCard?.title"
+  :date="lastCard?.createdAt"
+  :content="lastCard?.content"
+  :headerBackgroundImage="'/Image.jpg'"/>
+  
         <section class="popularTopics">
             <h3 class="popularTopics__heading">Popular topics</h3>
             <ul class="popularTopics__list">
@@ -109,4 +124,6 @@ const editorsPicks = ref([
             </div>
             
         </section>
+
+         <Footer />
 </template>

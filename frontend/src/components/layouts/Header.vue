@@ -1,5 +1,5 @@
 <template>
-    <header class="header">
+    <header class="header" :style="{ backgroundImage: 'url(' + headerBackgroundImage + ')' }">
       <HambugerMenu/>
     <div class="header__overlay">
    <nav class="nav">
@@ -22,14 +22,12 @@
         <li class="headerText__listItem">ADVENTURE</li>
         <li class="headerText__listItem">TRAVEL</li>
       </ul>
-      <p class="headerText__para">Richird Norton photorealistic rendering as real photos</p>
+      <p class="headerText__para">{{ title }}</p>
 
       <div class="timeSection">
-        <time class="timeSection__time">08:08:2021</time>
+        <time class="timeSection__time">{{ date }}</time>
         <p class="timeSection__seperator"></p>
-        <p class="timeSection__para">Progressively incentivize coperative system through technically sound
-          functionalities. The credibly productivate seamless data
-        </p>
+        <p class="timeSection__para">{{ content }}</p>
       </div>
       <ul class="headerText__dotList">
         <li class="headerText__dotListItem headerText--big">.</li>
@@ -39,8 +37,6 @@
     </div>
    </div>
   </header>
-  <!-- <RegisterModal/>
-  <LoginModal/> -->
   <Modal>
     <LoginModal/>
     <RegisterModal/>
@@ -50,11 +46,14 @@
 </template>
 
 <script setup>
-// import Modal from "../modals/Modal.vue";
 import LoginModal from "../modals/LoginModal.vue"
 import { useModalStore } from "@/store/modalStore";
 import RegisterModal from "../modals/RegisterModal.vue"
 import Modal from '../modals/Modal.vue'
+
+defineProps(
+        ['title', 'content', 'date', 'headerBackgroundImage']
+    )
 
     const modalStore = useModalStore();
 
