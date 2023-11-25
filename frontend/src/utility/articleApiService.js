@@ -1,5 +1,4 @@
-import axios from 'axios';
-import {http} from '../utility/Http.js'
+import {http} from '@/utility/Http.js'
 
 export const getAllArticles = async ()=>{
     try {
