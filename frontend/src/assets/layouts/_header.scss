@@ -188,3 +188,40 @@
   .headerText--big {
     color: $whiteColor;
   }
+
+  .headerText__container--center{
+
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .headerText__center {
+    display: block;
+    text-align: center;
+    min-height: 100%;
+  }
+
+  .headerText__center--title{
+    font-weight: 700px;
+    color: $whiteColor;
+    max-width: 530px;
+    font-size: 2.571rem;
+    line-height: 46.08px;
+  }
+
+  .headerText__center--content{
+    color: #E5E5E5;
+    max-width: 420px;
+    font-weight: 400px;
+    font-size: 0.857rem;
+    line-height: 20px;
+  }
+  .headerText__center--authorName{
+    color: $whiteColor;
+    max-width: 420px;
+    font-size: 0.6rem;
+    font-weight: 700px;
+    line-height: 20px;
+  }

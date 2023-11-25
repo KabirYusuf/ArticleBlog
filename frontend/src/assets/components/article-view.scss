@@ -1,0 +1,63 @@
+.articleView__container{
+    border: 1px solid red;
+    max-width: 70%;
+    margin: 0 auto;
+    padding: 40px 10px 10px 10px;
+}
+.articleView__content{
+    font-size: 1rem;
+    color: #495057;
+    font-weight: 400px;
+    line-height: 25px;
+}
+
+.articleView__tag{
+    display: flex;
+    justify-content: space-between;
+    max-width: 160px;
+    padding-top: 20px;
+    margin-bottom: 20px;
+}
+
+.articleViewTag__content{
+    color: #6C757D;
+    text-align: center;
+    padding: 3px;
+    border: 1px solid #E5E5E5;
+    gap: 5px;
+    border-radius: 3px;
+    font-size: 0.714rem;
+    font-family: 'Roboto';
+    font-weight: 700px;
+    background-color: rgb(206, 204, 204);
+}
+
+.articleAuthorInfo{
+    max-width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 30px 0px;
+    border-top: 1px solid #C4C4C4;
+    border-bottom: 1px solid #C4C4C4;
+    align-items: center;
+}
+
+.author--nameAndImage{
+    @include authorSection
+}
+
+.author__name{
+    @include authorName
+}
+
+.author__profession{
+    @include authorProfession
+}
+
+.author--SocialMedia{
+    display: flex;
+    gap: 5px;
+}
+
+
+

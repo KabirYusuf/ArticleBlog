@@ -1,5 +1,5 @@
 <template>
-    <div class="cardContainer">
+    <div class="cardContainer" @click="handleClick">
         <ul class="popularTopicCard__tagList">
                 <li class="popularTopicCard__tagListItem popularTopicCard__tagListItem--pushRight">
                     {{ cardTagOne }}
@@ -19,10 +19,10 @@
             <p class="card__para">{{ cardPara }}</p>
 
             <div class="card__author">
-                <img :src="cardAuthorImage" alt="Author image" class="cardAuthor__image">
+                <img v-if="cardAuthorImage" :src="cardAuthorImage" alt="Author image" class="cardAuthor__image">
                 <div class="cardAuthor">
-                    <p class="cardAuthor__name">{{ cardAuthorName }}</p>
-                    <p class="cardAcardAuthor--profession">{{ cardAuthorProfession }}</p>
+                    <p v-if="cardAuthorName" class="cardAuthor__name">{{ cardAuthorName }}</p>
+                    <p v-if="cardAuthorProfession" class="cardAcardAuthor--profession">{{ cardAuthorProfession }}</p>
                 </div>
             </div>
 
@@ -32,8 +32,15 @@
 </template>
 
 <script setup>
-    defineProps(
+import {defineEmits} from 'vue';
+const emit = defineEmits(['clickCard']);
+    const props = defineProps(
         ['cardTitle', 'cardImage', 'cardPara', 'cardAuthorImage', 
-        'cardAuthorName', 'cardAuthorProfession', 'cardTime', 'cardTagOne','cardTagTwo', 'icon']
+        'cardAuthorName', 'cardAuthorProfession', 'cardTime', 'cardTagOne','cardTagTwo', 'icon', 'id']
     )
+
+    const handleClick = () => {
+        emit('clickCard', props.id);
+    };
+
 </script>

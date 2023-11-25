@@ -3,7 +3,15 @@ import {http} from '@/utility/Http.js'
 export const getAllArticles = async ()=>{
     try {
         const response = await http.get('/articles')
-        console.log(response.data)
+        return response.data;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const getArticleById = async (articleId)=>{
+    try {
+        const response = await http.get(`/articles/${articleId}`)
         return response.data;
     } catch (error) {
         console.log(error);

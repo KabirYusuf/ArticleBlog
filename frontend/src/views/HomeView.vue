@@ -5,8 +5,16 @@ import EditorsPickCard from '@/components/homepage/EditorsPickCard.vue';
 import Header from "@/components/layouts/Header.vue"
 import Footer from "@/components/layouts/Footer.vue"
 import { fetchData, cards, lastCard } from '@/utility/articleLogic';
+import { useRouter } from 'vue-router';
+
 
 onMounted(fetchData);
+
+const router = useRouter();
+
+const handleArticleClick = (articleId) => {
+  router.push({ name: 'article', params: { id: articleId } });
+};
 
 const editorsPicks = ref([
   {
@@ -40,6 +48,7 @@ const editorsPicks = ref([
   :title="lastCard?.title"
   :date="lastCard?.createdAt"
   :content="lastCard?.content"
+  :isCenter="false"
   :headerBackgroundImage="'/Image.jpg'"/>
 
         <section class="popularTopics">
@@ -63,7 +72,9 @@ const editorsPicks = ref([
                     :cardTime="card.createdAt"
                     :cardTitle="card.title"
                     :cardPara="card.content"
+                    :id="card.id"
                     :cardAuthorName="card.user.firstName + ' ' + card.user.lastName"
+                    @clickCard="handleArticleClick"
             />
                             
             </div>

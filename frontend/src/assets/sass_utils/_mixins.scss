@@ -28,3 +28,23 @@
         gap: 10px;
     }
 }
+
+@mixin authorSection{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+@mixin authorName{
+    font-size: 0.857rem;
+    font-weight: bold;
+    color: #495057;
+    line-height: 20px;
+}
+
+@mixin authorProfession{
+    font-size: 0.857rem;
+    font-weight: 400;
+    color: #6C757D;
+    line-height: 20px;
+}
