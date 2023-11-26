@@ -5,17 +5,17 @@ import EditorsPickCard from '@/components/homepage/EditorsPickCard.vue';
 import Header from "@/components/layouts/Header.vue"
 import Footer from "@/components/layouts/Footer.vue"
 import { fetchData, cards, lastCard } from '@/utility/articleLogic';
-import { useRouter } from 'vue-router';
-import {handleArticleClick} from '../utility/articleLogic'
+// import { useRouter } from 'vue-router';
+// import { handleArticleClick } from '../utility/articleLogic'
 
 
 onMounted(fetchData);
 
-const router = useRouter();
+// const router = useRouter();
 
-const handleclickOfArticle = (articleId) =>{
-  handleArticleClick(articleId, router)
-}
+// const handleclickOfArticle = (articleId) => {
+//   handleArticleClick(articleId, router)
+// }
 
 const editorsPicks = ref([
   {
@@ -45,58 +45,40 @@ const editorsPicks = ref([
 
 
 <template>
-  <Header 
-  :title="lastCard?.title"
-  :date="lastCard?.createdAt"
-  :content="lastCard?.content"
-  :isCenter="false"
-  :headerBackgroundImage="'/Image.jpg'"/>
+  <Header :title="lastCard?.title" :date="lastCard?.createdAt" :content="lastCard?.content" :isCenter="false"
+    :headerBackgroundImage="'/Image.jpg'" />
 
-        <section class="popularTopics">
-            <h3 class="popularTopics__heading">Popular topics</h3>
-            <ul class="popularTopics__list">
-                <li class="popularTopics__listItem"><a href="#" class="popularTopics__listLink">All</a></li>
-                <li class="popularTopics__listItem"><a href="#" class="popularTopics__listLink">Adventure</a></li>
-                <li class="popularTopics__listItem"><a href="#" class="popularTopics__listLink">Travel</a></li>
-                <li class="popularTopics__listItem"><a href="#" class="popularTopics__listLink">Fashion</a></li>
-                <li class="popularTopics__listItem"><a href="#" class="popularTopics__listLink">Technology</a></li>
-                <li class="popularTopics__listItem"><a href="#" class="popularTopics__listLink">Branding</a></li>
-                <li class="popularTopics__listItem popularTopics__listItem--right">
-                  <router-link to="/view-all-articles" class="popularTopics__listLink">View All</router-link>
-                </li>
-            </ul>
-            <div class="popularTopics__card">
-        
-                <PopularTopicCard
-                    v-for="(card, index) in cards.slice(0,8)"
-                    :key="card.id"
-                    :cardTime="card.createdAt"
-                    :cardTitle="card.title"
-                    :cardPara="card.content"
-                    :id="card.id"
-                    :cardAuthorName="card.user.firstName + ' ' + card.user.lastName"
-                    @clickCard="handleclickOfArticle"
-            />
-                            
-            </div>
-        </section>
+  <section class="popularTopics">
+    <h3 class="popularTopics__heading">Popular topics</h3>
+    <ul class="popularTopics__list">
+      <li class="popularTopics__listItem"><a href="#" class="popularTopics__listLink">All</a></li>
+      <li class="popularTopics__listItem"><a href="#" class="popularTopics__listLink">Adventure</a></li>
+      <li class="popularTopics__listItem"><a href="#" class="popularTopics__listLink">Travel</a></li>
+      <li class="popularTopics__listItem"><a href="#" class="popularTopics__listLink">Fashion</a></li>
+      <li class="popularTopics__listItem"><a href="#" class="popularTopics__listLink">Technology</a></li>
+      <li class="popularTopics__listItem"><a href="#" class="popularTopics__listLink">Branding</a></li>
+      <li class="popularTopics__listItem popularTopics__listItem--right">
+        <router-link to="/view-all-articles" class="popularTopics__listLink">View All</router-link>
+      </li>
+    </ul>
+    <div class="popularTopics__card">
 
-        <section class="editorsPick">
-            <h3 class="editorsPick__heading">Editor's Pick</h3>
-            <div class="editorsPick__card">
-                <EditorsPickCard
-                    v-for="(editorPick, index) in editorsPicks"
-                    :key="index"
-                    :cardImage="editorPick.cardImage"
-                    :cardTime="editorPick.cardTime"
-                    :cardTag="editorPick.cardTag"
-                    :cardTitle="editorPick.cardTitle"
-                    :cardPara="editorPick.cardPara"
-                    :icon="editorPick.icon"
-                />
-            </div>
-            
-        </section>
+      <PopularTopicCard v-for="(card, index) in cards.slice(0, 8)" :key="card.id" :cardTime="card.createdAt"
+        :cardTitle="card.title" :cardPara="card.content" :id="card.id"
+        :cardAuthorName="card.user.firstName + ' ' + card.user.lastName" />
 
-         <Footer />
+    </div>
+  </section>
+
+  <section class="editorsPick">
+    <h3 class="editorsPick__heading">Editor's Pick</h3>
+    <div class="editorsPick__card">
+      <EditorsPickCard v-for="(editorPick, index) in editorsPicks" :key="index" :cardImage="editorPick.cardImage"
+        :cardTime="editorPick.cardTime" :cardTag="editorPick.cardTag" :cardTitle="editorPick.cardTitle"
+        :cardPara="editorPick.cardPara" :icon="editorPick.icon" />
+    </div>
+
+  </section>
+
+  <Footer />
 </template>

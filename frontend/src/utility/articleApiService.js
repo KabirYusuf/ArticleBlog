@@ -1,6 +1,6 @@
-import {http} from '@/utility/Http.js'
+import { http } from '@/utility/Http.js'
 
-export const getAllArticles = async ()=>{
+export const getAllArticles = async () => {
     try {
         const response = await http.get('/articles')
         return response.data;
@@ -9,7 +9,7 @@ export const getAllArticles = async ()=>{
     }
 }
 
-export const getArticleById = async (articleId)=>{
+export const getArticleById = async (articleId) => {
     try {
         const response = await http.get(`/articles/${articleId}`)
         return response.data;

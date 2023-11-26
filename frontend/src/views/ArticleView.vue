@@ -31,36 +31,26 @@
             </div>
             <p class="comment__title">Comments:</p>
 
-            <Comment
-            v-for="comment in formattedComments" 
-            :key="comment.id"
-            :date="comment.createdAt"
-            :name="comment.user.firstName + ' ' + comment.user.lastName"
-            :timeFromCommentPost="comment.timeFromCommentPost"
-            :content="comment.content"/>
+            <CommentInput />
+
+            <Comment v-for="comment in formattedComments" :key="comment.id" :date="comment.createdAt"
+                :name="comment.user.firstName + ' ' + comment.user.lastName"
+                :timeFromCommentPost="comment.timeFromCommentPost" :content="comment.content" />
         </div>
     </section>
 
     <section class="relatedPost">
         <div class="relatedPostContainer">
-            <h5 class="relatedPost__title">Relates Posts</h5>
+            <h5 class="relatedPost__title">Related Posts</h5>
             <div class="editorsPick__card">
-                <EditorsPickCard
-                    v-for="(editorPick, index) in editorsPicks"
-                    :key="index"
-                    :cardImage="editorPick.cardImage"
-                    :cardTime="editorPick.cardTime"
-                    :cardTag="editorPick.cardTag"
-                    :cardTitle="editorPick.cardTitle"
-                    :cardPara="editorPick.cardPara"
-                    :icon="editorPick.icon"
-                />
+                <EditorsPickCard v-for="(editorPick, index) in editorsPicks" :key="index" :cardImage="editorPick.cardImage"
+                    :cardTime="editorPick.cardTime" :cardTag="editorPick.cardTag" :cardTitle="editorPick.cardTitle"
+                    :cardPara="editorPick.cardPara" :icon="editorPick.icon" />
             </div>
         </div>
     </section>
 
-    <Footer 
-    :isConnection="true"/>
+    <Footer :isConnection="true" />
 </template>
 
 <script setup>
@@ -74,6 +64,7 @@ import Footer from "@/components/layouts/Footer.vue"
 import Comment from "../components/comment/Comment.vue"
 import { timeSince } from '../utility/dateAndTimeLogic';
 import { formatDate } from '../utility/dateAndTimeLogic';
+import CommentInput from '../components/comment/CommentInput.vue'
 
 
 const route = useRoute();
@@ -90,17 +81,17 @@ const fullName = computed(() => {
 
 
 const formattedComments = computed(() => {
-  if (!currentArticle.value || !currentArticle.value.comments) return [];
+    if (!currentArticle.value || !currentArticle.value.comments) return [];
 
-  return currentArticle.value.comments.map((comment) => {
-    const commentDate = new Date(comment.createdAt);
+    return currentArticle.value.comments.map((comment) => {
+        const commentDate = new Date(comment.createdAt);
 
-    return {
-      ...comment,
-      createdAt: formatDate(commentDate),
-      timeFromCommentPost: timeSince(commentDate)
-    };
-  });
+        return {
+            ...comment,
+            createdAt: formatDate(commentDate),
+            timeFromCommentPost: timeSince(commentDate)
+        };
+    });
 });
 
 onMounted(() => {
@@ -108,28 +99,28 @@ onMounted(() => {
 });
 
 const editorsPicks = ref([
-  {
-    cardImage: "/public/editors_images/Editor1.jpg",
-    cardTime: "08.08.2021",
-    cardTag: "FASHION",
-    cardTitle: "Richard Norton photorealistic rendering as real photos",
-    cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data",
-    icon: "fas fa-gem"
-  },
-  {
-    cardImage: "/public/editors_images/Editor2.jpg",
-    cardTime: "08.08.2021",
-    cardTag: "FASHION",
-    cardTitle: "Richard Norton photorealistic rendering as real photos",
-    cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data",
-  },
-  {
-    cardImage: "/public/editors_images/Editor3.jpg",
-    cardTime: "08.08.2021",
-    cardTag: "FASHION",
-    cardTitle: "Richard Norton photorealistic rendering as real photos",
-    cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data",
-  },
+    {
+        cardImage: "/public/editors_images/Editor1.jpg",
+        cardTime: "08.08.2021",
+        cardTag: "FASHION",
+        cardTitle: "Richard Norton photorealistic rendering as real photos",
+        cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data",
+        icon: "fas fa-gem"
+    },
+    {
+        cardImage: "/public/editors_images/Editor2.jpg",
+        cardTime: "08.08.2021",
+        cardTag: "FASHION",
+        cardTitle: "Richard Norton photorealistic rendering as real photos",
+        cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data",
+    },
+    {
+        cardImage: "/public/editors_images/Editor3.jpg",
+        cardTime: "08.08.2021",
+        cardTag: "FASHION",
+        cardTitle: "Richard Norton photorealistic rendering as real photos",
+        cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data",
+    },
 ]);
 
 </script>

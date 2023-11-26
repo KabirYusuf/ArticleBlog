@@ -1,12 +1,12 @@
 <template>
-    <div class="cardContainer" @click="handleClick">
+    <div class="cardContainer" @click="handleclickOfArticle">
         <ul class="popularTopicCard__tagList">
-                <li class="popularTopicCard__tagListItem popularTopicCard__tagListItem--pushRight">
-                    {{ cardTagOne }}
-                </li>
-                <li class="popularTopicCard__tagListItem">
-                    {{ cardTagTwo }}
-                </li>
+            <li class="popularTopicCard__tagListItem popularTopicCard__tagListItem--pushRight">
+                {{ cardTagOne }}
+            </li>
+            <li class="popularTopicCard__tagListItem">
+                {{ cardTagTwo }}
+            </li>
         </ul>
         <!-- <img :src="cardImage" alt="Popular Topic Image" class="card__image"> -->
         <img src="../../../public/card_images/BlogImage3.jpg" alt="image" class="card__image">
@@ -28,20 +28,26 @@
             </div>
 
         </div>
-    
+
     </div>
 </template>
 
 <script setup>
-import {defineEmits} from 'vue';
-const emit = defineEmits(['clickCard']);
-    const props = defineProps(
-        ['cardTitle', 'cardImage', 'cardPara', 'cardAuthorImage', 
-        'cardAuthorName', 'cardAuthorProfession', 'cardTime', 'cardTagOne','cardTagTwo', 'icon', 'id']
-    )
 
-    const handleClick = () => {
-        emit('clickCard', props.id);
-    };
+
+import { useRouter } from 'vue-router';
+import { handleArticleClick } from '../../utility/articleLogic'
+
+
+const router = useRouter();
+
+const props = defineProps(
+    ['cardTitle', 'cardImage', 'cardPara', 'cardAuthorImage',
+        'cardAuthorName', 'cardAuthorProfession', 'cardTime', 'cardTagOne', 'cardTagTwo', 'icon', 'id']
+)
+
+const handleclickOfArticle = () => {
+    handleArticleClick(props.id, router)
+}
 
 </script>

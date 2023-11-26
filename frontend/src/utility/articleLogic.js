@@ -1,40 +1,40 @@
 import { ref, computed } from 'vue';
-import { getAllArticles } from '@/utility/articleApiService'; 
+import { getAllArticles } from '@/utility/articleApiService';
 import { formatDate } from './dateAndTimeLogic';
 
 const rawCards = ref([]);
 
 export const fetchData = async () => {
-  try {
-    const articles = await getAllArticles();
-    rawCards.value = articles._embedded.items;
-  } catch (error) {
-    console.error('Error fetching articles:', error);
-  }
+    try {
+        const articles = await getAllArticles();
+        rawCards.value = articles._embedded.items;
+    } catch (error) {
+        console.error('Error fetching articles:', error);
+    }
 };
 
 export const cards = computed(() => {
-  return rawCards.value.map(card => {
-    const formattedTime = formatDate(card.createdAt);
-    let formattedContent = card.content;
-    if (card.content.length > 5) {
-      formattedContent = card.content.substring(0, 5) + '...';
-    }
+    return rawCards.value.map(card => {
+        const formattedTime = formatDate(card.createdAt);
+        let formattedContent = card.content;
+        if (card.content.length > 5) {
+            formattedContent = card.content.substring(0, 5) + '...';
+        }
 
-    return {
-      ...card,
-      createdAt: formattedTime,
-      content: formattedContent
-    };
-  });
+        return {
+            ...card,
+            createdAt: formattedTime,
+            content: formattedContent
+        };
+    });
 });
 
 export const lastCard = computed(() => {
-  return cards.value.length > 0 ? cards.value[cards.value.length - 1] : null;
+    return cards.value.length > 0 ? cards.value[cards.value.length - 1] : null;
 });
 
- export const handleArticleClick = (articleId, router) => {
+export const handleArticleClick = (articleId, router) => {
     router.push({ name: 'article', params: { id: articleId } });
-  };
+};
 
 

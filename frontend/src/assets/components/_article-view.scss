@@ -1,21 +1,22 @@
-.article__view{
+.article__view {
     background-color: $whiteColor;
 }
 
-.articleView__container{
+.articleView__container {
     max-width: 70%;
     margin: 0 auto;
     padding: 40px 10px 10px 10px;
     background-color: $whiteColor;
 }
-.articleView__content{
+
+.articleView__content {
     font-size: 1rem;
     color: #495057;
     font-weight: 400px;
     line-height: 25px;
 }
 
-.articleView__tag{
+.articleView__tag {
     display: flex;
     justify-content: space-between;
     max-width: 160px;
@@ -23,7 +24,7 @@
     margin-bottom: 20px;
 }
 
-.articleViewTag__content{
+.articleViewTag__content {
     color: #6C757D;
     text-align: center;
     padding: 3px;
@@ -33,10 +34,10 @@
     font-size: 0.714rem;
     font-family: 'Roboto';
     font-weight: 700px;
-    background-color: rgb(206, 204, 204);
+    background-color: $whiteColor;
 }
 
-.articleAuthorInfo{
+.articleAuthorInfo {
     max-width: 100%;
     display: flex;
     justify-content: space-between;
@@ -47,33 +48,33 @@
     margin-bottom: 30px;
 }
 
-.author--nameAndImage{
+.author--nameAndImage {
     @include authorSection
 }
 
-.article__authorImage{
+.article__authorImage {
     @include userImage
 }
 
-.author__name{
+.author__name {
     @include authorName
 }
 
-.author__profession{
+.author__profession {
     @include authorProfession
 }
 
-.author--SocialMedia{
+.author--SocialMedia {
     display: flex;
     gap: 5px;
 }
 
-.fab{
+.fab {
     font-size: 10px;
     color: #495057;
 }
 
-.comment__title{
+.comment__title {
     color: #495057;
     font-size: 1.286rem;
     font-weight: 700px;
@@ -81,17 +82,17 @@
     margin-bottom: 20px;
 }
 
-.relatedPost{
+.relatedPost {
     background-color: #E5E5E5;
 }
 
-.relatedPostContainer{
+.relatedPostContainer {
     max-width: 80%;
     margin: 0 auto;
     padding: 70px 20px;
 }
 
-.relatedPostTitle{
+.relatedPostTitle {
     color: #495057;
     font-size: 1.286rem;
     font-weight: 700px;
@@ -99,6 +100,3 @@
     font-family: Lora;
     margin-bottom: 5px;
 }
-
-
-

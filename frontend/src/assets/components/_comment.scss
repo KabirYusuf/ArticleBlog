@@ -1,0 +1,37 @@
+.commentCard__container {
+    margin-bottom: 25px;
+}
+
+.comment__card {
+    display: flex;
+    background-color: #E7E7E7;
+    padding: 16px;
+    max-width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+}
+
+.user__image {
+    @include userImage;
+}
+
+.commentUser__name {
+    color: #343A40;
+    font-size: 0.857rem;
+    font-weight: 700px;
+    line-height: 20px;
+}
+
+.comment__date {
+    color: #858585;
+    font-size: 0.857rem;
+    line-height: 25px;
+    font-weight: 700px;
+}
+
+.comment__text {
+    color: #495057;
+    font-size: 1rem;
+    font-weight: 400px;
+}

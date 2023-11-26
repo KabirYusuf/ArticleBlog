@@ -1,4 +1,4 @@
-.viewAllArticle{
+.viewAllArticle {
     @include container;
     padding-top: 50px;
     max-width: $maxWidth;
@@ -12,6 +12,6 @@
     }
 }
 
-.viewAllArticle__content{
+.viewAllArticle__content {
     @include articleDisplay
 }

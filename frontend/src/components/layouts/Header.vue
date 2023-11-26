@@ -48,8 +48,11 @@
       </div>
     </div>
   </header>
-  <Modal>
+  <Modal v-if="modalStore.showLogin">
     <LoginModal />
+  </Modal>
+  
+  <Modal v-if="modalStore.showRegister">
     <RegisterModal />
   </Modal>
 </template>

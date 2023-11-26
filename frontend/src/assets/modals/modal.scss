@@ -1,14 +1,15 @@
 .modal__container {
     position: fixed;
-    z-index: 1;
+    z-index: 50;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(49, 49, 49, 0.79);   
+    background-color: rgba(49, 49, 49, 0.79);
     align-items: center;
     justify-content: center;
+    padding: 30px;
 }
 
 .modalContent__container {
@@ -18,13 +19,12 @@
     transform: translate(-50%, -50%);
     background-color: $whiteColor;
     padding: 10px 25px;
-    width: 80%;
     max-width: 350px;
     border-radius: 10px;
     max-height: 719px;
 }
 
-.closeModal__symbol{
+.closeModal__symbol {
     position: absolute;
     right: 15px;
     display: inline-block;
@@ -32,18 +32,15 @@
     font-size: 20px;
     top: 10px;
 
-    &:hover{
+    &:hover {
         cursor: pointer;
     }
 }
 
-.modalContent__header{
+.modalContent__header {
     color: #495057;
     font-size: 1.286rem;
     font-weight: 700;
     line-height: 25px;
     margin-bottom: 10px;
 }
-
-
-
