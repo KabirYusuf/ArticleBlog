@@ -6,19 +6,20 @@ import Header from "@/components/layouts/Header.vue"
 import Footer from "@/components/layouts/Footer.vue"
 import { fetchData, cards, lastCard } from '@/utility/articleLogic';
 import { useRouter } from 'vue-router';
+import {handleArticleClick} from '../utility/articleLogic'
 
 
 onMounted(fetchData);
 
 const router = useRouter();
 
-const handleArticleClick = (articleId) => {
-  router.push({ name: 'article', params: { id: articleId } });
-};
+const handleclickOfArticle = (articleId) =>{
+  handleArticleClick(articleId, router)
+}
 
 const editorsPicks = ref([
   {
-    cardImage: "editors_images/Editor1.jpg",
+    cardImage: "/public/editors_images/Editor1.jpg",
     cardTime: "08.08.2021",
     cardTag: "FASHION",
     cardTitle: "Richard Norton photorealistic rendering as real photos",
@@ -74,7 +75,7 @@ const editorsPicks = ref([
                     :cardPara="card.content"
                     :id="card.id"
                     :cardAuthorName="card.user.firstName + ' ' + card.user.lastName"
-                    @clickCard="handleArticleClick"
+                    @clickCard="handleclickOfArticle"
             />
                             
             </div>

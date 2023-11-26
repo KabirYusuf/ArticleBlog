@@ -20,9 +20,17 @@
         <h4 class="footerTop__header">Headquarter</h4>
         <p class="footerTop__content footerContent--Para">191 Middleville Road, NY 1001, Sydney Australia</p>
       </div>
-      <div class="footerTop__headquarter">
+      <div v-if="!isConnection" class="footerTop__headquarter">
         <h4 class="footerTop__header">Headquarter</h4>
         <p class="footerTop__content footerContent--Para">191 Middleville Road, NY 1001, Sydney Australia</p>
+      </div>
+      <div v-if="isConnection" class="footerTop__headquarter">
+        <h4 class="footerTop__header">Connection</h4>
+        <i class="fab fa-facebook"></i>
+        <i class="fab fa-twitter"></i>
+        <i class="fab fa-instagram"></i>
+        <i class="fab fa-youtube"></i>
+        <i class="fab fa-twitter"></i>
       </div>
     </section>
     <div class="footerBottom__container">
@@ -35,4 +43,6 @@
 </template>
 
 <script setup>
+
+defineProps(['isConnection'])
 </script>

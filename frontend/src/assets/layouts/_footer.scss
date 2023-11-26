@@ -68,7 +68,7 @@
   .footerTop__explorate,
   .footerTop__headquarter,
   .footerContent--Para {
-    width: 114px; 
+    max-width: 130px; 
   }
   
   .footerTop__content {
@@ -84,6 +84,11 @@
     font-weight: 700;
     color: $whiteColor;
   }
+
+  .footerTop__headquarter .footerTop__header ~ .fab {
+    color: white;
+    margin-right: 15px;
+}
   
   .explorate__innerList {
     list-style: none;

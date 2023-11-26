@@ -1,5 +1,6 @@
 import { ref, computed } from 'vue';
 import { getAllArticles } from '@/utility/articleApiService'; 
+import { formatDate } from './dateAndTimeLogic';
 
 const rawCards = ref([]);
 
@@ -10,12 +11,6 @@ export const fetchData = async () => {
   } catch (error) {
     console.error('Error fetching articles:', error);
   }
-};
-
-export const formatDate = (dateString) => {
-  const options = { year: '2-digit', month: '2-digit', day: '2-digit' };
-  const formattedDate = new Intl.DateTimeFormat('en-GB', options).format(new Date(dateString));
-  return formattedDate.replace(/\//g, '.');
 };
 
 export const cards = computed(() => {
@@ -37,5 +32,9 @@ export const cards = computed(() => {
 export const lastCard = computed(() => {
   return cards.value.length > 0 ? cards.value[cards.value.length - 1] : null;
 });
+
+ export const handleArticleClick = (articleId, router) => {
+    router.push({ name: 'article', params: { id: articleId } });
+  };
 
 

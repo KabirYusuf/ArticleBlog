@@ -141,3 +141,7 @@
   .cardAuthor--profession {
     @include authorProfession
   }
+
+  .cardAuthor__image{
+    @include userImage
+  }

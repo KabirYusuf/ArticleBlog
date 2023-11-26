@@ -25,26 +25,26 @@ public class Article {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public LocalDate getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalDate getUpdatedAt() {
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDate updatedAt) {
+    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
     @CreationTimestamp
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
     @LastModifiedDate
-    private LocalDate updatedAt;
+    private LocalDateTime updatedAt;
 
     public User getUser() {
         return user;

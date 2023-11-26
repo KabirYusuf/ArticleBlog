@@ -7,6 +7,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.hateoas.server.core.Relation;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "comments", schema = "public")
@@ -23,19 +24,19 @@ public class Comment {
 
     private String content;
 
-    public LocalDate getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalDate getUpdatedAt() {
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDate updatedAt) {
+    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
@@ -44,9 +45,9 @@ public class Comment {
     private User user;
 
     @CreationTimestamp
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
     @LastModifiedDate
-    private LocalDate updatedAt;
+    private LocalDateTime updatedAt;
 
     public Comment(String content, Article article, User user) {
         this.content = content;

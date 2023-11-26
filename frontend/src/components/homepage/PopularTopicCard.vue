@@ -19,7 +19,8 @@
             <p class="card__para">{{ cardPara }}</p>
 
             <div class="card__author">
-                <img v-if="cardAuthorImage" :src="cardAuthorImage" alt="Author image" class="cardAuthor__image">
+                <!-- <img v-if="cardAuthorImage" :src="cardAuthorImage" alt="Author image" class="cardAuthor__image"> -->
+                <img src="../../../public/Image.jpg" alt="Author image" class="cardAuthor__image">
                 <div class="cardAuthor">
                     <p v-if="cardAuthorName" class="cardAuthor__name">{{ cardAuthorName }}</p>
                     <p v-if="cardAuthorProfession" class="cardAcardAuthor--profession">{{ cardAuthorProfession }}</p>

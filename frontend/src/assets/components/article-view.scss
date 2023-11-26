@@ -1,8 +1,12 @@
+.article__view{
+    background-color: $whiteColor;
+}
+
 .articleView__container{
-    border: 1px solid red;
     max-width: 70%;
     margin: 0 auto;
     padding: 40px 10px 10px 10px;
+    background-color: $whiteColor;
 }
 .articleView__content{
     font-size: 1rem;
@@ -40,10 +44,15 @@
     border-top: 1px solid #C4C4C4;
     border-bottom: 1px solid #C4C4C4;
     align-items: center;
+    margin-bottom: 30px;
 }
 
 .author--nameAndImage{
     @include authorSection
+}
+
+.article__authorImage{
+    @include userImage
 }
 
 .author__name{
@@ -57,6 +66,38 @@
 .author--SocialMedia{
     display: flex;
     gap: 5px;
+}
+
+.fab{
+    font-size: 10px;
+    color: #495057;
+}
+
+.comment__title{
+    color: #495057;
+    font-size: 1.286rem;
+    font-weight: 700px;
+    line-height: 25px;
+    margin-bottom: 20px;
+}
+
+.relatedPost{
+    background-color: #E5E5E5;
+}
+
+.relatedPostContainer{
+    max-width: 80%;
+    margin: 0 auto;
+    padding: 70px 20px;
+}
+
+.relatedPostTitle{
+    color: #495057;
+    font-size: 1.286rem;
+    font-weight: 700px;
+    line-height: 25px;
+    font-family: Lora;
+    margin-bottom: 5px;
 }
 
 
