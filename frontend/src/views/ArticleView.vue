@@ -1,6 +1,6 @@
 <template>
-    <Header :title="currentArticle?.title" :content="currentArticle?.content" :headerBackgroundImage="'/article-view.jpg'"
-        :isCenter="true" :authorName="currentArticle?.user.firstName + ' ' + currentArticle?.user.lastName" />
+    <Header :card="currentArticle"
+        :isCenter="true" />
 
     <section class="article__view">
         <div v-if="currentArticle" class="articleView__container">
@@ -43,9 +43,8 @@
         <div class="relatedPostContainer">
             <h5 class="relatedPost__title">Related Posts</h5>
             <div class="editorsPick__card">
-                <EditorsPickCard v-for="(editorPick, index) in editorsPicks" :key="index" :cardImage="editorPick.cardImage"
-                    :cardTime="editorPick.cardTime" :cardTag="editorPick.cardTag" :cardTitle="editorPick.cardTitle"
-                    :cardPara="editorPick.cardPara" :icon="editorPick.icon" />
+                <EditorsPickCard v-for="(editorPick, index) in editorsPicks" :key="index" 
+                :card="editorPick"/>
             </div>
         </div>
     </section>
@@ -100,26 +99,26 @@ onMounted(() => {
 
 const editorsPicks = ref([
     {
-        cardImage: "/public/editors_images/Editor1.jpg",
-        cardTime: "08.08.2021",
-        cardTag: "FASHION",
-        cardTitle: "Richard Norton photorealistic rendering as real photos",
-        cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data",
+        image: "/public/editors_images/Editor1.jpg",
+        createdAt: "08.08.2021",
+        tag: "FASHION",
+        title: "Richard Norton photorealistic rendering as real photos",
+        content: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data",
         icon: "fas fa-gem"
     },
     {
-        cardImage: "/public/editors_images/Editor2.jpg",
-        cardTime: "08.08.2021",
-        cardTag: "FASHION",
-        cardTitle: "Richard Norton photorealistic rendering as real photos",
-        cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data",
+        image: "/public/editors_images/Editor2.jpg",
+        createdAt: "08.08.2021",
+        tag: "FASHION",
+        title: "Richard Norton photorealistic rendering as real photos",
+        content: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data",
     },
     {
-        cardImage: "/public/editors_images/Editor3.jpg",
-        cardTime: "08.08.2021",
-        cardTag: "FASHION",
-        cardTitle: "Richard Norton photorealistic rendering as real photos",
-        cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data",
+        image: "/public/editors_images/Editor3.jpg",
+        createdAt: "08.08.2021",
+        tag: "FASHION",
+        title: "Richard Norton photorealistic rendering as real photos",
+        content: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data",
     },
 ]);
 

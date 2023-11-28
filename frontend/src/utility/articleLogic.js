@@ -29,9 +29,6 @@ export const cards = computed(() => {
     });
 });
 
-export const lastCard = computed(() => {
-    return cards.value.length > 0 ? cards.value[cards.value.length - 1] : null;
-});
 
 export const handleArticleClick = (articleId, router) => {
     router.push({ name: 'article', params: { id: articleId } });

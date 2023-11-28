@@ -1,52 +1,48 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import PopularTopicCard from '@/components/homepage/PopularTopicCard.vue';
 import EditorsPickCard from '@/components/homepage/EditorsPickCard.vue';
 import Header from "@/components/layouts/Header.vue"
 import Footer from "@/components/layouts/Footer.vue"
-import { fetchData, cards, lastCard } from '@/utility/articleLogic';
-// import { useRouter } from 'vue-router';
-// import { handleArticleClick } from '../utility/articleLogic'
+import { fetchData, cards } from '@/utility/articleLogic';
 
 
 onMounted(fetchData);
 
-// const router = useRouter();
+const firstCard = computed(() => {
+    return cards.value.length > 0 ? cards.value[0] : null;
+});
 
-// const handleclickOfArticle = (articleId) => {
-//   handleArticleClick(articleId, router)
-// }
 
 const editorsPicks = ref([
-  {
-    cardImage: "/public/editors_images/Editor1.jpg",
-    cardTime: "08.08.2021",
-    cardTag: "FASHION",
-    cardTitle: "Richard Norton photorealistic rendering as real photos",
-    cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data",
-    icon: "fas fa-gem"
-  },
-  {
-    cardImage: "editors_images/Editor2.jpg",
-    cardTime: "08.08.2021",
-    cardTag: "FASHION",
-    cardTitle: "Richard Norton photorealistic rendering as real photos",
-    cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data",
-  },
-  {
-    cardImage: "editors_images/Editor3.jpg",
-    cardTime: "08.08.2021",
-    cardTag: "FASHION",
-    cardTitle: "Richard Norton photorealistic rendering as real photos",
-    cardPara: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data",
-  },
-]);
+    {
+        image: "/public/editors_images/Editor1.jpg",
+        createdAt: "08.08.2021",
+        tag: "FASHION",
+        title: "Richard Norton photorealistic rendering as real photos",
+        content: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data",
+        icon: "fas fa-gem"
+    },
+    {
+        image: "/public/editors_images/Editor2.jpg",
+        createdAt: "08.08.2021",
+        tag: "FASHION",
+        title: "Richard Norton photorealistic rendering as real photos",
+        content: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data",
+    },
+    {
+        image: "/public/editors_images/Editor3.jpg",
+        createdAt: "08.08.2021",
+        tag: "FASHION",
+        title: "Richard Norton photorealistic rendering as real photos",
+        content: "Progressively incentivize cooperative systems through technically sound functionalities. The credibly productivate seamless data",
+    },
+]);;
 </script>
 
 
 <template>
-  <Header :title="lastCard?.title" :date="lastCard?.createdAt" :content="lastCard?.content" :isCenter="false"
-    :headerBackgroundImage="'/Image.jpg'" />
+  <Header :card="firstCard" />
 
   <section class="popularTopics">
     <h3 class="popularTopics__heading">Popular topics</h3>
@@ -63,9 +59,9 @@ const editorsPicks = ref([
     </ul>
     <div class="popularTopics__card">
 
-      <PopularTopicCard v-for="(card, index) in cards.slice(0, 8)" :key="card.id" :cardTime="card.createdAt"
-        :cardTitle="card.title" :cardPara="card.content" :id="card.id"
-        :cardAuthorName="card.user.firstName + ' ' + card.user.lastName" />
+      <PopularTopicCard v-for="card in cards.slice(0, 8)" 
+        :key="card.id"
+        :card="card"/>
 
     </div>
   </section>
@@ -73,9 +69,9 @@ const editorsPicks = ref([
   <section class="editorsPick">
     <h3 class="editorsPick__heading">Editor's Pick</h3>
     <div class="editorsPick__card">
-      <EditorsPickCard v-for="(editorPick, index) in editorsPicks" :key="index" :cardImage="editorPick.cardImage"
-        :cardTime="editorPick.cardTime" :cardTag="editorPick.cardTag" :cardTitle="editorPick.cardTitle"
-        :cardPara="editorPick.cardPara" :icon="editorPick.icon" />
+      <EditorsPickCard v-for="(editorPick, index) in editorsPicks" 
+      :key="index" 
+      :card="editorPick"/>
     </div>
 
   </section>

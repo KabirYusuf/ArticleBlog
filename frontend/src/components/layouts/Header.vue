@@ -1,5 +1,5 @@
 <template>
-  <header class="header" :style="{ backgroundImage: 'url(' + headerBackgroundImage + ')' }">
+  <header class="header">
     <HambugerMenu />
     <div class="header__overlay">
       <nav class="nav">
@@ -26,12 +26,12 @@
           <li class="headerText__listItem">ADVENTURE</li>
           <li class="headerText__listItem">TRAVEL</li>
         </ul>
-        <p class="headerText__para">{{ title }}</p>
+        <p class="headerText__para">{{ card?.title }}</p>
 
         <div class="timeSection">
-          <time class="timeSection__time">{{ date }}</time>
+          <time class="timeSection__time">{{ card?.createdAt }}</time>
           <p class="timeSection__seperator"></p>
-          <p class="timeSection__para">{{ content }}</p>
+          <p class="timeSection__para">{{ card?.title }}</p>
         </div>
         <ul class="headerText__dotList">
           <li class="headerText__dotListItem headerText--big">.</li>
@@ -42,16 +42,16 @@
     </div>
     <div class="headerText__container--center" v-if="isCenter">
       <div class="headerTextCenter__content">
-        <p class="headerText__center  headerText__center--title">{{ title }}</p>
-        <p class="headerText__center  headerText__center--content">{{ content }}</p>
-        <p class="headerText__center  headerText__center--authorName">By {{ authorName }}</p>
+        <p class="headerText__center  headerText__center--title">{{ card?.title }}</p>
+        <p class="headerText__center  headerText__center--content">{{ card?.content }}</p>
+        <p class="headerText__center  headerText__center--authorName">By {{ card?.user.firstName }}  {{ card?.user.lastName }}</p>
       </div>
     </div>
   </header>
   <Modal v-if="modalStore.showLogin">
     <LoginModal />
   </Modal>
-  
+
   <Modal v-if="modalStore.showRegister">
     <RegisterModal />
   </Modal>
@@ -65,10 +65,10 @@ import Modal from '../modals/Modal.vue'
 import HambugerMenu from '../hamburger/HambugerMenu.vue'
 
 defineProps(
-  ['title', 'content', 'date', 'headerBackgroundImage', 'authorName', 'isCenter']
+  ['card', 'isCenter']
 )
 
-const modalStore = useModalStore();
 
+const modalStore = useModalStore();
 
 </script>
