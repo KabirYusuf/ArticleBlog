@@ -16,8 +16,8 @@ public interface UserService {
     User registerUser(RegistrationRequest registrationRequest);
     User findUserById(Long authorId);
     Page<User> findAllUsers(Pageable pageable);
-    void deleteUser(Long authorId);
-    User updateUser(UpdateUserRequest updateUserRequest, Long authorId);
+    void deleteUser(Long userId, String authHeader);
+    User updateUser(UpdateUserRequest updateUserRequest, Long userId, String authHeader);
 
     User findUserByUsername(String username);
 

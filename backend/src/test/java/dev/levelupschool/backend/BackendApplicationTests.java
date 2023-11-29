@@ -44,7 +44,7 @@ class BackendApplicationTests {
     public void givenArticle_whenGetArticles_thenReturnJsonArray() throws Exception {
         User user = new User();
         userRepository.save(user);
-        var article = new Article("test title 1", "test content 1", user);
+        var article = new Article("test title 1", "test content 1", user, null);
 
         articleRepository.save(article);
 
@@ -60,7 +60,7 @@ class BackendApplicationTests {
     public void givenComment_whenGetArticle_thenReturnCommentsArray() throws Exception {
         User user = new User();
         userRepository.save(user);
-        var article = articleRepository.save(new Article("test title", "test content 1", user));
+        var article = articleRepository.save(new Article("test title", "test content 1", user, null));
 
         commentRepository.save(new Comment("test comment", article, user));
 

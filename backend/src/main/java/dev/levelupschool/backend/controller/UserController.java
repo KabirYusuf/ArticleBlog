@@ -52,11 +52,18 @@ public class UserController {
         return ResponseEntity.ok(userService.getUser(authHeader));
     }
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateAuthor(@RequestBody UpdateUserRequest updateUserRequest, @PathVariable("id") Long id){
-        return ResponseEntity.ok(userService.updateUser(updateUserRequest, id));
+    public ResponseEntity<User> updateAuthor(
+        @RequestBody UpdateUserRequest updateUserRequest,
+        @PathVariable("id") Long id,
+        HttpServletRequest httpServletRequest){
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        return ResponseEntity.ok(userService.updateUser(updateUserRequest, id, authHeader));
     }
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable("id") Long id){
-        userService.deleteUser(id);
+    public void deleteUser(
+        @PathVariable("id") Long id,
+        HttpServletRequest httpServletRequest){
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        userService.deleteUser(id, authHeader);
     }
 }

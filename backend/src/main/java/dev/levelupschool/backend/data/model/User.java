@@ -44,5 +44,6 @@ public class User {
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
     private List<Comment> comments;
+    private String userImage;
 
 }

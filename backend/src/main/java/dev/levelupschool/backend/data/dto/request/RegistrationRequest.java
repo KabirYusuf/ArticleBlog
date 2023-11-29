@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Setter
 @Getter
@@ -18,4 +19,7 @@ public class RegistrationRequest {
             "and include at least one uppercase letter, one lowercase " +
             "letter, one digit, and one special character.")
     private String password;
+    private String firstName;
+    private String lastName;
+    private String userImage;
 }

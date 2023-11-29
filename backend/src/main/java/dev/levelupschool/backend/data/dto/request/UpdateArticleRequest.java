@@ -11,4 +11,5 @@ public class UpdateArticleRequest {
     private String title;
     @NotBlank(message = "This field cannot be empty or null")
     private String content;
+    private String articleImage;
 }

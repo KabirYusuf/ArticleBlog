@@ -6,18 +6,24 @@ import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
 import dev.levelupschool.backend.data.model.Role;
 import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.repository.UserRepository;
+import dev.levelupschool.backend.exception.CommunicationException;
 import dev.levelupschool.backend.exception.ModelNotFoundException;
 import dev.levelupschool.backend.exception.UserException;
 import dev.levelupschool.backend.security.JwtService;
+import dev.levelupschool.backend.service.interfaces.FileStorageService;
 import dev.levelupschool.backend.service.interfaces.UserService;
+import dev.levelupschool.backend.util.Converter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 @Service
 @Slf4j
@@ -26,13 +32,16 @@ public class LevelUpUserService implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     private final JwtService jwtService;
+    private final FileStorageService fileStorageService;
     public LevelUpUserService(
         UserRepository userRepository,
         PasswordEncoder passwordEncoder,
-        JwtService jwtService){
+        JwtService jwtService,
+        FileStorageService fileStorageService){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.fileStorageService = fileStorageService;
     }
 
     @Override
@@ -46,7 +55,25 @@ public class LevelUpUserService implements UserService {
         newUser.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
         newUser.setRoles(roleSet);
         newUser.setEmail(registrationRequest.getEmail());
+        String firstName = covertNameFirstCharacterToUpperCase(registrationRequest.getFirstName());
+        String lastName = covertNameFirstCharacterToUpperCase(registrationRequest.getLastName());
+        newUser.setFirstName(firstName);
+        newUser.setLastName(lastName);
+        processFileStorage(registrationRequest.getUserImage(), registrationRequest.getUsername(), newUser);
         return userRepository.save(newUser);
+    }
+
+    private void processFileStorage(String image, String name, User user) {
+        if (image != null){
+            MultipartFile file = Converter.base64StringToMultipartFile(image, name);
+            String fileUrl = null;
+            try {
+                fileUrl = fileStorageService.saveFile(file, "blog-user-images").get();
+            } catch (InterruptedException | ExecutionException e) {
+                throw new CommunicationException(e.getMessage());
+            }
+            user.setUserImage(fileUrl);
+        }
     }
 
     private String covertNameFirstCharacterToUpperCase(String name){
@@ -68,18 +95,22 @@ public class LevelUpUserService implements UserService {
     }
 
     @Override
-    public void deleteUser(Long authorId) {
+    public void deleteUser(Long userId, String authHeader) {
+        User foundUser = getUser(authHeader);
+        if (!Objects.equals(foundUser.getId(), userId))throw new UserException("You have no permission to delete user");
         userRepository
-            .deleteById(authorId);
+            .deleteById(userId);
     }
 
     @Override
-    public User updateUser(UpdateUserRequest updateUserRequest, Long authorId) {
-        User foundUser = findUserById(authorId);
+    public User updateUser(UpdateUserRequest updateUserRequest, Long userId, String authHeader) {
+        User foundUser = getUser(authHeader);
+        if (!Objects.equals(foundUser.getId(), userId))throw new UserException("You have no permission to update user");
         String firstName = covertNameFirstCharacterToUpperCase(updateUserRequest.getFirstName());
         String lastName = covertNameFirstCharacterToUpperCase(updateUserRequest.getLastName());
         foundUser.setFirstName(firstName);
         foundUser.setLastName(lastName);
+        processFileStorage(updateUserRequest.getUserImage(), foundUser.getUsername(), foundUser);
         return userRepository.save(foundUser);
     }
 

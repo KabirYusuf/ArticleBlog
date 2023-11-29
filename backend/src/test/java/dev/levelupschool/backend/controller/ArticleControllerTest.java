@@ -75,7 +75,7 @@ class ArticleControllerTest {
 
 
 
-        var article = new Article("test title 1", "test content 1", userRepository.findById(1L).get());
+        var article = new Article("test title 1", "test content 1", userRepository.findById(1L).get(), null);
 
         articleRepository.save(article);
     }

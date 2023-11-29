@@ -7,7 +7,8 @@ CREATE TABLE users (
                        password TEXT NOT NULL DEFAULT NULL,
                        created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
                        updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-                       is_verified BOOLEAN DEFAULT FALSE
+                       is_verified BOOLEAN DEFAULT FALSE,
+                       user_image TEXT NULL DEFAULT NULL
 );
 CREATE INDEX upper_username_idx ON users (UPPER(username));
 
@@ -25,7 +26,9 @@ create table articles (
     content text       null default null,
     user_id integer not null references users,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    article_image TEXT NULL DEFAULT NULL
+
 );
 
 create table comments (

@@ -47,7 +47,7 @@ class UserControllerTest {
 
     @Container
     @ServiceConnection
-    static PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer("postgres:latest")
+    static PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer("postgres:16-alpine")
         .withDatabaseName("levelup");
     @BeforeAll
     static  void beforeAll(){
@@ -107,7 +107,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void givenAuthor_whenDeleteAuthorWithId_then200IsReturnedAsStatusCode() throws Exception {
+    public void givenUser_whenDeleteUserWithId_then200IsReturnedAsStatusCode() throws Exception {
         Assertions.assertEquals(1, userRepository.findAll().size());
        mvc.perform(delete("/users/1")
                .header("Authorization", authHeader)
@@ -117,7 +117,7 @@ class UserControllerTest {
     }
 
     @Test
-    void givenUpdateAuthorRequest_whenAuthorIsUpdated_authorIsUpdatedInDatabase() throws Exception {
+    void givenUpdateUserRequest_whenUserIsUpdated_UserIsUpdatedInDatabase() throws Exception {
         Assertions.assertNull(userService.findUserById(1L).getFirstName());
 
         UpdateUserRequest updateUserRequest = new UpdateUserRequest();

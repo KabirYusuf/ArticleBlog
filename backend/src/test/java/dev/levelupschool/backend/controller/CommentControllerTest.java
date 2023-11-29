@@ -75,7 +75,7 @@ class CommentControllerTest {
 
         authHeader = "Bearer " + authenticationResponse.getToken();
 
-        var article = new Article("test title 1", "test content 1", userRepository.findById(1L).get());
+        var article = new Article("test title 1", "test content 1", userRepository.findById(1L).get(), null);
         articleRepository.save(article);
 
         commentRepository.save(new Comment("test comment", article, userRepository.findById(1L).get()));
@@ -85,7 +85,7 @@ class CommentControllerTest {
     public void givenComment_whenGetArticle_thenReturnCommentsArray() throws Exception {
         User user = new User();
         userRepository.save(user);
-        var article = articleRepository.save(new Article("test title", "test content 1", user));
+        var article = articleRepository.save(new Article("test title", "test content 1", user, null));
 
         commentRepository.save(new Comment("test comment", article, user));
 

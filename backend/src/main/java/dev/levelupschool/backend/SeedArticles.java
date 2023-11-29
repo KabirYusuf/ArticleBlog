@@ -50,8 +50,8 @@ public class SeedArticles {
 
                     User savedUser = userRepository.save(newUser);
 
-                    var article1 = articleRepository.save(new Article("test title 1", "test content 1", savedUser));
-                    articleRepository.save(new Article("test title 2", "test content 2", savedUser));
+                    var article1 = articleRepository.save(new Article("test title 1", "test content 1", savedUser, null));
+                    articleRepository.save(new Article("test title 2", "test content 2", savedUser, null));
 
                     commentRepository.save(new Comment("test comment", article1, savedUser));
                 }

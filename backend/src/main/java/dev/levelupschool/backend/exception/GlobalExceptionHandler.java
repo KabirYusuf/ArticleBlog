@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
-public class ModelNotFoundAdvice {
+public class GlobalExceptionHandler {
     @ResponseBody
     @ExceptionHandler(ModelNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -60,6 +60,14 @@ public class ModelNotFoundAdvice {
         errors.put("description", "Validation failed");
         errors.put("errors", fieldErrors);
         return errors;
+    }
+
+    @ResponseBody
+    @ExceptionHandler(CommunicationException.class)
+    @ResponseStatus(HttpStatus.GATEWAY_TIMEOUT)
+    String handleCommunicationException(CommunicationException communicationException) {
+        return communicationException.getMessage();
+
     }
 
 }

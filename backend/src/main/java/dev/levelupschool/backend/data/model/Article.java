@@ -46,6 +46,18 @@ public class Article {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
+
+    private String articleImage;
+
+    public String getArticleImage() {
+        return articleImage;
+    }
+
+    public void setArticleImage(String articleImage) {
+        this.articleImage = articleImage;
+    }
+
+
     public User getUser() {
         return user;
     }
@@ -54,10 +66,11 @@ public class Article {
         this.user = user;
     }
 
-    public Article(String title, String content, User user) {
+    public Article(String title, String content, User user, String articleImage) {
         this.title = title;
         this.content = content;
         this.user = user;
+        this.articleImage = articleImage;
     }
 
     public Article() {
