@@ -1,6 +1,7 @@
 package dev.levelupschool.backend;
 
 import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
+import dev.levelupschool.backend.data.dto.request.NotificationRequest;
 import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
 import dev.levelupschool.backend.data.model.Article;
@@ -10,16 +11,22 @@ import dev.levelupschool.backend.data.repository.ArticleRepository;
 import dev.levelupschool.backend.data.repository.UserRepository;
 import dev.levelupschool.backend.data.repository.CommentRepository;
 import dev.levelupschool.backend.service.auth.AuthenticationService;
+import dev.levelupschool.backend.service.notification.LevelUpEmailSenderService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -27,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest
 @ActiveProfiles("test")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class BackendApplicationTests {
 
     @Autowired
@@ -41,9 +49,16 @@ class BackendApplicationTests {
     private UserRepository userRepository;
     @Autowired
     private AuthenticationService authenticationService;
+    @MockBean
+    private LevelUpEmailSenderService levelUpEmailSenderService;
 
     @Test
     void contextLoads() {
+    }
+    @BeforeEach
+    void setUp(){
+        userRepository.deleteAll();
+        doNothing().when(levelUpEmailSenderService).sendEmailNotification(any(NotificationRequest.class));
     }
 
     @Test
