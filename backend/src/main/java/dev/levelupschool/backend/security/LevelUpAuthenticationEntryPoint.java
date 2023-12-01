@@ -24,17 +24,17 @@ public class LevelUpAuthenticationEntryPoint implements AuthenticationEntryPoint
         HttpServletResponse response,
         AuthenticationException authException){
 
-        response.setStatus(HttpStatus.FORBIDDEN.value());
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("application/json");
-        log.info("Entry Point");
+
         Map<String, Object> data = new HashMap<>();
         data.put("Status", false);
-        data.put("Message", authException.getMessage());
+        data.put("Message", "Authentication failed: " + authException.getMessage());
 
         try {
             response.getOutputStream().print(Serializer.asJsonString(data));
         } catch (IOException e) {
-            throw new SecurityException(e.getMessage());
+            log.error("Failed to send internal server error response. Request: {}", request.getRequestURI(), e);
         }
     }
 }

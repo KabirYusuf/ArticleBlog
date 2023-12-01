@@ -29,9 +29,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class AuthenticationControllerTest {
     @Autowired
     private MockMvc mvc;
-    @Autowired
-    private AuthenticationService authenticationService;
-    private String authHeader;
 
     @Autowired
     private UserRepository userRepository;
@@ -43,6 +40,7 @@ class AuthenticationControllerTest {
     }
     @BeforeEach
     void setUp() {
+        userRepository.deleteAll();
         registrationRequest = new RegistrationRequest();
         registrationRequest.setUsername("kaybee");
         registrationRequest.setEmail("k@gmail.com");
