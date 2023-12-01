@@ -6,6 +6,7 @@ import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
 import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
 import dev.levelupschool.backend.data.dto.response.CreateUserResponse;
+import dev.levelupschool.backend.data.dto.response.UserDTO;
 import dev.levelupschool.backend.data.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,5 +23,9 @@ public interface UserService {
     User findUserByUsername(String username);
 
     User getUser(String authHeader);
+    void followUser(String authHeader, Long followedUserId);
+    void unfollowUser(String authHeader, Long followedUserId);
+    List<UserDTO> getFollowers(String authHeader);
+    List<UserDTO> getUsersFollowed(String authHeader);
 
 }

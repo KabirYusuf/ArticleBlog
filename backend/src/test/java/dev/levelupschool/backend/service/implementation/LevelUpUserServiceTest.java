@@ -1,5 +1,5 @@
 package dev.levelupschool.backend.service.implementation;
-import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
+
 import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
 import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
@@ -72,6 +73,93 @@ class LevelUpUserServiceTest {
 
         User updatedUser = userService.updateUser(updateUserRequest, 1L, authHeader);
         assertEquals("Papez", updatedUser.getLastName());
+    }
+
+    @Test
+    void givenUserAAndUserB_whenUserAFollowsUserB_userBGetsAdditionalFollowerAndUserASizeOfUsersFollowedIncreasesByOne(){
+        RegistrationRequest userARequest = new RegistrationRequest();
+        userARequest.setUsername("kaybee1");
+        userARequest.setEmail("sonkaybee@gmail.com");
+        userARequest.setPassword("1234");
+        AuthenticationResponse authenticationResponse = authenticationService.register(userARequest);
+
+        String userAAuthHeader = "Bearer " + authenticationResponse.getToken();
+
+        RegistrationRequest userBRequest = new RegistrationRequest();
+        userBRequest.setUsername("kaybee2");
+        userBRequest.setEmail("sonkaybee@gmail.com");
+        userBRequest.setPassword("1234");
+
+        authenticationService.register(userBRequest);
+
+        User userABeforeFollowingUserB = userRepository.findByIdWithFollowing(2L).get();
+        User userBBeforeUserAFollowed = userRepository.findByIdWithFollowers(3L).get();
+
+        int numberOfUsersUserAIsFollowingBeforeFollowingUserB = userABeforeFollowingUserB.getFollowing().size();
+        int numberOfUsersThatIsFollowingUserBBeforeUserAFollowsUserB = userBBeforeUserAFollowed.getFollowers().size();
+
+        assertEquals(0, numberOfUsersThatIsFollowingUserBBeforeUserAFollowsUserB);
+        assertEquals(0, numberOfUsersUserAIsFollowingBeforeFollowingUserB);
+
+        userService.followUser(userAAuthHeader, 3L);
+
+        User userAAfterFollowingUserB = userRepository.findByIdWithFollowing(2L).get();
+        User userBAfterFollowedByUserA = userRepository.findByIdWithFollowers(3L).get();
+
+        int numberOfUsersUserAIsFollowingAfterFollowingUserB = userAAfterFollowingUserB.getFollowing().size();
+        int numberOfUsersThatIsFollowingUserBAfterUserAFollowsUserB = userBAfterFollowedByUserA.getFollowers().size();
+
+        assertEquals(1, numberOfUsersThatIsFollowingUserBAfterUserAFollowsUserB);
+        assertEquals(1, numberOfUsersUserAIsFollowingAfterFollowingUserB);
+    }
+
+    @Test
+    void givenUserAFollowsUserB_whenUserAUnfollowsUserB_userBNumberOfFollowersDecreasesByOneAndUserASizeOfUsersFollowedDecreasesByOne(){
+        RegistrationRequest userARequest = new RegistrationRequest();
+        userARequest.setUsername("kaybee1");
+        userARequest.setEmail("sonkaybee@gmail.com");
+        userARequest.setPassword("1234");
+        AuthenticationResponse authenticationResponse = authenticationService.register(userARequest);
+
+        String userAAuthHeader = "Bearer " + authenticationResponse.getToken();
+
+        RegistrationRequest userBRequest = new RegistrationRequest();
+        userBRequest.setUsername("kaybee2");
+        userBRequest.setEmail("sonkaybee@gmail.com");
+        userBRequest.setPassword("1234");
+
+        authenticationService.register(userBRequest);
+
+        User userABeforeFollowingUserB = userRepository.findByIdWithFollowing(2L).get();
+        User userBBeforeUserAFollowed = userRepository.findByIdWithFollowers(3L).get();
+
+        int numberOfUsersUserAIsFollowingBeforeFollowingUserB = userABeforeFollowingUserB.getFollowing().size();
+        int numberOfUsersThatIsFollowingUserBBeforeUserAFollowsUserB = userBBeforeUserAFollowed.getFollowers().size();
+
+        assertEquals(0, numberOfUsersThatIsFollowingUserBBeforeUserAFollowsUserB);
+        assertEquals(0, numberOfUsersUserAIsFollowingBeforeFollowingUserB);
+
+        userService.followUser(userAAuthHeader, 3L);
+
+        User userAAfterFollowingUserB = userRepository.findByIdWithFollowing(2L).get();
+        User userBAfterFollowedByUserA = userRepository.findByIdWithFollowers(3L).get();
+
+        int numberOfUsersUserAIsFollowingAfterFollowingUserB = userAAfterFollowingUserB.getFollowing().size();
+        int numberOfUsersThatIsFollowingUserBAfterUserAFollowsUserB = userBAfterFollowedByUserA.getFollowers().size();
+
+        assertEquals(1, numberOfUsersThatIsFollowingUserBAfterUserAFollowsUserB);
+        assertEquals(1, numberOfUsersUserAIsFollowingAfterFollowingUserB);
+
+        userService.unfollowUser(userAAuthHeader, 3L);
+
+        User userAAfterUnfollowingUserB = userRepository.findByIdWithFollowing(2L).get();
+        User userBAfterUserAUnfollowed = userRepository.findByIdWithFollowers(3L).get();
+
+        int numberOfUsersUserAIsFollowingAfterUnfollowingUserB = userAAfterUnfollowingUserB.getFollowing().size();
+        int numberOfUsersThatIsFollowingUserBAfterUserAUnfollowsUserB = userBAfterUserAUnfollowed.getFollowers().size();
+
+        assertEquals(0, numberOfUsersThatIsFollowingUserBAfterUserAUnfollowsUserB);
+        assertEquals(0, numberOfUsersUserAIsFollowingAfterUnfollowingUserB);
     }
 
 }

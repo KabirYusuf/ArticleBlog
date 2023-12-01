@@ -61,11 +61,9 @@ public class LevelUpArticleService implements ArticleService {
         if (image != null){
             MultipartFile file = Converter.base64StringToMultipartFile(image, name);
             String fileUrl = null;
-            try {
-                fileUrl = fileStorageService.saveFile(file, "blog-article-images").get();
-            } catch (InterruptedException | ExecutionException e) {
-                throw new CommunicationException(e.getMessage());
-            }
+
+            fileUrl = fileStorageService.saveFile(file, "blog-article-images");
+
             return fileUrl;
         }
         return null;

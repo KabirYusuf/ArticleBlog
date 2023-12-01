@@ -22,8 +22,7 @@ public class CloudinaryFileStorageService implements FileStorageService {
     @Value("${CLOUDINARY_API_SECRET}")
     private String cloudinaryApiSecret;
     @Override
-    @Async
-    public CompletableFuture<String> saveFile(MultipartFile file, String folderName) {
+    public String saveFile(MultipartFile file, String folderName) {
         Map<String, Object> config = new HashMap<>();
         config.put("cloud_name", cloudinaryCloudName);
         config.put("api_key", cloudinaryApiKey);
@@ -36,7 +35,7 @@ public class CloudinaryFileStorageService implements FileStorageService {
 
         try {
             Map uploadedFile = cloudinary.uploader().upload(file.getBytes(), parameters);
-            return CompletableFuture.completedFuture((String) uploadedFile.get("url"));
+            return (String) uploadedFile.get("url");
         } catch (IOException e) {
             throw new UserException(e.getMessage());
         }

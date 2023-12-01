@@ -1,8 +1,8 @@
 package dev.levelupschool.backend.service.implementation;
 
-import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
 import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
+import dev.levelupschool.backend.data.dto.response.UserDTO;
 import dev.levelupschool.backend.data.model.Role;
 import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.repository.UserRepository;
@@ -18,9 +18,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -66,12 +68,7 @@ public class LevelUpUserService implements UserService {
     private void processFileStorage(String image, String name, User user) {
         if (image != null){
             MultipartFile file = Converter.base64StringToMultipartFile(image, name);
-            String fileUrl = null;
-            try {
-                fileUrl = fileStorageService.saveFile(file, "blog-user-images").get();
-            } catch (InterruptedException | ExecutionException e) {
-                throw new CommunicationException(e.getMessage());
-            }
+            String fileUrl = fileStorageService.saveFile(file, "blog-user-images");
             user.setUserImage(fileUrl);
         }
     }
@@ -124,8 +121,65 @@ public class LevelUpUserService implements UserService {
     @Override
     public User getUser(String authHeader) {
         String jwt = authHeader.substring(7);
-        String email = jwtService.extractUsername(jwt);
-        return userRepository.findUsersByUsernameIgnoreCase(email)
+        String username = jwtService.extractUsername(jwt);
+        return userRepository.findUsersByUsernameIgnoreCase(username)
             .orElseThrow(()-> new UserException("User not found"));
+    }
+    @Override
+    @Transactional
+    public void followUser(String authHeader, Long followedUserId) {
+        User userFollowing = getUser(authHeader);
+
+        User userFollowed = userRepository.findById(followedUserId)
+            .orElseThrow(()-> new UserException("User not found"));
+
+        if (!userFollowing.getFollowing().contains(userFollowed)) {
+            userFollowing.getFollowing().add(userFollowed);
+            userFollowed.getFollowers().add(userFollowing);
+
+            userRepository.save(userFollowed);
+            userRepository.save(userFollowing);
+        } else {
+            throw new UserException("You are already following this user");
+        }
+    }
+
+    @Override
+    @Transactional
+    public void unfollowUser(String authHeader, Long followedUserId) {
+        User userFollowing = getUser(authHeader);
+
+        User userFollowed = userRepository.findById(followedUserId)
+            .orElseThrow(()-> new UserException("User not found"));
+
+
+        if (userFollowing.getFollowing().contains(userFollowed)) {
+            userFollowing.getFollowing().remove(userFollowed);
+            userFollowed.getFollowers().remove(userFollowing);
+
+            userRepository.save(userFollowed);
+            userRepository.save(userFollowing);
+        } else {
+            throw new UserException("You cannot unfollow a user you are not following");
+        }
+    }
+
+
+    @Override
+    public List<UserDTO> getFollowers(String authHeader) {
+        User foundUser = getUser(authHeader);
+        return foundUser
+            .getFollowers()
+            .stream()
+            .map(UserDTO::new).toList();
+    }
+
+    @Override
+    public List<UserDTO> getUsersFollowed(String authHeader) {
+        User foundUser = getUser(authHeader);
+        return foundUser
+            .getFollowing()
+            .stream()
+            .map(UserDTO::new).toList();
     }
 }

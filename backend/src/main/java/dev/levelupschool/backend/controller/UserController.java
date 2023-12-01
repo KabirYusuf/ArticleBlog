@@ -2,6 +2,7 @@ package dev.levelupschool.backend.controller;
 import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
 import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
+import dev.levelupschool.backend.data.dto.response.UserDTO;
 import dev.levelupschool.backend.data.model.Article;
 import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.service.interfaces.UserService;
@@ -65,5 +66,32 @@ public class UserController {
         HttpServletRequest httpServletRequest){
         String authHeader = httpServletRequest.getHeader("Authorization");
         userService.deleteUser(id, authHeader);
+    }
+    @PostMapping("{id}/follows")
+    public void followUser(
+        @PathVariable("id") Long id,
+        HttpServletRequest httpServletRequest
+    ){
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        userService.followUser(authHeader, id);
+    }
+    @DeleteMapping("{id}/follows")
+    public void unFollowUser(
+        @PathVariable("id") Long id,
+        HttpServletRequest httpServletRequest
+    ){
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        userService.unfollowUser(authHeader, id);
+    }
+    @GetMapping("/followers")
+    public ResponseEntity<List<UserDTO>> getFollowers(HttpServletRequest httpServletRequest){
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        return ResponseEntity.ok(userService.getFollowers(authHeader));
+    }
+
+    @GetMapping("/following")
+    public ResponseEntity<List<UserDTO>> getUsersFollowed(HttpServletRequest httpServletRequest){
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        return ResponseEntity.ok(userService.getUsersFollowed(authHeader));
     }
 }
