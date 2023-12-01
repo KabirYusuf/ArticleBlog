@@ -15,6 +15,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.followers WHERE u.id = :userId")
     Optional<User> findByIdWithFollowers(Long userId);
+<<<<<<< HEAD
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.bookmarkedArticles WHERE u.id = :userId")
     Optional<User> findByIdWithBookmarkedArticles(Long userId);
+=======
+>>>>>>> 154319b (feat: Implemented many-many r/shp for users and followers with all unit and integration test passing)
 }
