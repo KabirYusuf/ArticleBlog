@@ -1,5 +1,6 @@
 package dev.levelupschool.backend.data.model;
 
+import dev.levelupschool.backend.data.model.enums.ReactionType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -55,6 +56,17 @@ public class Article {
     private String articleImage;
     @ManyToMany(mappedBy = "bookmarkedArticles")
     private Set<User> bookmarkedByUsers = new HashSet<>();
+
+    public Set<UserArticleReaction> getReactions() {
+        return reactions;
+    }
+
+    public void setReactions(Set<UserArticleReaction> reactions) {
+        this.reactions = reactions;
+    }
+
+    @OneToMany(mappedBy = "article")
+    private Set<UserArticleReaction> reactions = new HashSet<>();
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;

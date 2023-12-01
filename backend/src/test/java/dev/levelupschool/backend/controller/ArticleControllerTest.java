@@ -8,8 +8,11 @@ import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
 import dev.levelupschool.backend.data.model.Article;
 import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.repository.ArticleRepository;
+import dev.levelupschool.backend.data.repository.UserArticleReactionRepository;
 import dev.levelupschool.backend.data.repository.UserRepository;
 import dev.levelupschool.backend.service.auth.AuthenticationService;
+import dev.levelupschool.backend.service.implementation.LevelUpUserArticleReactionService;
+import dev.levelupschool.backend.service.interfaces.ArticleService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static dev.levelupschool.backend.util.Serializer.asJsonString;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -40,6 +44,12 @@ class ArticleControllerTest {
     private ArticleRepository articleRepository;
     @Autowired
     private AuthenticationService authenticationService;
+    @Autowired
+    UserArticleReactionRepository userArticleReactionRepository;
+    @Autowired
+    LevelUpUserArticleReactionService levelUpUserArticleReactionService;
+    @Autowired
+    private ArticleService articleService;
     private String authHeader;
     private RegistrationRequest registrationRequest;
 
@@ -110,19 +120,19 @@ class ArticleControllerTest {
 
     @Test
     public void givenArticle_whenDeleteArticleWithId_then200IsReturnedAsStatusCode() throws Exception {
-        Assertions.assertEquals(1, articleRepository.findAll().size());
+        assertEquals(1, articleRepository.findAll().size());
         mvc.perform(
                 delete("/articles/1")
                     .header("Authorization", authHeader)
             )
             .andExpect(status().is2xxSuccessful());
 
-        Assertions.assertEquals(0, articleRepository.findAll().size());
+        assertEquals(0, articleRepository.findAll().size());
     }
     @Test
     public void givenAnArticle_whenArticleIsUpdated_theArticleIsUpdatedAndTheNewArticleIsReturned() throws Exception {
-        Assertions.assertEquals("test title 1", articleRepository.findById(1L).get().getTitle());
-        Assertions.assertEquals("test content 1", articleRepository.findById(1L).get().getContent());
+        assertEquals("test title 1", articleRepository.findById(1L).get().getTitle());
+        assertEquals("test content 1", articleRepository.findById(1L).get().getContent());
 
         UpdateArticleRequest updateArticleRequest = new UpdateArticleRequest();
         updateArticleRequest.setTitle("updated title");
@@ -137,13 +147,13 @@ class ArticleControllerTest {
             .andExpect(jsonPath("$.title").value("updated title"))
             .andExpect(jsonPath("$.content").value("updated content"));
 
-        Assertions.assertEquals("updated title", articleRepository.findById(1L).get().getTitle());
-        Assertions.assertEquals("updated content", articleRepository.findById(1L).get().getContent());
+        assertEquals("updated title", articleRepository.findById(1L).get().getTitle());
+        assertEquals("updated content", articleRepository.findById(1L).get().getContent());
     }
 
     @Test
     public void givenACreateArticleRequest_whenArticleIsCreated_theNumberOfArticlesIncreasesByOne() throws Exception {
-        Assertions.assertEquals(1, articleRepository.findAll().size());
+        assertEquals(1, articleRepository.findAll().size());
 
         CreateArticleRequest createArticleRequest = new CreateArticleRequest();
         createArticleRequest.setTitle("Second article title");
@@ -157,7 +167,7 @@ class ArticleControllerTest {
         )
             .andExpect(status().isCreated());
 
-        Assertions.assertEquals(2, articleRepository.findAll().size());
+        assertEquals(2, articleRepository.findAll().size());
     }
 
     @Test
@@ -183,8 +193,8 @@ class ArticleControllerTest {
         String authHeaderForSecondUser = "Bearer " + authenticationResponse.getToken();
 
 
-        Assertions.assertEquals("test title 1", articleRepository.findById(1L).get().getTitle());
-        Assertions.assertEquals("test content 1", articleRepository.findById(1L).get().getContent());
+        assertEquals("test title 1", articleRepository.findById(1L).get().getTitle());
+        assertEquals("test content 1", articleRepository.findById(1L).get().getContent());
 
         UpdateArticleRequest updateArticleRequest = new UpdateArticleRequest();
         updateArticleRequest.setTitle("updated title");
@@ -198,8 +208,8 @@ class ArticleControllerTest {
             )
                 .andExpect(status().is4xxClientError());
 
-        Assertions.assertEquals("test title 1", articleRepository.findById(1L).get().getTitle());
-        Assertions.assertEquals("test content 1", articleRepository.findById(1L).get().getContent());
+        assertEquals("test title 1", articleRepository.findById(1L).get().getTitle());
+        assertEquals("test content 1", articleRepository.findById(1L).get().getContent());
     }
 
     @Test
@@ -224,14 +234,58 @@ class ArticleControllerTest {
 
         String authHeaderForSecondUser = "Bearer " + authenticationResponse.getToken();
 
-        Assertions.assertEquals(1, articleRepository.findAll().size());
+        assertEquals(1, articleRepository.findAll().size());
         mvc.perform(
                 delete("/articles/1")
                     .header("Authorization", authHeaderForSecondUser)
             )
             .andExpect(status().is4xxClientError());
 
-        Assertions.assertEquals(1, articleRepository.findAll().size());
+        assertEquals(1, articleRepository.findAll().size());
     }
+
+    @Test
+    public void givenReactionTypeAndArticle_whenReactToArticle_thenReactionIsSaved() throws Exception {
+        String reactionType = "LIKE";
+
+
+        int sizeBeforeReactingToArticle = userArticleReactionRepository.findAll().size();
+        assertEquals(0, sizeBeforeReactingToArticle);
+
+        mvc.perform(
+                post("/articles/" + 1L + "/react")
+                    .header("Authorization", authHeader)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("{\"reactionType\":\"" + reactionType + "\"}")
+            )
+            .andExpect(status().isOk());
+
+        int countAfterReactingToArticle = userArticleReactionRepository.findAll().size();
+
+
+        assertEquals(1, countAfterReactingToArticle);
+    }
+
+    @Test
+    public void givenArticleWithReaction_whenRemoveReaction_thenReactionIsRemoved() throws Exception {
+
+        articleService.reactToArticle(1L, "LIKE", authHeader);
+
+        int countAfterReactingToArticle = userArticleReactionRepository.findAll().size();
+        assertEquals(1, countAfterReactingToArticle);
+
+        mvc.perform(
+                delete("/articles/" + 1L + "/react")
+                    .header("Authorization", authHeader)
+            )
+            .andExpect(status().isOk());
+
+
+        int countAfterRemovingReactionToArticle = userArticleReactionRepository.findAll().size();
+
+        assertEquals(0, countAfterRemovingReactionToArticle);
+    }
+
+
 
 }

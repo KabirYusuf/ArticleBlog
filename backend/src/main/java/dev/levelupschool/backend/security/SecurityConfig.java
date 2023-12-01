@@ -1,6 +1,6 @@
 package dev.levelupschool.backend.security;
 
-import dev.levelupschool.backend.data.model.Role;
+import dev.levelupschool.backend.data.model.enums.Role;
 import dev.levelupschool.backend.exception.SecurityException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

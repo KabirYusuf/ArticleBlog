@@ -84,6 +84,9 @@ class CommentControllerTest {
     @Test
     public void givenComment_whenGetArticle_thenReturnCommentsArray() throws Exception {
         User user = new User();
+        user.setUsername("kabir");
+        user.setPassword("123456yfg");
+        user.setEmail("son@gmail.com");
         userRepository.save(user);
         var article = articleRepository.save(new Article("test title", "test content 1", user, null));
 

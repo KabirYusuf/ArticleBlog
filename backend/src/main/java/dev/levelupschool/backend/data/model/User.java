@@ -1,8 +1,8 @@
 package dev.levelupschool.backend.data.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import dev.levelupschool.backend.data.model.enums.Role;
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -63,6 +63,9 @@ public class User {
         inverseJoinColumns = @JoinColumn(name = "article_id")
     )
     private Set<Article> bookmarkedArticles = new HashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<UserArticleReaction> reactions = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {

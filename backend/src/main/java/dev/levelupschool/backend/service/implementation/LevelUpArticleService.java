@@ -5,17 +5,23 @@ import dev.levelupschool.backend.data.dto.request.UpdateArticleRequest;
 import dev.levelupschool.backend.data.dto.response.CreateArticleResponse;
 import dev.levelupschool.backend.data.model.Article;
 import dev.levelupschool.backend.data.model.User;
+import dev.levelupschool.backend.data.model.UserArticleReaction;
+import dev.levelupschool.backend.data.model.enums.ReactionType;
 import dev.levelupschool.backend.data.repository.ArticleRepository;
 import dev.levelupschool.backend.exception.CommunicationException;
 import dev.levelupschool.backend.exception.ModelNotFoundException;
+import dev.levelupschool.backend.exception.ReactionException;
 import dev.levelupschool.backend.exception.UserException;
 import dev.levelupschool.backend.service.interfaces.ArticleService;
 import dev.levelupschool.backend.service.interfaces.FileStorageService;
+import dev.levelupschool.backend.service.interfaces.UserArticleReactionService;
 import dev.levelupschool.backend.service.interfaces.UserService;
 import dev.levelupschool.backend.util.Converter;
+import dev.levelupschool.backend.util.UserArticleReactionId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -27,14 +33,17 @@ public class LevelUpArticleService implements ArticleService {
     private final ArticleRepository articleRepository;
     private final UserService userService;
     private final FileStorageService fileStorageService;
+    private final UserArticleReactionService userArticleReactionService;
 
     public LevelUpArticleService(
         ArticleRepository articleRepository,
         UserService userService,
-        FileStorageService fileStorageService){
+        FileStorageService fileStorageService,
+        UserArticleReactionService userArticleReactionService){
         this.articleRepository = articleRepository;
         this.userService = userService;
         this.fileStorageService = fileStorageService;
+        this.userArticleReactionService = userArticleReactionService;
     }
     @Override
     public CreateArticleResponse createArticle(CreateArticleRequest createArticleRequest, String authHeader) {
@@ -107,4 +116,39 @@ public class LevelUpArticleService implements ArticleService {
         articleRepository
             .deleteById(articleId);
     }
+    @Transactional
+    public void reactToArticle(Long articleId, String reactionType, String authHeader) {
+        User user = userService.getUser(authHeader);
+        Article article = articleRepository.findById(articleId)
+            .orElseThrow(() -> new ModelNotFoundException(articleId));
+
+        UserArticleReactionId id = new UserArticleReactionId(user.getId(), article.getId());
+
+        UserArticleReaction reaction = userArticleReactionService.findUserArticleReactionById(id);
+        if (reaction ==null){
+            reaction = new UserArticleReaction();
+        }
+
+        reaction.setId(id);
+        reaction.setUser(user);
+        reaction.setArticle(article);
+        reaction.setReaction(ReactionType.valueOf(reactionType));
+
+        userArticleReactionService.save(reaction);
+    }
+    @Transactional
+    public void removeReaction(Long articleId, String authHeader) {
+        User user = userService.getUser(authHeader);
+        UserArticleReactionId id = new UserArticleReactionId(user.getId(), articleId);
+
+        UserArticleReaction existingReaction = userArticleReactionService.findUserArticleReactionById(id);
+
+        if (existingReaction != null) {
+            userArticleReactionService.deleteUserArticleReaction(existingReaction);
+        } else {
+            throw new ReactionException("Reaction not found");
+        }
+    }
+
+
 }

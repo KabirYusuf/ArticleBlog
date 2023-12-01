@@ -1,6 +1,7 @@
 package dev.levelupschool.backend.controller;
 
 import dev.levelupschool.backend.data.dto.request.CreateArticleRequest;
+import dev.levelupschool.backend.data.dto.request.ReactionRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateArticleRequest;
 import dev.levelupschool.backend.data.dto.response.CreateArticleResponse;
 import dev.levelupschool.backend.data.model.Article;
@@ -66,5 +67,20 @@ public class ArticleController {
         HttpServletRequest httpServletRequest) {
         String authHeader = httpServletRequest.getHeader("Authorization");
         articleService.deleteArticle(id, authHeader);
+    }
+    @PostMapping("{id}/react")
+    public void reactToArticle(
+        @RequestBody ReactionRequest reactionRequest,
+        @PathVariable Long id,
+        HttpServletRequest httpServletRequest) {
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        articleService.reactToArticle(id, reactionRequest.getReactionType(), authHeader);
+    }
+    @DeleteMapping("{id}/react")
+    public void removeReaction(
+        @PathVariable Long id,
+        HttpServletRequest httpServletRequest) {
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        articleService.removeReaction(id, authHeader);
     }
 }

@@ -1,7 +1,7 @@
 package dev.levelupschool.backend;
 
 import dev.levelupschool.backend.data.model.Article;
-import dev.levelupschool.backend.data.model.Role;
+import dev.levelupschool.backend.data.model.enums.Role;
 import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.model.Comment;
 import dev.levelupschool.backend.data.repository.ArticleRepository;
