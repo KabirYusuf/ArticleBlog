@@ -5,9 +5,14 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.hateoas.server.core.Relation;
 
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import java.util.HashSet;
+
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "articles", schema = "public")
@@ -48,6 +53,20 @@ public class Article {
 
 
     private String articleImage;
+    @ManyToMany(mappedBy = "bookmarkedArticles")
+    private Set<User> bookmarkedByUsers = new HashSet<>();
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public Set<User> getBookmarkedByUsers() {
+        return bookmarkedByUsers;
+    }
+
+    public void setBookmarkedByUsers(Set<User> bookmarkedByUsers) {
+        this.bookmarkedByUsers = bookmarkedByUsers;
+    }
 
     public String getArticleImage() {
         return articleImage;

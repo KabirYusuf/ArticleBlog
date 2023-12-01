@@ -5,7 +5,9 @@ import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
 import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
 import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
+import dev.levelupschool.backend.data.model.Article;
 import dev.levelupschool.backend.data.model.User;
+import dev.levelupschool.backend.data.repository.ArticleRepository;
 import dev.levelupschool.backend.data.repository.UserRepository;
 import dev.levelupschool.backend.service.auth.AuthenticationService;
 import dev.levelupschool.backend.service.interfaces.UserService;
@@ -24,7 +26,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static dev.levelupschool.backend.util.Serializer.*;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -43,6 +45,8 @@ class UserControllerTest {
     private UserService userService;
     @Autowired
     private AuthenticationService authenticationService;
+    @Autowired
+    private ArticleRepository articleRepository;
     private String authHeader;
     private RegistrationRequest registrationRequest;
     @Container
@@ -282,5 +286,66 @@ class UserControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.*", hasSize(1)))
             .andExpect(jsonPath("$[0].username", is("kaybee2")));
+    }
+
+    @Test
+    public void givenUserAndArticle_whenUserBookmarksArticle_thenArticleIsBookmarked() throws Exception {
+        var article = new Article("test title 1", "test content 1", userRepository.findById(1L).get(), null);
+
+        articleRepository.save(article);
+        Long articleId = 1L;
+
+        mvc.perform(
+                post("/users/bookmarks/" + articleId)
+                    .header("Authorization", authHeader)
+            )
+            .andExpect(status().isOk());
+
+
+        User userAfterBookmarking = userRepository.findByIdWithBookmarkedArticles(1L).get();
+        assertTrue(userAfterBookmarking.getBookmarkedArticles().stream()
+            .anyMatch(foundArticle -> foundArticle.getId().equals(articleId)));
+    }
+
+    @Test
+    public void givenUserAndBookmarkedArticle_whenUserUnBookmarksArticle_thenArticleIsUnBookmarked() throws Exception {
+        var article = new Article("test title 1", "test content 1", userRepository.findById(1L).get(), null);
+
+        articleRepository.save(article);
+        Long articleId = 1L;
+
+
+        userService.bookmarkArticle(articleId, authHeader);
+
+        mvc.perform(
+                delete("/users/bookmarks/" + articleId)
+                    .header("Authorization", authHeader)
+            )
+            .andExpect(status().isOk());
+
+
+        User userAfterUnBookmarking = userRepository.findByIdWithBookmarkedArticles(1L).get();
+        assertFalse(userAfterUnBookmarking.getBookmarkedArticles().stream()
+            .anyMatch(foundArticle -> foundArticle.getId().equals(articleId)));
+    }
+
+    @Test
+    public void givenUser_whenGetBookmarkedArticles_thenReturnJsonArrayOfBookmarkedArticles() throws Exception {
+        var article = new Article("test title 1", "test content 1", userRepository.findById(1L).get(), null);
+
+        articleRepository.save(article);
+        Long articleId = 1L;
+
+
+        userService.bookmarkArticle(articleId, authHeader);
+
+        mvc.perform(
+                get("/users/bookmarks")
+                    .header("Authorization", authHeader)
+            )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.*", hasSize(greaterThan(0))))
+            .andExpect(jsonPath("$[0].id", is(notNullValue())))
+            .andExpect(jsonPath("$[0].title", is(notNullValue())));
     }
 }

@@ -56,6 +56,14 @@ public class User {
     @ManyToMany(mappedBy = "following")
     Set<User> followers = new HashSet<>();
 
+    @ManyToMany
+    @JoinTable(
+        name = "user_bookmarked_articles",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "article_id")
+    )
+    private Set<Article> bookmarkedArticles = new HashSet<>();
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

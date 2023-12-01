@@ -2,6 +2,7 @@ package dev.levelupschool.backend.controller;
 import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
 import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
+import dev.levelupschool.backend.data.dto.response.ArticleDTO;
 import dev.levelupschool.backend.data.dto.response.UserDTO;
 import dev.levelupschool.backend.data.model.Article;
 import dev.levelupschool.backend.data.model.User;
@@ -93,5 +94,27 @@ public class UserController {
     public ResponseEntity<List<UserDTO>> getUsersFollowed(HttpServletRequest httpServletRequest){
         String authHeader = httpServletRequest.getHeader("Authorization");
         return ResponseEntity.ok(userService.getUsersFollowed(authHeader));
+    }
+    @PostMapping("/bookmarks/{id}")
+    public void bookmarkArticle(
+        @PathVariable("id") Long id,
+        HttpServletRequest httpServletRequest
+    ){
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        userService.bookmarkArticle(id, authHeader);
+    }
+    @DeleteMapping("/bookmarks/{id}")
+    public void unBookmarkArticle(
+        @PathVariable("id") Long id,
+        HttpServletRequest httpServletRequest
+    ){
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        userService.unBookmarkArticle(id, authHeader);
+    }
+
+    @GetMapping("/bookmarks")
+    public ResponseEntity<List<ArticleDTO>> getBookmarkedArticles(HttpServletRequest httpServletRequest){
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        return ResponseEntity.ok(userService.getBookmarkedArticles(authHeader));
     }
 }

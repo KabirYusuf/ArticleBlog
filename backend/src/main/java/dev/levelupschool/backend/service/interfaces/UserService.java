@@ -4,6 +4,7 @@ import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
 import dev.levelupschool.backend.data.dto.request.CreateUserRequest;
 import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
+import dev.levelupschool.backend.data.dto.response.ArticleDTO;
 import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
 import dev.levelupschool.backend.data.dto.response.CreateUserResponse;
 import dev.levelupschool.backend.data.dto.response.UserDTO;
@@ -27,5 +28,8 @@ public interface UserService {
     void unfollowUser(String authHeader, Long followedUserId);
     List<UserDTO> getFollowers(String authHeader);
     List<UserDTO> getUsersFollowed(String authHeader);
+    void bookmarkArticle(Long articleId, String authHeader);
+    void unBookmarkArticle(Long articleId, String authHeader);
+    public List<ArticleDTO> getBookmarkedArticles(String authHeader);
 
 }

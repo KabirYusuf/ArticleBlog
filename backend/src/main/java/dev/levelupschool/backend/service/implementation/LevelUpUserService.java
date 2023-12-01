@@ -2,9 +2,12 @@ package dev.levelupschool.backend.service.implementation;
 
 import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
+import dev.levelupschool.backend.data.dto.response.ArticleDTO;
 import dev.levelupschool.backend.data.dto.response.UserDTO;
+import dev.levelupschool.backend.data.model.Article;
 import dev.levelupschool.backend.data.model.Role;
 import dev.levelupschool.backend.data.model.User;
+import dev.levelupschool.backend.data.repository.ArticleRepository;
 import dev.levelupschool.backend.data.repository.UserRepository;
 import dev.levelupschool.backend.exception.CommunicationException;
 import dev.levelupschool.backend.exception.ModelNotFoundException;
@@ -26,6 +29,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -35,15 +39,18 @@ public class LevelUpUserService implements UserService {
 
     private final JwtService jwtService;
     private final FileStorageService fileStorageService;
+    private ArticleRepository articleRepository;
     public LevelUpUserService(
         UserRepository userRepository,
         PasswordEncoder passwordEncoder,
         JwtService jwtService,
-        FileStorageService fileStorageService){
+        FileStorageService fileStorageService,
+        ArticleRepository articleRepository){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.fileStorageService = fileStorageService;
+        this.articleRepository = articleRepository;
     }
 
     @Override
@@ -181,5 +188,45 @@ public class LevelUpUserService implements UserService {
             .getFollowing()
             .stream()
             .map(UserDTO::new).toList();
+    }
+
+    @Override
+    @Transactional
+    public void bookmarkArticle(Long articleId, String authHeader) {
+        User user = getUser(authHeader);
+        Article article = articleRepository.findById(articleId)
+            .orElseThrow(() -> new ModelNotFoundException(articleId));
+
+        if (user.getBookmarkedArticles().contains(article)) {
+            throw new UserException("Article already bookmarked");
+        }
+
+        user.getBookmarkedArticles().add(article);
+        userRepository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public void unBookmarkArticle(Long articleId, String authHeader) {
+        User user = getUser(authHeader);
+        Article article = articleRepository.findById(articleId)
+            .orElseThrow(() -> new ModelNotFoundException(articleId));
+
+        if (!user.getBookmarkedArticles().contains(article)) {
+            throw new UserException("Article not bookmarked");
+        }
+
+        user.getBookmarkedArticles().remove(article);
+        userRepository.save(user);
+    }
+    @Override
+    @Transactional(readOnly = true)
+    public List<ArticleDTO> getBookmarkedArticles(String authHeader) {
+        User user = getUser(authHeader);
+
+        return user.getBookmarkedArticles()
+            .stream()
+            .map(ArticleDTO::new)
+            .collect(Collectors.toList());
     }
 }

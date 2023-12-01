@@ -3,7 +3,9 @@ package dev.levelupschool.backend.service.implementation;
 import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
 import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
+import dev.levelupschool.backend.data.model.Article;
 import dev.levelupschool.backend.data.model.User;
+import dev.levelupschool.backend.data.repository.ArticleRepository;
 import dev.levelupschool.backend.data.repository.UserRepository;
 import dev.levelupschool.backend.service.auth.AuthenticationService;
 import dev.levelupschool.backend.service.interfaces.UserService;
@@ -29,6 +31,8 @@ class LevelUpUserServiceTest {
 
     @Autowired
     private AuthenticationService authenticationService;
+    @Autowired
+    private ArticleRepository articleRepository;
 
     private String authHeader;
 
@@ -161,5 +165,47 @@ class LevelUpUserServiceTest {
         assertEquals(0, numberOfUsersThatIsFollowingUserBAfterUserAUnfollowsUserB);
         assertEquals(0, numberOfUsersUserAIsFollowingAfterUnfollowingUserB);
     }
+
+    @Test
+    public void givenUserAndArticle_whenUserBookmarksArticle_thenArticleIsBookmarked() {
+        var article = new Article("test title 1", "test content 1", userRepository.findById(1L).get(), null);
+
+        articleRepository.save(article);
+        Long articleId = 1L;
+
+
+        User userBeforeBookmarking = userRepository.findByIdWithBookmarkedArticles(1L).get();
+        assertFalse(userBeforeBookmarking.getBookmarkedArticles().stream()
+            .anyMatch(foundArticle -> foundArticle.getId().equals(articleId)));
+
+        userService.bookmarkArticle(articleId, authHeader);
+
+
+        User userAfterBookmarking = userRepository.findByIdWithBookmarkedArticles(1L).get();
+        assertTrue(userAfterBookmarking.getBookmarkedArticles().stream()
+            .anyMatch(foundArticle -> foundArticle.getId().equals(articleId)));
+
+    }
+    @Test
+    public void givenUserAndBookmarkedArticle_whenUserUnBookmarksArticle_thenArticleIsUnBookmarked() {
+        var article = new Article("test title 1", "test content 1", userRepository.findById(1L).get(), null);
+
+        articleRepository.save(article);
+        Long articleId = 1L;
+
+        userService.bookmarkArticle(articleId, authHeader);
+        User userBeforeUnBookmarking = userRepository.findByIdWithBookmarkedArticles(1L).get();
+        assertTrue(userBeforeUnBookmarking.getBookmarkedArticles().stream()
+            .anyMatch(foundArticle -> foundArticle.getId().equals(articleId)));
+
+        userService.unBookmarkArticle(articleId, authHeader);
+
+
+        User userAfterUnBookmarking = userRepository.findByIdWithBookmarkedArticles(1L).get();
+        assertFalse(userAfterUnBookmarking.getBookmarkedArticles().stream()
+            .anyMatch(foundArticle -> foundArticle.getId().equals(articleId)));
+    }
+
+
 
 }
