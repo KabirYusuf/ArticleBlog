@@ -1,9 +1,6 @@
 <template>
   <header class="header">
-    <HambugerMenu />
-    
-      <NavBar/>
-    
+    <NavBar />
 
     <div class="headerText__container" v-if="!isCenter">
       <div class="headerText__inner">
@@ -29,24 +26,15 @@
       <div class="headerTextCenter__content">
         <p class="headerText__center  headerText__center--title">{{ card?.title }}</p>
         <p class="headerText__center  headerText__center--content">{{ card?.content }}</p>
-        <p class="headerText__center  headerText__center--authorName">By {{ card?.user.firstName }}  {{ card?.user.lastName }}</p>
+        <p class="headerText__center  headerText__center--authorName">By {{ card?.user.firstName }} {{ card?.user.lastName
+        }}</p>
       </div>
     </div>
   </header>
-  <Modal v-if="modalStore.showLogin">
-    <LoginModal />
-  </Modal>
-
-  <Modal v-if="modalStore.showRegister">
-    <RegisterModal />
-  </Modal>
 </template>
 
 <script setup>
-import LoginModal from "../modals/LoginModal.vue"
-import { useModalStore } from "@/store/modalStore";
-import RegisterModal from "../modals/RegisterModal.vue"
-import Modal from '../modals/Modal.vue'
+
 import HambugerMenu from '../hamburger/HambugerMenu.vue'
 import NavBar from './NavBar.vue'
 
@@ -55,6 +43,6 @@ defineProps(
 )
 
 
-const modalStore = useModalStore();
+
 
 </script>

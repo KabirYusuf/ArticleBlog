@@ -12,7 +12,9 @@ const stopPropagation = (e) => {
 <template>
     <div class="modal__container" @click="modalStore.closeModal">
         <div class="modalContent__container" @click="stopPropagation">
-            <span class="closeModal__symbol" @click="modalStore.closeModal"><X /></span>
+            <span class="closeModal__symbol" @click="modalStore.closeModal">
+                <X />
+            </span>
             <slot />
         </div>
     </div>

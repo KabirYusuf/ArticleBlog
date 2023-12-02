@@ -1,12 +1,46 @@
 .form__submitButton{
   width: 100%;
-  padding: 15px 20px;
+  padding: 10px 15px;
   margin-top: 20px;
   border: none;
   background-color: #d2a679;
   color: white;
-  font-size: 16px;
+  font-size: 1.025rem;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+}
+
+.subscription__button{
+  background-color: #d2a679;
+  color: white;
+  width: 200px;
+  cursor: pointer;
+  font-size: 0.876rem;
+  border: none;
+  padding: 10px;
+}
+
+.articleInfo__submitButton{
+  width: 20%;
+  border: none;
+  background-color: #d2a679;
+  color: white;
+  font-size: 1.025rem;
+  cursor: pointer;
+  padding: 10px 15px;
+  margin-top: 20px;
+}
+
+.articleInfo__addTag{
+  width: fit-content;
+  margin-bottom: 5px;
+  border: none;
+  background-color: #d2a679;
+  color: white;
+  font-size: 1.025rem;
+  cursor: pointer;
+  padding: 3px;
+  border-radius: 3px;
+  font-size: 0.925rem;
 }

@@ -1,0 +1,131 @@
+.myProfileHeader__content {
+    @include profileHeaderContent;
+}
+
+.myProfileHeader__inner {
+    @include profileHeaderInner;
+}
+
+
+.profileHeader__image {
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 50%;
+    margin: 0px auto 10px;
+    object-fit: cover;
+}
+
+.profile__name {
+    font-size: 2.571rem;
+    font-weight: 700;
+    line-height: 46px;
+    margin-bottom: 10px;
+    color: #FFFFFF;
+}
+
+.profile__email {
+    font-size: 0.857rem;
+    color: #FFFFFF;
+    line-height: 20px;
+
+    &::after {
+        content: '';
+        display: block;
+        width: 40px;
+        height: 2px;
+        background: #D4A373;
+        margin: 30px auto;
+    }
+}
+
+.profile__link {
+    color: #D4A373;
+    text-decoration: none;
+    font-family: Lora;
+    font-size: 0.857rem;
+    font-weight: 700;
+    line-height: 20px;
+}
+
+.userArticle__container {
+    @include container;
+    max-width: $maxWidth;
+}
+
+.userArticle__heading {
+    font-size: 2.571rem;
+    font-weight: 700;
+    line-height: 46px;
+    color: #495057;
+}
+
+.userArticle__addArticleCard {
+    border: 2px solid #DDDDDD;
+    border-style: dashed;
+    height: 350px;
+    border-radius: 5px;
+    background-color: $whiteColor;
+    display: flex;
+    justify-content: center;
+    align-items: center
+}
+
+.userArticle__iconAndText {
+    text-align: center;
+}
+
+.userArticle__link{
+    text-decoration: none;
+    color: #000;
+}
+
+.userArticle__article {
+    @include editorsCardDisplay;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 13.3px;
+}
+
+.subcription__container {
+    @include container;
+    background-color: #E5E5E5;
+}
+
+.subscriptionHeading__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.subscription__title {
+    color: #495057;
+    font-size: 2.571rem;
+    font-weight: 700;
+    line-height: 46px;
+}
+
+.subscription__addNew {
+    color: #D4A373;
+    font-size: 1rem;
+    line-height: 20px;
+}
+
+.subscription__innerContent {
+    background-color: white;
+    padding: 40px 20px;
+    border: 1px solid #495057;
+    border-style: dashed;
+}
+
+.subscription__status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.subscription__state {
+    color: #495057;
+    font-size: 1.286rem;
+    line-height: 25px;
+    font-weight: 700;
+}

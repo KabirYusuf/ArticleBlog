@@ -10,11 +10,13 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.6.2",
     "lucide-vue-next": "^0.294.0",
     "pinia": "^2.1.7",
     "sweetalert2": "^11.10.1",
     "vue": "^3.3.4",
+    "vue-image-crop-upload": "^3.0.3",
     "vue-router": "^4.2.5"
   },
   "devDependencies": {

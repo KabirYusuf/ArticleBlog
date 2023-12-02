@@ -1,58 +1,67 @@
 <script setup>
 import { ref } from 'vue';
-import { useModalStore } from '../../store/modalStore';
 import InputField from '../inputs/InputField.vue';
-import Button from '../inputs/Button.vue'
+import Button from '../inputs/Button.vue';
 import { register } from '../../utility/Auth';
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
+import { useUserStore } from '../../store/userStore';
+import { useModalStore } from '../../store/modalStore';
+import { useRouter } from 'vue-router';
 
+const userStore = useUserStore();
+const modalStore = useModalStore();
+const router = useRouter();
 
-const email = ref('')
-const name = ref('')
-const username = ref('')
-const password = ref('')
-const repeatPassword = ref('')
+const email = ref('');
+const firstName = ref('');
+const lastName = ref('');
+const username = ref('');
+const password = ref('');
+const repeatPassword = ref('');
 const isPremium = ref(false);
-const message = ref('')
+const message = ref('');
 
 const handleSubmit = async () => {
-    console.log(email.value, password.value, username.value, repeatPassword.value, isPremium.value)
-    message.value = ''
-    if (password !== repeatPassword) {
-        message.value = 'Password mismatch'
+    message.value = '';
+    if (password.value !== repeatPassword.value) {
+        message.value = 'Password mismatch';
+        return;
     }
-    if (!email || !username || !password) {
-        return
+    if (!email.value || !username.value || !password.value || !firstName.value || !lastName.value) {
+        return;
     }
     try {
         const response = await register({
             email: email.value,
             username: username.value,
-            password: password.value
+            password: password.value,
+            firstName: firstName.value,
+            lastName: lastName.value
         });
         localStorage.setItem('token', response.data.token);
+        userStore.logIn();
 
-        console.log(response.data)
+        modalStore.closeModal();
+
         Swal.fire({
             icon: 'success',
             title: 'Success',
             text: response.data.message
-        })
+        });
+
+        router.push('/');
+        
     } catch (error) {
-        const err = Object.values(error.response.data.errors)
+        const err = Object.values(error.response.data.errors);
         Swal.fire({
             icon: 'error',
             title: 'Unsuccessful',
             text: err[0]
-        })
+        });
     }
-
-
-}
-
-
-
+};
 </script>
+
 <template>
     <div class="modalContent__header">
         <p>Register</p>
@@ -62,8 +71,11 @@ const handleSubmit = async () => {
         <label for="email" class="form__label">Email</label>
         <InputField id="email" type="email" placeholder="email@email.com" v-model:value="email" class="input__field" />
 
-        <label for="name" class="form__label">Name</label>
-        <InputField id="name" type="text" placeholder="name" v-model:value="name" class="input__field" />
+        <label for="firstName" class="form__label">First Name</label>
+        <InputField id="firstNname" type="text" placeholder="first name" v-model:value="firstName" class="input__field" />
+
+        <label for="lastName" class="form__label">Last Name</label>
+        <InputField id="lastNname" type="text" placeholder="last name" v-model:value="lastName" class="input__field" />
 
         <label for="username" class="form__label">Username</label>
         <InputField id="username" type="text" placeholder="username" v-model:value="username" class="input__field" />

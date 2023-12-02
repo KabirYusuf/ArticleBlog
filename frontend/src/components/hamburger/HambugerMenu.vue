@@ -1,5 +1,6 @@
 <template>
-  <div :class="[isMenuOpen ? 'open' : 'close', isMenuOpen ? 'hamburger__container--true' : 'hamburger__container--false']">
+  <div
+    :class="[isMenuOpen ? 'open' : 'close', isMenuOpen ? 'hamburger__container--true' : 'hamburger__container--false']">
     <div v-if="!isMenuOpen" class="nav__logoContainer">
       <a class="nav__logoLink" href="#">RUNO</a>
     </div>
@@ -20,7 +21,6 @@
       </li>
     </ul>
   </div>
-
 </template>
   
 <script setup>

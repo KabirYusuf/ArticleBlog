@@ -1,5 +1,5 @@
 <template>
-    <footer class="footer">
+  <footer class="footer">
     <section class="footer__inner footerInner--top">
       <div class="footerTop__contact">
         <h4 class="footerTop__header">Contact the Publisher</h4>
@@ -35,8 +35,8 @@
     </section>
     <div class="footerBottom__container">
       <div class="footer__inner footerInner--bottom">
-      <p class="footerBottom__inner">2021 | RUNO Publisher Studio</p>
-      <p class="footerBottom__inner"><a class="footerBottom__innerLink" href="#">Subscribe Now</a></p>
+        <p class="footerBottom__inner">2021 | RUNO Publisher Studio</p>
+        <p class="footerBottom__inner"><a class="footerBottom__innerLink" href="#">Subscribe Now</a></p>
       </div>
     </div>
   </footer>

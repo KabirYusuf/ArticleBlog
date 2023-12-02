@@ -1,6 +1,5 @@
 <template>
-    <Header :card="currentArticle"
-        :isCenter="true" />
+    <Header :card="currentArticle" :isCenter="true" />
 
     <section class="article__view">
         <div v-if="currentArticle" class="articleView__container">
@@ -31,7 +30,7 @@
             </div>
             <p class="comment__title">Comments:</p>
 
-            <CommentInput :article="currentArticle"/>
+            <CommentInput :article="currentArticle" />
 
             <Comment v-for="comment in formattedComments" :key="comment.id" :date="comment.createdAt"
                 :name="comment.user.firstName + ' ' + comment.user.lastName"
@@ -43,8 +42,7 @@
         <div class="relatedPostContainer">
             <h5 class="relatedPost__title">Related Posts</h5>
             <div class="editorsPick__card">
-                <EditorsPickCard v-for="(editorPick, index) in editorsPicks" :key="index" 
-                :card="editorPick"/>
+                <EditorsPickCard v-for="(editorPick, index) in editorsPicks" :key="index" :card="editorPick" />
             </div>
         </div>
     </section>
