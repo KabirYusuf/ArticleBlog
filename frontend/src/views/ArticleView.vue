@@ -15,8 +15,8 @@
 
             <div class="articleAuthorInfo">
                 <div class="author__Info author--nameAndImage">
-                    <!-- <img v-if="currentArticle?.user.image" :src="currentArticle?.user.image" alt="authorImage"> -->
-                    <img src="../../public/Image.jpg" alt="Article author image" class="article__authorImage">
+                    <img v-if="currentArticle?.user.image" :src="currentArticle?.user.image" alt="authorImage">
+                    <img v-else src="../../public/Image.jpg" alt="Article author image" class="article__authorImage">
                     <div class="author__nameAndProfession">
                         <p class="author__name">{{ fullName }}</p>
                         <p class="author__profession">Thinker & Designer</p>
@@ -31,7 +31,7 @@
             </div>
             <p class="comment__title">Comments:</p>
 
-            <CommentInput />
+            <CommentInput :article="currentArticle"/>
 
             <Comment v-for="comment in formattedComments" :key="comment.id" :date="comment.createdAt"
                 :name="comment.user.firstName + ' ' + comment.user.lastName"

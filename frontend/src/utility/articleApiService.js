@@ -1,4 +1,4 @@
-import { http } from '@/utility/Http.js'
+import { http } from '@/utility/Auth'
 
 export const getAllArticles = async () => {
     try {
@@ -17,3 +17,4 @@ export const getArticleById = async (articleId) => {
         console.log(error);
     }
 }
+
