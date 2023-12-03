@@ -2,7 +2,7 @@
     <ProfileHeader>
         <div class="myProfileHeader__content">
             <div class="myProfileHeader__inner">
-                <ImageUploader />
+                <ImageUploader/>
                 <h2 class="profile__name" v-if="fullName">{{ fullName }}</h2>
                 <h2 class="profile__name" v-else>{{ userStore.user?.username }}</h2>
                 <p class="profile__email">{{ userStore.user?.email }}</p>

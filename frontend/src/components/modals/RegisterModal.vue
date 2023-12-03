@@ -20,14 +20,21 @@ const password = ref('');
 const repeatPassword = ref('');
 const isPremium = ref(false);
 const message = ref('');
+const passwordError = ref('')
+
+const handleChange = () => {
+    message.value = ''
+    passwordError.value = ''
+}
 
 const handleSubmit = async () => {
     message.value = '';
     if (password.value !== repeatPassword.value) {
-        message.value = 'Password mismatch';
+        passwordError.value = 'Password mismatch';
         return;
     }
-    if (!email.value || !username.value || !password.value || !firstName.value || !lastName.value) {
+    if (!email.value || !username.value || !password.value) {
+        message.value = 'Please fill in all required fields';
         return;
     }
     try {
@@ -50,14 +57,20 @@ const handleSubmit = async () => {
         });
 
         router.push('/');
-        
+
     } catch (error) {
-        const err = Object.values(error.response.data.errors);
-        Swal.fire({
-            icon: 'error',
-            title: 'Unsuccessful',
-            text: err[0]
-        });
+
+        if (!error.response.data.errors) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Unsuccessful',
+                text: error.response.data
+            });
+        } else
+            if (error.response.data.errors['password']) {
+                passwordError.value = error.response.data.errors['password'];
+            }
+
     }
 };
 </script>
@@ -81,11 +94,14 @@ const handleSubmit = async () => {
         <InputField id="username" type="text" placeholder="username" v-model:value="username" class="input__field" />
 
         <label for="password" class="form__label">Password</label>
-        <InputField id="password" type="password" placeholder="Password" v-model:value="password" class="input__field" />
+        <InputField id="password" type="password" placeholder="Password" v-model:value="password" class="input__field"
+            :focus="handleChange" />
 
         <label for="repeat-password" class="form__label">Repeat Password</label>
         <InputField id="repeat-password" type="password" placeholder="Password" v-model:value="repeatPassword"
-            class="input__field" />
+            class="input__field" :focus="handleChange" />
+        <p v-if="passwordError" style="color: red;">{{ passwordError }}</p>
+        <p v-if="message" style="color: red;">{{ message }}</p>
 
         <InputField id="isPremium" type="checkbox" v-model:checked="isPremium" class="checkbox__field" />
         <label for="isPremium" class="form__label form__label--premium">I want Premium</label>

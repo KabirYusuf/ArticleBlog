@@ -59,6 +59,7 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import Swal from 'sweetalert2';
 import { ref } from 'vue'
 import { createArticle } from '../utility/articleApiService';
+import { handleErrors } from '../utility/handleErrors';
 
 const title = ref('');
 const slug = ref('');
@@ -83,11 +84,7 @@ const handleSubmit = async () => {
         });
 
     } catch (error) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Unsuccessful',
-            text: 'Failed to add article.'
-        });
+       handleErrors(error)
     }
 };
 </script>

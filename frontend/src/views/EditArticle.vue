@@ -61,6 +61,7 @@ import Swal from 'sweetalert2';
 import { ref } from 'vue'
 import { updateArticle } from '../utility/articleApiService';
 import { useRoute } from 'vue-router';
+import { handleErrors } from '../utility/handleErrors';
 
 const title = ref('');
 const slug = ref('');
@@ -88,11 +89,7 @@ const handleSubmit = async () => {
         });
 
     } catch (error) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Unsuccessful',
-            text: 'Failed to add article.'
-        });
+       handleErrors(error)
     }
 };
 </script>

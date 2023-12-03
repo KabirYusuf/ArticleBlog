@@ -19,6 +19,13 @@
       </li>
       <li class="nav__listItem" @click="modalStore.openModal('register')"><a class="nav__listLink" href="#">Register</a>
       </li>
+      <li v-if="userStore.isLoggedIn" class="nav__listItem">
+          <router-link to="/my-profile" class="nav__listLink">My profile</router-link>
+        </li>
+
+        <li v-if="userStore.isLoggedIn" class="nav__listItem" @click="handleLogout">
+          <a class="nav__listLink" href="#">Logout</a>
+        </li>
     </ul>
   </div>
 </template>
@@ -28,9 +35,17 @@ import { ref } from 'vue';
 
 
 import { useModalStore } from "@/store/modalStore";
+import { useUserStore } from "../../store/userStore";
 
 
 const modalStore = useModalStore();
+const userStore = useUserStore();
+
+
+const handleLogout = () => {
+  userStore.logOut();
+  router.push({ name: 'home' });
+};
 
 const isMenuOpen = ref(false);
 

@@ -16,16 +16,18 @@ const username = ref('')
 const password = ref('')
 const usernameError = ref('')
 const passwordError = ref('')
+const message = ref('');
 
 const handleChange = () => {
     usernameError.value = ''
     passwordError.value = ''
+    message.value = ''
 }
 
 const handleSubmit = async () => {
 
     if (!username.value || !password.value) {
-
+        message.value = 'username/password cant be empty'
         return;
     }
 
@@ -48,7 +50,7 @@ const handleSubmit = async () => {
         modalStore.closeModal();
 
         router.push('/');
-        
+
     } catch (error) {
         console.log(error.response);
         if (!error.response.data.errors) {
@@ -76,6 +78,8 @@ const handleSubmit = async () => {
         <p>Log in</p>
 
     </div>
+    <p v-if="message" style="color: red"> {{ message }} </p>
+
 
     <form @submit.prevent="handleSubmit">
         <label for="username" class="form__label">Username</label>

@@ -95,6 +95,12 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 30px;
+   
+    @media only screen and (max-width: 414px) {
+        flex-direction: column;
+        text-align: center;
+        gap: 5px;
+    }
 }
 
 .subscription__title {
@@ -102,6 +108,11 @@
     font-size: 2.571rem;
     font-weight: 700;
     line-height: 46px;
+    @media only screen and (max-width: 414px) {
+    font-size: 1.871rem;
+    font-weight: 500;
+    line-height: 40px;
+    }
 }
 
 .subscription__addNew {
@@ -121,6 +132,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    @media only screen and (max-width: 414px) {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+    }
+    
 }
 
 .subscription__state {
@@ -128,4 +145,9 @@
     font-size: 1.286rem;
     line-height: 25px;
     font-weight: 700;
+    @media only screen and (max-width: 414px) {
+        font-size: 0.771rem;
+        font-weight: 700;
+        line-height: 15px;
+        }
 }
