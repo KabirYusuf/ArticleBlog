@@ -30,11 +30,9 @@
             </div>
             <p class="comment__title">Comments:</p>
 
-            <CommentInput :article="currentArticle" />
+            <CommentInput @commentSent="handleNewComment" />
 
-            <Comment v-for="comment in formattedComments" :key="comment.id" :date="comment.createdAt"
-                :name="comment.user.firstName + ' ' + comment.user.lastName"
-                :timeFromCommentPost="comment.timeFromCommentPost" :content="comment.content" />
+            <Comment v-for="comment in formattedComments" :comment="comment" :key="comment.id" />
         </div>
     </section>
 
@@ -90,6 +88,10 @@ const formattedComments = computed(() => {
         };
     });
 });
+
+const handleNewComment = (newComment) => {
+    articleStore.addComment(newComment);
+};
 
 onMounted(() => {
     articleStore.fetchArticle(route.params.id);

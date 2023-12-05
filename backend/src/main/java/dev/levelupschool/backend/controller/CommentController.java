@@ -13,7 +13,6 @@ import dev.levelupschool.backend.service.interfaces.CommentService;
 import dev.levelupschool.backend.util.CommentResourceAssembler;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.EntityModel;

@@ -13,31 +13,53 @@
 <script setup>
 import Button from '../inputs/Button.vue'
 import { postComment } from '../../utility/Http'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useArticleStore } from '@/store/articleStore'
 import { useRouter } from 'vue-router';
+import { defineEmits } from 'vue';
+import { useUserStore } from '../../store/userStore'
+
+const emits = defineEmits(['commentSent']);
 
 const router = useRouter();
+const userStore = useUserStore();
+
 
 
 const articleStore = useArticleStore()
 const articleId = ref(articleStore.currentArticle.id)
 const content = ref('')
 
-const sendComment = async () => {
-    console.log('Content:', content.value);
+onMounted(async () => {
+    await userStore.fetchUser();
+});
 
-    const addCommentRequest = {
+const sendComment = async () => {
+    const currentUser = userStore.user;
+
+    if (!currentUser) {
+        return;
+    }
+
+    const fullComment = {
+        articleId: articleId.value,
+        content: content.value,
+        createdAt: new Date().toISOString(),
+        user: currentUser
+    };
+
+    const backendRequest = {
         articleId: articleId.value,
         content: content.value
-    }
+    };
 
     try {
-        await postComment(addCommentRequest)
-        content.value = ''
-        router.go();
+        await postComment(backendRequest);
+        content.value = '';
+        emits('commentSent', fullComment);
     } catch (error) {
-        console.error(error.message)
+        console.error(error.message);
     }
-}
+};
+
 </script>

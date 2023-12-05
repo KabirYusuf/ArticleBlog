@@ -66,7 +66,7 @@ onMounted(async () => {
     await userStore.fetchUser();
     try {
         const articlesResponse = await getAllArticles();
-        rawArticles.value = articlesResponse._embedded.items;
+        rawArticles.value = articlesResponse._embedded.items.sort((a, b) => a.id - b.id);
     } catch (error) {
         console.error('Error fetching articles:', error);
     }

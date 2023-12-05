@@ -2,7 +2,14 @@
     <ProfileHeader>
         <div class="myProfileHeader__content">
             <div class="myProfileHeader__inner">
-                <ImageUploader/>
+
+                <img @click="toggleUploader" src="../../public/profile-avatar.webp" alt="profile-image"
+                    class="profileHeader__image">
+
+                <ImageCropUpload ref="formData.image" :width="200" :height="200" :preview="true" lang-type="en"
+                    v-model="showUploader" :url="uploadUrl" :params="params" :headers="headers" :img-format="imgFormat"
+                    @crop-success="cropSuccess" @crop-upload-success="cropUploadSuccess"
+                    @crop-upload-fail="cropUploadFail" />
                 <h2 class="profile__name" v-if="fullName">{{ fullName }}</h2>
                 <h2 class="profile__name" v-else>{{ userStore.user?.username }}</h2>
                 <p class="profile__email">{{ userStore.user?.email }}</p>
@@ -44,12 +51,12 @@ import ProfileHeader from '../components/layouts/ProfileHeader.vue';
 import InputField from '../components/inputs/InputField.vue';
 import Button from '../components/inputs/Button.vue';
 import Footer from '../components/layouts/Footer.vue';
-import ImageUploader from '../components/ImageUploader.vue';
 import { ref, onMounted, computed } from 'vue';
 import { useUserStore } from '../store/userStore';
 import { updateUser } from '../utility/userApiService';
 import Swal from 'sweetalert2'
 import { useRouter } from 'vue-router';
+import ImageCropUpload from 'vue-image-crop-upload';
 
 
 
@@ -119,7 +126,7 @@ const handleSubmit = async () => {
         });
 
         router.push('/my-profile');
-        
+
     } catch (error) {
         const errorMessage = error.response?.data?.errors
             ? Object.values(error.response.data.errors)[0]
@@ -130,7 +137,31 @@ const handleSubmit = async () => {
             text: errorMessage
         });
     }
+
 }
 
+const showUploader = ref(false);
+const imgDataUrl = ref('');
+const uploadUrl = '/upload';
+const imgFormat = 'png';
+const params = ref({});
+const headers = ref({});
+
+const toggleUploader = () => {
+    showUploader.value = !showUploader.value;
+}
+
+const cropSuccess = (imgDataUrlParam, field) => {
+    imgDataUrl.value = imgDataUrlParam;
+    showUploader.value = false;
+}
+
+const cropUploadSuccess = (jsonData, field) => {
+    console.log('Upload success:', jsonData);
+}
+
+const cropUploadFail = (status, field) => {
+    console.error('Upload fail:', status);
+}
 
 </script>

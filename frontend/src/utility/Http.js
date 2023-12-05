@@ -15,6 +15,7 @@ http.interceptors.request.use((config) => {
 export const postComment = async (addCommentRequest) => {
     try {
         const response = await http.post('/comments', addCommentRequest)
+        console.log('kabir');
         return response.data;
     } catch (error) {
         console.log(error.message);

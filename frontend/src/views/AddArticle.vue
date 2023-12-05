@@ -31,7 +31,7 @@
 
                     <div class="articleTagsAndPremium">
                         <h4 class="articleTagsAndPremium__title">Tags</h4>
-                        <Button class="articleInfo__addTag">ADD TAG +</Button>
+                        <Button type="button" class="articleInfo__addTag">ADD TAG +</Button>
                         <div class="articlePremium__choice">
                             <InputField id="isPremium" type="checkbox" v-model:checked="isPremium"
                                 class="checkbox__field" />
@@ -42,7 +42,7 @@
 
             </div>
             <div class="articleInfo__submitButtonContainer">
-                <Button type="submit" class="articleInfo__submitButton">Update</Button>
+                <Button type="submit" class="articleInfo__submitButton">Add new</Button>
             </div>
         </form>
     </section>
@@ -60,6 +60,9 @@ import Swal from 'sweetalert2';
 import { ref } from 'vue'
 import { createArticle } from '../utility/articleApiService';
 import { handleErrors } from '../utility/handleErrors';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const title = ref('');
 const slug = ref('');
@@ -68,6 +71,16 @@ const date = ref('');
 const isPremium = ref(false);
 
 const handleSubmit = async () => {
+
+    if (!title.value.trim() || !content.value.trim()) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Title and content are required!'
+        });
+
+        return
+    }
     try {
         const response = await createArticle({
             title: title.value,
@@ -75,7 +88,8 @@ const handleSubmit = async () => {
             content: content.value,
             date: date.value,
             isPremium: isPremium.value
-        });
+        })
+        router.push({ name: 'my-profile' });
 
         Swal.fire({
             icon: 'success',
@@ -84,7 +98,7 @@ const handleSubmit = async () => {
         });
 
     } catch (error) {
-       handleErrors(error)
+        handleErrors(error)
     }
 };
 </script>

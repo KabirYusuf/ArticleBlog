@@ -20,7 +20,7 @@ export const useUserStore = defineStore('user', {
         },
         logIn() {
             this.isLoggedIn = true;
-            
+
         },
         logOut() {
             this.isLoggedIn = false;
