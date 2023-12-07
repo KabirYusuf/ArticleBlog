@@ -11,15 +11,20 @@ import dev.levelupschool.backend.exception.UserException;
 import dev.levelupschool.backend.service.auth.AuthenticationService;
 import dev.levelupschool.backend.service.interfaces.ArticleService;
 import dev.levelupschool.backend.service.interfaces.CommentService;
+import dev.levelupschool.backend.service.notification.LevelUpEmailSenderService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+
 @SpringBootTest
 @ActiveProfiles("test")
 @Slf4j
@@ -36,6 +41,8 @@ class LevelUpCommentServiceTest {
 
     @Autowired
     private UserRepository userRepository;
+    @MockBean
+    private LevelUpEmailSenderService levelUpEmailSenderService;
     private CreateArticleRequest createArticleRequest;
     private AddCommentRequest addCommentRequest;
 
@@ -45,6 +52,8 @@ class LevelUpCommentServiceTest {
 
     @BeforeEach
     void setUp(){
+        userRepository.deleteAll();
+        doNothing().when(levelUpEmailSenderService).sendEmailNotification(any(NotificationRequest.class));
         registrationRequest = new RegistrationRequest();
         registrationRequest.setEmail("kabir@gmail.com");
         registrationRequest.setUsername("kaybee");

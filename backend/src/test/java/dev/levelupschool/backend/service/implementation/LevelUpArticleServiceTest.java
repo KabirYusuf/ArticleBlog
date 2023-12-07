@@ -1,9 +1,6 @@
 package dev.levelupschool.backend.service.implementation;
 
-import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
-import dev.levelupschool.backend.data.dto.request.CreateArticleRequest;
-import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
-import dev.levelupschool.backend.data.dto.request.UpdateArticleRequest;
+import dev.levelupschool.backend.data.dto.request.*;
 import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
 import dev.levelupschool.backend.data.model.Article;
 import dev.levelupschool.backend.data.model.User;
@@ -17,14 +14,19 @@ import dev.levelupschool.backend.exception.UserException;
 import dev.levelupschool.backend.service.auth.AuthenticationService;
 import dev.levelupschool.backend.service.interfaces.ArticleService;
 import dev.levelupschool.backend.service.interfaces.UserArticleReactionService;
+import dev.levelupschool.backend.service.notification.LevelUpEmailSenderService;
 import dev.levelupschool.backend.util.UserArticleReactionId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+
 @SpringBootTest
 @ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -40,6 +42,8 @@ class LevelUpArticleServiceTest {
     UserRepository userRepository;
     @Autowired
     private UserArticleReactionService userArticleReactionService;
+    @MockBean
+    private LevelUpEmailSenderService levelUpEmailSenderService;
 
     private CreateArticleRequest createArticleRequest;
     private String authHeader;
@@ -48,6 +52,8 @@ class LevelUpArticleServiceTest {
 
     @BeforeEach
     void setup(){
+        userRepository.deleteAll();
+        doNothing().when(levelUpEmailSenderService).sendEmailNotification(any(NotificationRequest.class));
         registrationRequest = new RegistrationRequest();
         registrationRequest.setEmail("kabir@gmail.com");
         registrationRequest.setUsername("kaybee");

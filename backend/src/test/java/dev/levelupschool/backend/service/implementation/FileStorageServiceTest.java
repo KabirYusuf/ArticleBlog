@@ -79,3 +79,4 @@ class FileStorageServiceTest {
         assertEquals("fileUrl", savedUser.getUserImage());
     }
 }
+
