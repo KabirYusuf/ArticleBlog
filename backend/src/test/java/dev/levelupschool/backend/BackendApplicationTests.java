@@ -1,10 +1,10 @@
 package dev.levelupschool.backend;
 
 import dev.levelupschool.backend.data.model.Article;
-import dev.levelupschool.backend.data.model.Author;
+import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.model.Comment;
 import dev.levelupschool.backend.data.repository.ArticleRepository;
-import dev.levelupschool.backend.data.repository.AuthorRepository;
+import dev.levelupschool.backend.data.repository.UserRepository;
 import dev.levelupschool.backend.data.repository.CommentRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ class BackendApplicationTests {
     @Autowired
     private CommentRepository commentRepository;
     @Autowired
-    private AuthorRepository authorRepository;
+    private UserRepository userRepository;
 
     @Test
     void contextLoads() {
@@ -42,9 +42,9 @@ class BackendApplicationTests {
 
     @Test
     public void givenArticle_whenGetArticles_thenReturnJsonArray() throws Exception {
-        Author author = new Author();
-        authorRepository.save(author);
-        var article = new Article("test title 1", "test content 1", author);
+        User user = new User();
+        userRepository.save(user);
+        var article = new Article("test title 1", "test content 1", user);
 
         articleRepository.save(article);
 
@@ -58,11 +58,11 @@ class BackendApplicationTests {
 
     @Test
     public void givenComment_whenGetArticle_thenReturnCommentsArray() throws Exception {
-        Author author = new Author();
-        authorRepository.save(author);
-        var article = articleRepository.save(new Article("test title", "test content 1", author));
+        User user = new User();
+        userRepository.save(user);
+        var article = articleRepository.save(new Article("test title", "test content 1", user));
 
-        commentRepository.save(new Comment("test comment", article,author));
+        commentRepository.save(new Comment("test comment", article, user));
 
         mvc.perform(
                 get("/articles/{id}", article.getId())

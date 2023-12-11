@@ -1,10 +1,11 @@
 package dev.levelupschool.backend;
 
 import dev.levelupschool.backend.data.model.Article;
-import dev.levelupschool.backend.data.model.Author;
+import dev.levelupschool.backend.data.model.Role;
+import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.model.Comment;
 import dev.levelupschool.backend.data.repository.ArticleRepository;
-import dev.levelupschool.backend.data.repository.AuthorRepository;
+import dev.levelupschool.backend.data.repository.UserRepository;
 import dev.levelupschool.backend.data.repository.CommentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Configuration
 @Profile("dev")
@@ -22,7 +27,7 @@ public class SeedArticles {
     CommandLineRunner init(
         ArticleRepository articleRepository,
         CommentRepository commentRepository,
-        AuthorRepository authorRepository
+        UserRepository userRepository
     ) {
         return new CommandLineRunner() {
             @Override
@@ -30,16 +35,25 @@ public class SeedArticles {
                 if (articleRepository.count() == 0) {
                     log.info("Seeding articles");
 
-                    Author newAuthor = new Author();
-                    newAuthor.setFirstName("Luka");
-                    newAuthor.setLastName("Papez");
+                    Set<Role> roleSet = new HashSet<>();
 
-                    Author savedAuthor = authorRepository.save(newAuthor);
+                    roleSet.add(Role.USER);
+                    roleSet.add(Role.ADMIN);
+                    User newUser = new User();
+                    newUser.setFirstName("Luka");
+                    newUser.setLastName("Papez");
+                    newUser.setEmail("luka@gmail.com");
+                    newUser.setUsername("lpapez");
+                    newUser.setPassword(new BCryptPasswordEncoder().encode("Abc123@lp"));
+                    newUser.setRoles(roleSet);
+                    newUser.setVerified(true);
 
-                    var article1 = articleRepository.save(new Article("test title 1", "test content 1", savedAuthor));
-                    articleRepository.save(new Article("test title 2", "test content 2", savedAuthor));
+                    User savedUser = userRepository.save(newUser);
 
-                    commentRepository.save(new Comment("test comment", article1, savedAuthor));
+                    var article1 = articleRepository.save(new Article("test title 1", "test content 1", savedUser));
+                    articleRepository.save(new Article("test title 2", "test content 2", savedUser));
+
+                    commentRepository.save(new Comment("test comment", article1, savedUser));
                 }
             }
         };

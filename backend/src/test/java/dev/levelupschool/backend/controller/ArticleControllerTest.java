@@ -1,11 +1,15 @@
 package dev.levelupschool.backend.controller;
 
+import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
 import dev.levelupschool.backend.data.dto.request.CreateArticleRequest;
+import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateArticleRequest;
+import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
 import dev.levelupschool.backend.data.model.Article;
-import dev.levelupschool.backend.data.model.Author;
+import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.repository.ArticleRepository;
-import dev.levelupschool.backend.data.repository.AuthorRepository;
+import dev.levelupschool.backend.data.repository.UserRepository;
+import dev.levelupschool.backend.service.auth.AuthenticationService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,8 +22,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static dev.levelupschool.backend.util.Serializer.asJsonString;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -35,36 +38,70 @@ class ArticleControllerTest {
 
     @Autowired
     private ArticleRepository articleRepository;
+    @Autowired
+    private AuthenticationService authenticationService;
+    private String authHeader;
+    private RegistrationRequest registrationRequest;
+
 
     @Autowired
-    private AuthorRepository authorRepository;
+    private UserRepository userRepository;
     @Test
     void contextLoads() {
     }
     @BeforeEach
     void setUp(){
-        Author author = new Author();
-        authorRepository.save(author);
-        var article = new Article("test title 1", "test content 1", author);
+        registrationRequest = new RegistrationRequest();
+        registrationRequest.setUsername("kaybee");
+        registrationRequest.setEmail("k@gmail.com");
+        registrationRequest.setPassword("12345abA@qw");
+        authenticationService.register(registrationRequest);
+
+        User foundUser = userRepository.findById(1L).get();
+
+        foundUser.setVerified(true);
+
+        userRepository.save(foundUser);
+
+        AuthenticationRequest authenticationRequest = new AuthenticationRequest();
+        authenticationRequest.setUsername("kaybee");
+        authenticationRequest.setPassword("12345abA@qw");
+
+        AuthenticationResponse authenticationResponse = authenticationService.login(authenticationRequest);
+
+        authHeader = "Bearer " + authenticationResponse.getToken();
+
+
+
+
+
+        var article = new Article("test title 1", "test content 1", userRepository.findById(1L).get());
 
         articleRepository.save(article);
     }
 
     @Test
     public void givenArticle_whenGetArticles_thenReturnJsonArray() throws Exception {
-        mvc.perform(
-                get("/articles")
-                    .contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(get("/articles")
+                .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[0].title", is("test title 1")))
-            .andExpect(jsonPath("$[0].author.id", is(1)));
+            .andExpect(jsonPath("$._embedded.items", hasSize(1)))
+            .andExpect(jsonPath("$._embedded.items[0].title", is("test title 1")))
+            .andExpect(jsonPath("$._embedded.items[0].user.id", is(1)))
+
+            .andExpect(jsonPath("$._links.self.href", is(notNullValue())))
+            .andExpect(jsonPath("$.page.size", is(20)))
+            .andExpect(jsonPath("$.page.totalElements", is(notNullValue())))
+            .andExpect(jsonPath("$.page.totalPages", is(notNullValue())))
+            .andExpect(jsonPath("$.page.number", is(0)));
     }
 
     @Test
     public void givenArticle_whenGetArticlesWithId_thenReturnJsonOfThatSpecificArticle() throws Exception {
         mvc.perform(
             get("/articles/1")
+                .header("Authorization", authHeader)
+                .contentType(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.title").value("test title 1"))
@@ -76,6 +113,7 @@ class ArticleControllerTest {
         Assertions.assertEquals(1, articleRepository.findAll().size());
         mvc.perform(
                 delete("/articles/1")
+                    .header("Authorization", authHeader)
             )
             .andExpect(status().is2xxSuccessful());
 
@@ -92,6 +130,7 @@ class ArticleControllerTest {
 
         mvc.perform(
             put("/articles/1")
+                .header("Authorization", authHeader)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(updateArticleRequest))
         )
@@ -107,18 +146,92 @@ class ArticleControllerTest {
         Assertions.assertEquals(1, articleRepository.findAll().size());
 
         CreateArticleRequest createArticleRequest = new CreateArticleRequest();
-        createArticleRequest.setAuthorId(1L);
         createArticleRequest.setTitle("Second article title");
         createArticleRequest.setContent("Second article content");
 
         mvc.perform(
             post("/articles")
+                .header("Authorization", authHeader)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(createArticleRequest))
         )
             .andExpect(status().isCreated());
 
         Assertions.assertEquals(2, articleRepository.findAll().size());
+    }
+
+    @Test
+    public void testThatAUserCannotUpdateArticleCreatedByAnotherUser() throws Exception {
+        RegistrationRequest registrationRequestForSecondUser = new RegistrationRequest();
+        registrationRequestForSecondUser.setEmail("kabir@gmail.com");
+        registrationRequestForSecondUser.setUsername("kaybeeTwo");
+        registrationRequestForSecondUser.setPassword("12345&980aA");
+        authenticationService.register(registrationRequestForSecondUser);
+
+        AuthenticationRequest authenticationRequestForSecondUser = new AuthenticationRequest();
+        authenticationRequestForSecondUser.setUsername("kaybeeTwo");
+        authenticationRequestForSecondUser.setPassword("12345&980aA");
+
+        User foundUser = userRepository.findById(2L).get();
+
+        foundUser.setVerified(true);
+
+        userRepository.save(foundUser);
+
+        AuthenticationResponse authenticationResponse = authenticationService.login(authenticationRequestForSecondUser);
+
+        String authHeaderForSecondUser = "Bearer " + authenticationResponse.getToken();
+
+
+        Assertions.assertEquals("test title 1", articleRepository.findById(1L).get().getTitle());
+        Assertions.assertEquals("test content 1", articleRepository.findById(1L).get().getContent());
+
+        UpdateArticleRequest updateArticleRequest = new UpdateArticleRequest();
+        updateArticleRequest.setTitle("updated title");
+        updateArticleRequest.setContent("updated content");
+
+        mvc.perform(
+                put("/articles/1")
+                    .header("Authorization", authHeaderForSecondUser)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(asJsonString(updateArticleRequest))
+            )
+                .andExpect(status().is4xxClientError());
+
+        Assertions.assertEquals("test title 1", articleRepository.findById(1L).get().getTitle());
+        Assertions.assertEquals("test content 1", articleRepository.findById(1L).get().getContent());
+    }
+
+    @Test
+    public void testThatUserCannotDeleteArticleCreatedByAnotherUser() throws Exception {
+        RegistrationRequest registrationRequestForSecondUser = new RegistrationRequest();
+        registrationRequestForSecondUser.setEmail("kabir@gmail.com");
+        registrationRequestForSecondUser.setUsername("kaybeeTwo");
+        registrationRequestForSecondUser.setPassword("12345");
+        authenticationService.register(registrationRequestForSecondUser);
+
+        AuthenticationRequest authenticationRequestForSecondUser = new AuthenticationRequest();
+        authenticationRequestForSecondUser.setUsername("kaybeeTwo");
+        authenticationRequestForSecondUser.setPassword("12345");
+
+        User foundUser = userRepository.findById(2L).get();
+
+        foundUser.setVerified(true);
+
+        userRepository.save(foundUser);
+
+        AuthenticationResponse authenticationResponse = authenticationService.login(authenticationRequestForSecondUser);
+
+        String authHeaderForSecondUser = "Bearer " + authenticationResponse.getToken();
+
+        Assertions.assertEquals(1, articleRepository.findAll().size());
+        mvc.perform(
+                delete("/articles/1")
+                    .header("Authorization", authHeaderForSecondUser)
+            )
+            .andExpect(status().is4xxClientError());
+
+        Assertions.assertEquals(1, articleRepository.findAll().size());
     }
 
 }
