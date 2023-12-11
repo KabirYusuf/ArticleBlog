@@ -1,13 +1,17 @@
 package dev.levelupschool.backend.controller;
 
 import dev.levelupschool.backend.data.dto.request.AddCommentRequest;
+import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
+import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateCommentRequest;
+import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
 import dev.levelupschool.backend.data.model.Article;
-import dev.levelupschool.backend.data.model.Author;
+import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.model.Comment;
 import dev.levelupschool.backend.data.repository.ArticleRepository;
-import dev.levelupschool.backend.data.repository.AuthorRepository;
+import dev.levelupschool.backend.data.repository.UserRepository;
 import dev.levelupschool.backend.data.repository.CommentRepository;
+import dev.levelupschool.backend.service.auth.AuthenticationService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,32 +41,57 @@ class CommentControllerTest {
     private ArticleRepository articleRepository;
 
     @Autowired
-    private AuthorRepository authorRepository;
+    private UserRepository userRepository;
     @Autowired
     private CommentRepository commentRepository;
+    @Autowired
+    private AuthenticationService authenticationService;
+
+    private RegistrationRequest registrationRequest;
+
+    private String authHeader;
     @Test
     void contextLoads() {
     }
     @BeforeEach
     void setUp(){
-        Author author = new Author();
-        authorRepository.save(author);
-        var article = new Article("test title 1", "test content 1", author);
+        registrationRequest = new RegistrationRequest();
+        registrationRequest.setUsername("kaybee");
+        registrationRequest.setEmail("k@gmail.com");
+        registrationRequest.setPassword("12345");
+        authenticationService.register(registrationRequest);
+
+        User foundUser = userRepository.findById(1L).get();
+
+        foundUser.setVerified(true);
+
+        userRepository.save(foundUser);
+
+        AuthenticationRequest authenticationRequest = new AuthenticationRequest();
+        authenticationRequest.setUsername("kaybee");
+        authenticationRequest.setPassword("12345");
+
+        AuthenticationResponse authenticationResponse = authenticationService.login(authenticationRequest);
+
+        authHeader = "Bearer " + authenticationResponse.getToken();
+
+        var article = new Article("test title 1", "test content 1", userRepository.findById(1L).get());
         articleRepository.save(article);
 
-        commentRepository.save(new Comment("test comment", article,author));
+        commentRepository.save(new Comment("test comment", article, userRepository.findById(1L).get()));
     }
 
     @Test
     public void givenComment_whenGetArticle_thenReturnCommentsArray() throws Exception {
-        Author author = new Author();
-        authorRepository.save(author);
-        var article = articleRepository.save(new Article("test title", "test content 1", author));
+        User user = new User();
+        userRepository.save(user);
+        var article = articleRepository.save(new Article("test title", "test content 1", user));
 
-        commentRepository.save(new Comment("test comment", article,author));
+        commentRepository.save(new Comment("test comment", article, user));
 
         mvc.perform(
-                get("/articles/{id}", article.getId())
+                get("/articles/1", article.getId())
+                    .header("Authorization", authHeader)
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isOk())
@@ -72,6 +101,8 @@ class CommentControllerTest {
     public void givenComment_whenGetCommentWithId_thenReturnJsonOfThatSpecificComment() throws Exception {
         mvc.perform(
                 get("/comments/1")
+                    .header("Authorization", authHeader)
+                    .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.content").value("test comment"));
@@ -82,6 +113,7 @@ class CommentControllerTest {
         Assertions.assertEquals(1, commentRepository.findAll().size());
         mvc.perform(
                 delete("/comments/1")
+                    .header("Authorization", authHeader)
             )
             .andExpect(status().is2xxSuccessful());
         Assertions.assertEquals(0, commentRepository.findAll().size());
@@ -91,8 +123,8 @@ class CommentControllerTest {
         mvc.perform(
             get("/comments")
         )
-            .andExpect(jsonPath("$.*", hasSize(1)))
-            .andExpect(jsonPath("$[0].content").value("test comment"))
+            .andExpect(jsonPath("$._embedded.items.*", hasSize(1)))
+            .andExpect(jsonPath("$._embedded.items[0].content").value("test comment"))
             .andExpect(status().isOk());
     }
     @Test
@@ -101,11 +133,11 @@ class CommentControllerTest {
 
         AddCommentRequest addCommentRequest = new AddCommentRequest();
         addCommentRequest.setContent("Comment two");
-        addCommentRequest.setAuthorId(1L);
         addCommentRequest.setArticleId(1L);
 
         mvc.perform(
             post("/comments")
+                .header("Authorization", authHeader)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(addCommentRequest))
         )
@@ -121,11 +153,80 @@ class CommentControllerTest {
 
         mvc.perform(
             put("/comments/1")
+                .header("Authorization", authHeader)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(updateCommentRequest))
         )
             .andExpect(status().isOk());
         Assertions.assertEquals("Updated Comment", commentRepository.findById(1L).get().getContent());
+    }
+
+    @Test
+    public void testThatAUserCannotUpdateCommentCreatedByAnotherUser() throws Exception {
+        RegistrationRequest registrationRequestForSecondUser = new RegistrationRequest();
+        registrationRequestForSecondUser.setEmail("kabir@gmail.com");
+        registrationRequestForSecondUser.setUsername("kaybeeTwo");
+        registrationRequestForSecondUser.setPassword("12345");
+        authenticationService.register(registrationRequestForSecondUser);
+
+        AuthenticationRequest authenticationRequestForSecondUser = new AuthenticationRequest();
+        authenticationRequestForSecondUser.setUsername("kaybeeTwo");
+        authenticationRequestForSecondUser.setPassword("12345");
+
+        User foundUser = userRepository.findById(2L).get();
+
+        foundUser.setVerified(true);
+
+        userRepository.save(foundUser);
+
+        AuthenticationResponse authenticationResponse = authenticationService.login(authenticationRequestForSecondUser);
+
+        String authHeaderForSecondUser = "Bearer " + authenticationResponse.getToken();
+
+        Assertions.assertEquals("test comment", commentRepository.findById(1L).get().getContent());
+
+        UpdateCommentRequest updateCommentRequest = new UpdateCommentRequest();
+        updateCommentRequest.setContent("Updated Comment");
+
+        mvc.perform(
+                put("/comments/1")
+                    .header("Authorization", authHeaderForSecondUser)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(asJsonString(updateCommentRequest))
+            )
+            .andExpect(status().is4xxClientError());
+        Assertions.assertEquals("test comment", commentRepository.findById(1L).get().getContent());
+    }
+
+    @Test
+    public void testThatAUserCannotDeleteCommentCreatedByAnotherUser() throws Exception {
+        RegistrationRequest registrationRequestForSecondUser = new RegistrationRequest();
+        registrationRequestForSecondUser.setEmail("kabir@gmail.com");
+        registrationRequestForSecondUser.setUsername("kaybeeTwo");
+        registrationRequestForSecondUser.setPassword("12345");
+        authenticationService.register(registrationRequestForSecondUser);
+
+        AuthenticationRequest authenticationRequestForSecondUser = new AuthenticationRequest();
+        authenticationRequestForSecondUser.setUsername("kaybeeTwo");
+        authenticationRequestForSecondUser.setPassword("12345");
+
+        User foundUser = userRepository.findById(2L).get();
+
+        foundUser.setVerified(true);
+
+        userRepository.save(foundUser);
+
+        AuthenticationResponse authenticationResponse = authenticationService.login(authenticationRequestForSecondUser);
+
+        String authHeaderForSecondUser = "Bearer " + authenticationResponse.getToken();
+
+        Assertions.assertEquals(1, commentRepository.findAll().size());
+        mvc.perform(
+                delete("/comments/1")
+                    .header("Authorization", authHeaderForSecondUser)
+            )
+            .andExpect(status().is4xxClientError());
+        Assertions.assertEquals(1, commentRepository.findAll().size());
     }
 
 }

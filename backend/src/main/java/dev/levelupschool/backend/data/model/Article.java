@@ -1,11 +1,13 @@
 package dev.levelupschool.backend.data.model;
 
 import jakarta.persistence.*;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.util.List;
 
 @Entity
 @Table(name = "articles", schema = "public")
+@Relation(collectionRelation = "items")
 public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,21 +18,21 @@ public class Article {
     @OneToMany(mappedBy = "article", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Comment> comments;
     @ManyToOne
-    @JoinColumn(name = "author_id")
-    private Author author;
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    public Author getAuthor() {
-        return author;
+    public User getUser() {
+        return user;
     }
 
-    public void setAuthor(Author author) {
-        this.author = author;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public Article(String title, String content, Author author) {
+    public Article(String title, String content, User user) {
         this.title = title;
         this.content = content;
-        this.author = author;
+        this.user = user;
     }
 
     public Article() {
