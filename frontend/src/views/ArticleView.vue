@@ -1,6 +1,5 @@
 <template>
-    <Header :card="currentArticle"
-        :isCenter="true" />
+    <Header :card="currentArticle" :isCenter="true" />
 
     <section class="article__view">
         <div v-if="currentArticle" class="articleView__container">
@@ -15,8 +14,8 @@
 
             <div class="articleAuthorInfo">
                 <div class="author__Info author--nameAndImage">
-                    <!-- <img v-if="currentArticle?.user.image" :src="currentArticle?.user.image" alt="authorImage"> -->
-                    <img src="../../public/Image.jpg" alt="Article author image" class="article__authorImage">
+                    <img v-if="currentArticle?.user.image" :src="currentArticle?.user.image" alt="authorImage">
+                    <img v-else src="../../public/Image.jpg" alt="Article author image" class="article__authorImage">
                     <div class="author__nameAndProfession">
                         <p class="author__name">{{ fullName }}</p>
                         <p class="author__profession">Thinker & Designer</p>
@@ -31,11 +30,9 @@
             </div>
             <p class="comment__title">Comments:</p>
 
-            <CommentInput />
+            <CommentInput @commentSent="handleNewComment" />
 
-            <Comment v-for="comment in formattedComments" :key="comment.id" :date="comment.createdAt"
-                :name="comment.user.firstName + ' ' + comment.user.lastName"
-                :timeFromCommentPost="comment.timeFromCommentPost" :content="comment.content" />
+            <Comment v-for="comment in formattedComments" :comment="comment" :key="comment.id" />
         </div>
     </section>
 
@@ -43,8 +40,7 @@
         <div class="relatedPostContainer">
             <h5 class="relatedPost__title">Related Posts</h5>
             <div class="editorsPick__card">
-                <EditorsPickCard v-for="(editorPick, index) in editorsPicks" :key="index" 
-                :card="editorPick"/>
+                <EditorsPickCard v-for="(editorPick, index) in editorsPicks" :key="index" :card="editorPick" />
             </div>
         </div>
     </section>
@@ -92,6 +88,10 @@ const formattedComments = computed(() => {
         };
     });
 });
+
+const handleNewComment = (newComment) => {
+    articleStore.addComment(newComment);
+};
 
 onMounted(() => {
     articleStore.fetchArticle(route.params.id);

@@ -1,6 +1,6 @@
 <script setup>
 import { defineProps } from 'vue'
-defineProps(['type', 'placeholder', 'value', 'checked', 'id'])
+defineProps(['type', 'placeholder', 'value', 'checked', 'id', 'focus'])
 
 </script>
 
@@ -11,6 +11,6 @@ defineProps(['type', 'placeholder', 'value', 'checked', 'id'])
 
 
   <input v-else :id="id" :type="type" :placeholder="placeholder" :value="value" v-bind="$attrs"
-    @input="$emit('update:value', $event.target.value)" />
+    @input="$emit('update:value', $event.target.value)" @focus="focus"/>
 
 </template>

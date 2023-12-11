@@ -5,7 +5,7 @@
 
 @import "./layouts/header";
 
-
+@import "./layouts//nav-bar";
 @import "./layouts/footer";
 
 @import "./components/homepage/popular-topic-card.scss";
@@ -25,6 +25,14 @@
 @import "./components/comment.scss";
 
 @import "./components//comment-input.scss";
+
+@import "./layouts//profile-header";
+
+@import "./components//view/my-profile";
+
+@import "./components/view/edit-profile";
+
+@import "./components//view/add-article"
 
   
   

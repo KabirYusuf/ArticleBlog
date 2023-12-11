@@ -14,5 +14,14 @@ export const useArticleStore = defineStore('article', {
                 console.error('Error fetching article:', error);
             }
         },
+
+        addComment(newComment) {
+
+            if (this.currentArticle && this.currentArticle.comments) {
+                this.currentArticle.comments.unshift(newComment);
+            } else if (this.currentArticle) {
+                this.currentArticle.comments = [newComment];
+            }
+        },
     },
 });

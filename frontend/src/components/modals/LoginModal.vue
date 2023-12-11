@@ -3,34 +3,94 @@ import { ref } from 'vue';
 import { useModalStore } from '../../store/modalStore';
 import InputField from '../inputs/InputField.vue'
 import Button from '../inputs/Button.vue'
+import { login } from '../../utility/Auth'
+import Swal from 'sweetalert2'
+import { useUserStore } from '../../store/userStore'
+import { useRouter } from 'vue-router';
 
+const userStore = useUserStore();
+const router = useRouter();
 const modalStore = useModalStore();
 
-const email = ref('')
+const username = ref('')
 const password = ref('')
+const usernameError = ref('')
+const passwordError = ref('')
+const message = ref('');
 
-const handleSubmit = () => {
-    console.log(email.value, password.value)
-
+const handleChange = () => {
+    usernameError.value = ''
+    passwordError.value = ''
+    message.value = ''
 }
+
+const handleSubmit = async () => {
+
+    if (!username.value || !password.value) {
+        message.value = 'username/password cant be empty'
+        return;
+    }
+
+    try {
+        const response = await login({
+            username: username.value,
+            password: password.value
+        });
+
+        localStorage.setItem('token', response.data.token);
+        userStore.logIn();
+
+
+        Swal.fire({
+            icon: 'success',
+            title: 'Logged In',
+            text: 'You have successfully logged in'
+        });
+
+        modalStore.closeModal();
+
+        router.push('/');
+
+    } catch (error) {
+        console.log(error.response);
+        if (!error.response.data.errors) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Unsuccessful',
+                text: error.response.data
+            });
+        } else {
+            if (error.response.data.errors['username']) {
+                usernameError.value = error.response.data.errors['username'];
+            }
+            if (error.response.data.errors['password']) {
+                passwordError.value = error.response.data.errors['password'];
+            }
+        }
+    }
+};
+
 
 </script>
 <template>
-    <div v-if="modalStore.showLogin">
-        <div class="modalContent__header">
+    <div class="modalContent__header">
 
-            <p>Log in</p>
+        <p>Log in</p>
 
-        </div>
-
-        <form @submit.prevent="handleSubmit">
-            <label for="loginEmail" class="form__label">Email</label>
-            <InputField id="loginEmail" type="email" placeholder="email@email.com" v-model:value="email" class="input__field" />
-
-            <label for="loginPassword" class="form__label">Password</label>
-            <InputField id="loginPassword" type="password" placeholder="Password" v-model:value="password"
-                class="input__field" />
-            <Button type="button" @click="handleSubmit" class="form__submitButton">Log in</Button>
-        </form>
     </div>
+    <p v-if="message" style="color: red"> {{ message }} </p>
+
+
+    <form @submit.prevent="handleSubmit">
+        <label for="username" class="form__label">Username</label>
+        <InputField id="username" type="text" placeholder="username" v-model:value="username" class="input__field"
+            :focus="handleChange" />
+        <p v-if="usernameError" style="color: red;">{{ usernameError }}</p>
+
+        <label for="loginPassword" class="form__label">Password</label>
+        <InputField id="loginPassword" type="password" placeholder="Password" v-model:value="password" class="input__field"
+            :focus="handleChange" />
+        <p v-if="passwordError" style="color: red;">{{ passwordError }}</p>
+        <Button type="submit" class="form__submitButton">Log in</Button>
+    </form>
 </template>

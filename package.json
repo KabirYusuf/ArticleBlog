@@ -1,8 +1,11 @@
 {
   "dependencies": {
+    "@vueup/vue-quill": "^1.2.0",
     "axios": "^1.6.2",
     "env": "^0.0.2",
     "lucide-vue-next": "^0.294.0",
-    "process": "^0.11.10"
+    "process": "^0.11.10",
+    "sweetalert2": "^11.10.1",
+    "vue-image-crop-upload": "^3.0.3"
   }
 }

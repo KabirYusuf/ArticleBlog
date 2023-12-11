@@ -12,7 +12,7 @@ import dev.levelupschool.backend.service.interfaces.ArticleService;
 import dev.levelupschool.backend.service.interfaces.CommentService;
 import dev.levelupschool.backend.util.CommentResourceAssembler;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.EntityModel;
@@ -52,7 +52,7 @@ public class CommentController {
 
     @PostMapping
     public ResponseEntity<AddCommentResponse> store(
-        @RequestBody AddCommentRequest addCommentRequest,
+        @RequestBody @Valid AddCommentRequest addCommentRequest,
         HttpServletRequest httpServletRequest) {
         String authHeader = httpServletRequest.getHeader("Authorization");
         return new ResponseEntity<>(commentService.addComment(addCommentRequest, authHeader), HttpStatus.CREATED);

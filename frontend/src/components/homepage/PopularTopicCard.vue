@@ -20,7 +20,7 @@
             <div class="card__author">
                 <img src="../../../public/Image.jpg" alt="Author image" class="cardAuthor__image">
                 <div class="cardAuthor">
-                    <p class="cardAuthor__name">{{ card?.user.firstName }}  {{ card?.user.lastName }}</p>
+                    <p class="cardAuthor__name">{{ card?.user.firstName }} {{ card?.user.lastName }}</p>
                     <p v-if="cardAuthorProfession" class="cardAcardAuthor--profession">Journalist</p>
                 </div>
             </div>
