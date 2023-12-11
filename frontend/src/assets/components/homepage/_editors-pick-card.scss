@@ -49,6 +49,7 @@
   
   .editorsCard__inner {
     position: absolute;
+    left: 40px;
   }
   
   .editorsCard_tagList {
@@ -64,22 +65,21 @@
     height: 14.14px;
     color: #D7D7D7;
     position: absolute;
-    top: 100px;
+    top: 80px;
     left: 40px;
 
     @media only screen and (max-width: 414px) {
-        top: 50px;
+        top: 30px;
     }
   }
   
   .editorsCard__writeUp {
-    top: 120px;
+    top: 100px;
     overflow: auto;
-    width: 100%;
-    padding: 5px 65px 0 40px;
-
+    max-width: 90%;
     @media only screen and (max-width: 414px) {
         top: 60px;
+        
     }
   }
   
@@ -89,6 +89,8 @@
     padding: 7px;
     font-size: 0.714rem;
     display: inline-block;
+    position: absolute;
+    right: 50px;
   }
   .editorsCard__tagListItem--pushRight{
     margin-left: auto;
@@ -97,7 +99,7 @@
   .editorsCard__time {
     color: #E5E5E5;
     font-size: 0.857rem;
-    font-weight: 400;
+    font-weight: 400px;
     margin-bottom: 15px;
   }
   
@@ -114,5 +116,5 @@
     font-size: 0.857rem;
     font-weight: 400;
     color: #E5E5E5;
-    line-height: 20px;
+    overflow: auto;
   }

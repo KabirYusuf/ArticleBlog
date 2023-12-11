@@ -1,0 +1,52 @@
+.input__field {
+    display: block;
+    width: 100%;
+    height: 72;
+    border: 1px solid #495057;
+    color: #495057;
+    margin-bottom: 10px;
+    padding: 10px 5px;
+}
+
+.form__label {
+    display: block;
+    font-size: 0.857rem;
+    line-height: 25px;
+    font-weight: 700;
+    color: #818181;
+}
+
+.writeComment__inputField {
+    border: none;
+    outline: none;
+    flex-grow: 4;
+    height: 35px;
+    border-radius: 20px;
+    padding: 20px;
+
+    @media only screen and (max-width: 500px) {
+       width: 100%;
+    }
+}
+
+.writeComment__submitButton {
+    position: absolute;
+    right: 15px;
+    border: none;
+    background-color: #f0ad4e;
+    border-radius: 15px;
+    padding: 5px 20px;
+    color: $whiteColor;
+    font-size: 0.857rem;
+
+    @media only screen and (max-width: 500px) {
+        position: unset;
+    }
+}
+
+.form__label--premium{
+    display: inline;
+    padding-left: 15px;
+    position: relative;
+    bottom: 2px;
+}

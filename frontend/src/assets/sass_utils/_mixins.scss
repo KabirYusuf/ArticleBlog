@@ -3,10 +3,54 @@
     width: 100%;
     margin: 0 auto;
 }
+
 @mixin tabletContainer{
     padding: 20px 45px;
 }
+
 @mixin mobileContainer{
     padding: 15px 35px;
     margin: 0 auto;
+}
+
+@mixin articleDisplay{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+
+    @media only screen and (max-width: 820px) {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    @media only screen and (max-width: 414px) {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+}
+
+@mixin authorSection{
+    display: flex;
+    align-items: center;
+}
+
+@mixin authorName{
+    font-size: 0.857rem;
+    font-weight: bold;
+    color: #495057;
+    line-height: 20px;
+}
+
+@mixin authorProfession{
+    font-size: 0.857rem;
+    font-weight: 400;
+    color: #6C757D;
+    line-height: 20px;
+}
+
+@mixin userImage{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 16px;
 }

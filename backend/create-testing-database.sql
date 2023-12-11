@@ -23,14 +23,18 @@ create table articles (
     id      serial not null primary key,
     title   text       null default null,
     content text       null default null,
-    user_id integer not null references users
+    user_id integer not null references users,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 create table comments (
     id          serial not null primary key,
     article_id integer not null references articles,
     content    text        null default null,
-    user_id integer not null references users
+    user_id integer not null references users,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE verification_tokens (
