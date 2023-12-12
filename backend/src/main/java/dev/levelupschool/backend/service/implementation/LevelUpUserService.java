@@ -71,7 +71,7 @@ public class LevelUpUserService implements UserService {
     }
 
     private void processFileStorage(String image, String name, User user) {
-        if (image != null){
+        if (image != null && !image.isEmpty()){
             MultipartFile file = Converter.base64StringToMultipartFile(image, name);
             String fileUrl = fileStorageService.saveFile(file, "blog-user-images");
             user.setUserImage(fileUrl);
@@ -112,6 +112,9 @@ public class LevelUpUserService implements UserService {
         String lastName = covertNameFirstCharacterToUpperCase(updateUserRequest.getLastName());
         foundUser.setFirstName(firstName);
         foundUser.setLastName(lastName);
+        if (updateUserRequest.getPassword() != null && !updateUserRequest.getPassword().isEmpty()){
+            foundUser.setPassword(passwordEncoder.encode(updateUserRequest.getPassword()));
+        }
         processFileStorage(updateUserRequest.getUserImage(), foundUser.getUsername(), foundUser);
         return userRepository.save(foundUser);
     }

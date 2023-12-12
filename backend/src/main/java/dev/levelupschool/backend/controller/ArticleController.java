@@ -8,6 +8,7 @@ import dev.levelupschool.backend.data.model.Article;
 import dev.levelupschool.backend.service.interfaces.ArticleService;
 import dev.levelupschool.backend.util.ArticleResourceAssembler;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.EntityModel;
@@ -54,7 +55,7 @@ public class ArticleController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Article> update(
-        @RequestBody UpdateArticleRequest updateArticleRequest,
+        @RequestBody @Valid UpdateArticleRequest updateArticleRequest,
         @PathVariable Long id,
         HttpServletRequest httpServletRequest) {
         String authHeader = httpServletRequest.getHeader("Authorization");

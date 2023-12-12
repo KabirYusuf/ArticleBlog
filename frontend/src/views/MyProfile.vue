@@ -2,7 +2,7 @@
     <ProfileHeader>
         <div class="myProfileHeader__content">
             <div class="myProfileHeader__inner">
-                <img src="../../public/profile-avatar.webp" alt="profile-image" class="profileHeader__image">
+                <img :src="userImageUrl" alt="profile-image" class="profileHeader__image">
                 <h2 class="profile__name" v-if="fullName">{{ fullName }}</h2>
                 <h2 class="profile__name" v-else>{{ userStore.user?.username }}</h2>
                 <p class="profile__email">{{ userStore.user?.email }}</p>
@@ -84,6 +84,10 @@ const userArticles = computed(() => {
         return rawArticles.value.filter(article => article.user.id === userStore.user.id);
     }
     return [];
+});
+
+const userImageUrl = computed(() => {
+    return userStore.user?.userImage || '../../public/profile-avatar.webp';
 });
 
 </script>

@@ -61,6 +61,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+    margin-bottom: 10px;
 }
 
 .articleTagsAndPremium__title {
@@ -72,3 +73,14 @@
     font-size: 0.857rem;
     font-weight: 700;
 }
+.articleInfo__uploadImage{
+    width: fit-content;
+    margin-bottom: 5px;
+    border: none;
+    background-color: #d2a679;
+    color: white;
+    font-size: 1.025rem;
+    cursor: pointer;
+    padding: 3px;
+    font-size: 0.925rem;
+  }

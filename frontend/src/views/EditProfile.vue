@@ -3,8 +3,8 @@
         <div class="myProfileHeader__content">
             <div class="myProfileHeader__inner">
 
-                <img @click="toggleUploader" src="../../public/profile-avatar.webp" alt="profile-image"
-                    class="profileHeader__image">
+                <img @click="toggleUploader" :src="userImageUrl" alt="profile-image"
+                    class="profileHeader__image" style="cursor: pointer;">
 
                 <ImageCropUpload ref="formData.image" :width="200" :height="200" :preview="true" lang-type="en"
                     v-model="showUploader" :url="uploadUrl" :params="params" :headers="headers" :img-format="imgFormat"
@@ -69,6 +69,7 @@ const lastName = ref('')
 const password = ref('')
 const repeatPassword = ref('')
 const message = ref('')
+const profileImageData = ref('');
 
 
 onMounted(async () => {
@@ -90,8 +91,9 @@ const fullName = computed(() => {
 const handleSubmit = async () => {
     message.value = '';
 
+    
 
-    if (!password.value || !firstName.value || !lastName.value) {
+    if (!firstName.value || !lastName.value) {
         message.value = 'Please fill in all fields';
 
         Swal.fire({
@@ -116,7 +118,8 @@ const handleSubmit = async () => {
         const response = await updateUser({
             password: password.value,
             firstName: firstName.value,
-            lastName: lastName.value
+            lastName: lastName.value,
+            userImage: profileImageData.value
         }, userStore.user.id);
 
         await Swal.fire({
@@ -153,6 +156,10 @@ const toggleUploader = () => {
 
 const cropSuccess = (imgDataUrlParam, field) => {
     imgDataUrl.value = imgDataUrlParam;
+    
+    const base64Image = imgDataUrlParam.replace(/^data:image\/[a-z]+;base64,/, '');
+
+    profileImageData.value = base64Image;
     showUploader.value = false;
 }
 
@@ -163,5 +170,9 @@ const cropUploadSuccess = (jsonData, field) => {
 const cropUploadFail = (status, field) => {
     console.error('Upload fail:', status);
 }
+
+const userImageUrl = computed(() => {
+    return userStore.user?.userImage || '../../public/profile-avatar.webp';
+});
 
 </script>

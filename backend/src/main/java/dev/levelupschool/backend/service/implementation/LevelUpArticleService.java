@@ -48,8 +48,13 @@ public class LevelUpArticleService implements ArticleService {
     @Override
     public CreateArticleResponse createArticle(CreateArticleRequest createArticleRequest, String authHeader) {
         User fondUser = userService.getUser(authHeader);
+        String fileUrl = null;
+        if (createArticleRequest.getArticleImage() !=null && !createArticleRequest.getArticleImage().isEmpty()){
+            MultipartFile file = Converter.base64StringToMultipartFile(createArticleRequest.getArticleImage(), fondUser.getUsername());
+            fileUrl = fileStorageService.saveFile(file, "blog-article-images");
 
-        String fileUrl = processFileStorage(createArticleRequest.getArticleImage(), createArticleRequest.getTitle());
+        }
+
         Article newArticle = new Article(
             createArticleRequest.getTitle(),
             createArticleRequest.getContent(),
@@ -66,16 +71,13 @@ public class LevelUpArticleService implements ArticleService {
         return createArticleResponse;
     }
 
-    private String processFileStorage(String image, String name) {
-        if (image != null){
+    private void processFileStorage(String image, String name, Article article) {
+        if (image != null && !image.isEmpty()){
             MultipartFile file = Converter.base64StringToMultipartFile(image, name);
-            String fileUrl = null;
-
-            fileUrl = fileStorageService.saveFile(file, "blog-article-images");
-
-            return fileUrl;
+            String fileUrl = fileStorageService.saveFile(file, "blog-article-images");
+            article.setArticleImage(fileUrl);
         }
-        return null;
+
     }
 
     @Override
@@ -94,14 +96,14 @@ public class LevelUpArticleService implements ArticleService {
     @Override
     public Article updateArticle(UpdateArticleRequest updateArticleRequest, Long articleId, String authHeader) {
         User foundUser = userService.getUser(authHeader);
-        String fileUrl = processFileStorage(updateArticleRequest.getArticleImage(), updateArticleRequest.getTitle());
+
         return articleRepository
             .findById(articleId)
             .map(article -> {
                 if (!Objects.equals(foundUser.getId(), article.getUser().getId()))throw new UserException("You have no permission to update article");
                 article.setTitle(updateArticleRequest.getTitle());
                 article.setContent(updateArticleRequest.getContent());
-                article.setArticleImage(fileUrl);
+                processFileStorage(updateArticleRequest.getArticleImage(), updateArticleRequest.getTitle(), article);
                 return articleRepository.save(article);
             })
             .orElseThrow(()-> new ModelNotFoundException(articleId));

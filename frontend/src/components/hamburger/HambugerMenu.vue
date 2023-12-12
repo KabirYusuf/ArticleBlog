@@ -15,9 +15,9 @@
       </li>
       <li class="nav__listItem"><a class="nav__listLink" href="#">About</a></li>
       <li class="nav__listItem"><a class="nav__listLink" href="#">Article</a></li>
-      <li class="nav__listItem" @click="modalStore.openModal('login')"><a class="nav__listLink" href="#">Sign in</a>
+      <li v-if="!userStore.isLoggedIn" class="nav__listItem" @click="modalStore.openModal('login')"><a class="nav__listLink" href="#">Sign in</a>
       </li>
-      <li class="nav__listItem" @click="modalStore.openModal('register')"><a class="nav__listLink" href="#">Register</a>
+      <li v-if="!userStore.isLoggedIn" class="nav__listItem" @click="modalStore.openModal('register')"><a class="nav__listLink" href="#">Register</a>
       </li>
       <li v-if="userStore.isLoggedIn" class="nav__listItem">
           <router-link to="/my-profile" class="nav__listLink">My profile</router-link>
