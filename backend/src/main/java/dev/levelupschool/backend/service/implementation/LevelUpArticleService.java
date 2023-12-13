@@ -58,9 +58,9 @@ public class LevelUpArticleService implements ArticleService {
         Article newArticle = new Article(
             createArticleRequest.getTitle(),
             createArticleRequest.getContent(),
-                fondUser,
+            fondUser,
             fileUrl
-            );
+        );
 
         Article savedArticle = articleRepository.save(newArticle);
 

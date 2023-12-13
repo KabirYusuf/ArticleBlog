@@ -1,23 +1,36 @@
 package dev.levelupschool.backend.controller;
 
 import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
+import dev.levelupschool.backend.data.dto.request.NotificationRequest;
 import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.model.User;
+import dev.levelupschool.backend.data.model.enums.Role;
 import dev.levelupschool.backend.data.repository.UserRepository;
 import dev.levelupschool.backend.service.auth.AuthenticationService;
+import dev.levelupschool.backend.service.notification.LevelUpEmailSenderService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Collections;
+import java.util.Set;
+
 import static dev.levelupschool.backend.util.Serializer.asJsonString;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -35,15 +48,20 @@ class AuthenticationControllerTest {
     private AuthenticationRequest authenticationRequest;
 
     private RegistrationRequest registrationRequest;
+    @MockBean
+    private LevelUpEmailSenderService levelUpEmailSenderService;
+    @MockBean
+    private AuthenticationManager authenticationManager;
     @Test
     void contextLoads() {
     }
     @BeforeEach
     void setUp() {
         userRepository.deleteAll();
+        doNothing().when(levelUpEmailSenderService).sendEmailNotification(any(NotificationRequest.class));
         registrationRequest = new RegistrationRequest();
         registrationRequest.setUsername("kaybee");
-        registrationRequest.setEmail("k@gmail.com");
+        registrationRequest.setEmail("sonkaybee@gmail.com");
         registrationRequest.setPassword("a12345A45@");
 
         authenticationRequest = new AuthenticationRequest();
@@ -54,6 +72,7 @@ class AuthenticationControllerTest {
 
     @Test
     void testThatWhenAUserRegister_UserRecordIncreasesByOne() throws Exception {
+        doNothing().when(levelUpEmailSenderService).sendEmailNotification(any(NotificationRequest.class));
         Assertions.assertEquals(0, userRepository.findAll().size());
         mvc.perform(
                 post("/auth/register")
@@ -67,18 +86,13 @@ class AuthenticationControllerTest {
 
     @Test
     void testThatTokenIsReturnedWhenAUserLogsInWithValidCredentials() throws Exception {
-        mvc.perform(
-            post("/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(authenticationRequest))
-        );
 
-        User foundUser = userRepository.findById(1L).get();
-
-        foundUser.setVerified(true);
-
-        userRepository.save(foundUser);
-
+        User user = new User();
+        user.setUsername("kaybee");
+        user.setPassword("a12345A45@");
+        user.setRoles(Set.of(Role.USER));
+        user.setVerified(true);
+        userRepository.save(user);
 
         mvc.perform(
                 post("/auth/login")

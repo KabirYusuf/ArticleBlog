@@ -1,9 +1,6 @@
 package dev.levelupschool.backend.controller;
 
-import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
-import dev.levelupschool.backend.data.dto.request.CreateArticleRequest;
-import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
-import dev.levelupschool.backend.data.dto.request.UpdateArticleRequest;
+import dev.levelupschool.backend.data.dto.request.*;
 import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
 import dev.levelupschool.backend.data.model.Article;
 import dev.levelupschool.backend.data.model.User;
@@ -13,12 +10,14 @@ import dev.levelupschool.backend.data.repository.UserRepository;
 import dev.levelupschool.backend.service.auth.AuthenticationService;
 import dev.levelupschool.backend.service.implementation.LevelUpUserArticleReactionService;
 import dev.levelupschool.backend.service.interfaces.ArticleService;
+import dev.levelupschool.backend.service.notification.LevelUpEmailSenderService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -27,6 +26,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import static dev.levelupschool.backend.util.Serializer.asJsonString;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -50,6 +51,8 @@ class ArticleControllerTest {
     LevelUpUserArticleReactionService levelUpUserArticleReactionService;
     @Autowired
     private ArticleService articleService;
+    @MockBean
+    private LevelUpEmailSenderService levelUpEmailSenderService;
     private String authHeader;
     private RegistrationRequest registrationRequest;
 
@@ -61,6 +64,8 @@ class ArticleControllerTest {
     }
     @BeforeEach
     void setUp(){
+        userRepository.deleteAll();
+        doNothing().when(levelUpEmailSenderService).sendEmailNotification(any(NotificationRequest.class));
         registrationRequest = new RegistrationRequest();
         registrationRequest.setUsername("kaybee");
         registrationRequest.setEmail("k@gmail.com");
