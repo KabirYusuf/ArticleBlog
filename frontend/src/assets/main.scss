@@ -1,46 +1,35 @@
-@import "./sass_utils/variable";
-@import "./sass_utils/mixins";
+@import "./sass_utils/_variable";
+@import "./sass_utils/_mixins";
 
 @import "./general.scss";
 
-@import "./layouts/header";
+@import "./layouts/_header";
 
-@import "./layouts//nav-bar";
-@import "./layouts/footer";
+@import "./layouts//_nav-bar";
+@import "./layouts/_footer";
 
 @import "./components/homepage/popular-topic-card.scss";
 
-@import "./components/homepage/editors-pick-card";
+@import "./components/homepage/_editors-pick-card.scss";
 
 @import "./modals/modal.scss";
 
-@import "./components/inputs/input-field.scss";
+@import "./components/inputs/_input-field.scss";
 
-@import "./components/inputs/button.scss";
-<<<<<<< HEAD
+@import "./components/inputs/_button.scss";
 
-@import "./components/view/view-all-articles.scss";
+@import "./components/view/_view-all-articles.scss";
 
-@import "./components/article-view.scss";
+@import "./components/_article-view.scss";
 
-@import "./components/comment.scss";
+@import "./components/_comment.scss";
 
-<<<<<<< HEAD
-@import "./components//comment-input.scss";
+@import "./components//_comment-input.scss";
 
-@import "./layouts//profile-header";
+@import "./layouts//_profile-header";
 
-@import "./components//view/my-profile";
+@import "./components//view/_my-profile";
 
-@import "./components/view/edit-profile";
+@import "./components/view/_edit-profile";
 
-@import "./components//view/add-article"
-=======
->>>>>>> 561af2f (fix: "resolving conflict between homework3 and storage branch")
-
-=======
->>>>>>> 19eb3cd (feat: implemented article view and routing)
-  
-  
-  
-  
+@import "./components//view/_add-article"

@@ -44,17 +44,11 @@ public class SecurityConfig {
                     exceptionHandlingConfigurer.accessDeniedHandler(accessDeniedHandler);
                 })
                 .authorizeHttpRequests((authz) -> authz
-<<<<<<< HEAD
                     .requestMatchers("/**").permitAll()
-=======
-                    .requestMatchers(HttpMethod.GET, "/articles", "/articles/**","/comments").permitAll()
-                    .requestMatchers("/auth/register", "/auth/login").permitAll()
-                    .requestMatchers("/app-usage/**").hasAuthority(Role.ADMIN.name())
->>>>>>> 19eb3cd (feat: implemented article view and routing)
                     .anyRequest().authenticated()
                 )
                 .sessionManagement(session-> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         } catch (Exception e) {

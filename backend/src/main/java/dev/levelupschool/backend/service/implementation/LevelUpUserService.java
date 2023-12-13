@@ -79,7 +79,7 @@ public class LevelUpUserService implements UserService {
     }
 
     private String covertNameFirstCharacterToUpperCase(String name){
-        if (name != null) return name.substring(0,1).toUpperCase() + name.substring(1);
+        if (name != null && !name.isEmpty()) return name.substring(0,1).toUpperCase() + name.substring(1);
         return null;
     }
 

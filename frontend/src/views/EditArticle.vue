@@ -42,9 +42,9 @@
 
                     <div class="articleInfo__uploadImage" @click="toggleUploader">Upload article image</div>
                     <ImageCropUpload ref="formData.image" :width="200" :height="200" :preview="true" lang-type="en"
-                    v-model="showUploader" :url="uploadUrl" :params="params" :headers="headers" :img-format="imgFormat"
-                    @crop-success="cropSuccess" @crop-upload-success="cropUploadSuccess"
-                    @crop-upload-fail="cropUploadFail" />
+                        v-model="showUploader" :url="uploadUrl" :params="params" :headers="headers" :img-format="imgFormat"
+                        @crop-success="cropSuccess" @crop-upload-success="cropUploadSuccess"
+                        @crop-upload-fail="cropUploadFail" />
 
                 </div>
 
@@ -151,7 +151,7 @@ const toggleUploader = () => {
 
 const cropSuccess = (imgDataUrlParam, field) => {
     imgDataUrl.value = imgDataUrlParam;
-    
+
     const base64Image = imgDataUrlParam.replace(/^data:image\/[a-z]+;base64,/, '');
 
     articleImageData.value = base64Image;
