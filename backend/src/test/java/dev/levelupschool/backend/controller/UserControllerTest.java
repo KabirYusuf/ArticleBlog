@@ -5,7 +5,9 @@ import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
 import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
 import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
+import dev.levelupschool.backend.data.model.Article;
 import dev.levelupschool.backend.data.model.User;
+import dev.levelupschool.backend.data.repository.ArticleRepository;
 import dev.levelupschool.backend.data.repository.UserRepository;
 import dev.levelupschool.backend.service.auth.AuthenticationService;
 import dev.levelupschool.backend.service.interfaces.UserService;
@@ -24,6 +26,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static dev.levelupschool.backend.util.Serializer.*;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -42,12 +45,13 @@ class UserControllerTest {
     private UserService userService;
     @Autowired
     private AuthenticationService authenticationService;
+    @Autowired
+    private ArticleRepository articleRepository;
     private String authHeader;
     private RegistrationRequest registrationRequest;
-
     @Container
     @ServiceConnection
-    static PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer("postgres:latest")
+    static PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer("postgres:16-alpine")
         .withDatabaseName("levelup");
     @BeforeAll
     static  void beforeAll(){
@@ -107,7 +111,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void givenAuthor_whenDeleteAuthorWithId_then200IsReturnedAsStatusCode() throws Exception {
+    public void givenUser_whenDeleteUserWithId_then200IsReturnedAsStatusCode() throws Exception {
         Assertions.assertEquals(1, userRepository.findAll().size());
        mvc.perform(delete("/users/1")
                .header("Authorization", authHeader)
@@ -117,7 +121,7 @@ class UserControllerTest {
     }
 
     @Test
-    void givenUpdateAuthorRequest_whenAuthorIsUpdated_authorIsUpdatedInDatabase() throws Exception {
+    public void givenUpdateUserRequest_whenUserIsUpdated_UserIsUpdatedInDatabase() throws Exception {
         Assertions.assertNull(userService.findUserById(1L).getFirstName());
 
         UpdateUserRequest updateUserRequest = new UpdateUserRequest();
@@ -134,4 +138,214 @@ class UserControllerTest {
        Assertions.assertEquals("Marko", userService.findUserById(1L).getFirstName());
     }
 
+    @Test
+    public void givenUserAAndUserB_whenUserAFollowsUserB_userBGetsAdditionalFollowerAndUserASizeOfUsersFollowedIncreasesByOne() throws Exception {
+        RegistrationRequest userARequest = new RegistrationRequest();
+        userARequest.setUsername("kaybee1");
+        userARequest.setEmail("sonkaybee@gmail.com");
+        userARequest.setPassword("1234");
+        AuthenticationResponse authenticationResponse = authenticationService.register(userARequest);
+
+        String userAAuthHeader = "Bearer " + authenticationResponse.getToken();
+
+        RegistrationRequest userBRequest = new RegistrationRequest();
+        userBRequest.setUsername("kaybee2");
+        userBRequest.setEmail("sonkaybee@gmail.com");
+        userBRequest.setPassword("1234");
+
+        authenticationService.register(userBRequest);
+
+        User userABeforeFollowingUserB = userRepository.findByIdWithFollowing(2L).get();
+        User userBBeforeUserAFollowed = userRepository.findByIdWithFollowers(3L).get();
+
+        int numberOfUsersUserAIsFollowingBeforeFollowingUserB = userABeforeFollowingUserB.getFollowing().size();
+        int numberOfUsersThatIsFollowingUserBBeforeUserAFollowsUserB = userBBeforeUserAFollowed.getFollowers().size();
+
+        assertEquals(0, numberOfUsersThatIsFollowingUserBBeforeUserAFollowsUserB);
+        assertEquals(0, numberOfUsersUserAIsFollowingBeforeFollowingUserB);
+
+        mvc.perform(
+                post("/users/3/follows")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", userAAuthHeader)
+
+            )
+            .andExpect(status().isOk());
+
+        User userAAfterFollowingUserB = userRepository.findByIdWithFollowing(2L).get();
+        User userBAfterFollowedByUserA = userRepository.findByIdWithFollowers(3L).get();
+
+        int numberOfUsersUserAIsFollowingAfterFollowingUserB = userAAfterFollowingUserB.getFollowing().size();
+        int numberOfUsersThatIsFollowingUserBAfterUserAFollowsUserB = userBAfterFollowedByUserA.getFollowers().size();
+
+        assertEquals(1, numberOfUsersThatIsFollowingUserBAfterUserAFollowsUserB);
+        assertEquals(1, numberOfUsersUserAIsFollowingAfterFollowingUserB);
+    }
+
+
+    @Test
+    public void givenUserAFollowsUserB_whenUserAUnfollowsUserB_userBNumberOfFollowersDecreasesByOneAndUserASizeOfUsersFollowedDecreasesByOne() throws Exception {
+        RegistrationRequest userARequest = new RegistrationRequest();
+        userARequest.setUsername("kaybee1");
+        userARequest.setEmail("sonkaybee@gmail.com");
+        userARequest.setPassword("1234");
+        AuthenticationResponse authenticationResponse = authenticationService.register(userARequest);
+
+        String userAAuthHeader = "Bearer " + authenticationResponse.getToken();
+
+        RegistrationRequest userBRequest = new RegistrationRequest();
+        userBRequest.setUsername("kaybee2");
+        userBRequest.setEmail("sonkaybee@gmail.com");
+        userBRequest.setPassword("1234");
+
+        authenticationService.register(userBRequest);
+
+        User userABeforeFollowingUserB = userRepository.findByIdWithFollowing(2L).get();
+        User userBBeforeUserAFollowed = userRepository.findByIdWithFollowers(3L).get();
+
+        int numberOfUsersUserAIsFollowingBeforeFollowingUserB = userABeforeFollowingUserB.getFollowing().size();
+        int numberOfUsersThatIsFollowingUserBBeforeUserAFollowsUserB = userBBeforeUserAFollowed.getFollowers().size();
+
+        assertEquals(0, numberOfUsersThatIsFollowingUserBBeforeUserAFollowsUserB);
+        assertEquals(0, numberOfUsersUserAIsFollowingBeforeFollowingUserB);
+
+        userService.followUser(userAAuthHeader, 3L);
+
+        User userAAfterFollowingUserB = userRepository.findByIdWithFollowing(2L).get();
+        User userBAfterFollowedByUserA = userRepository.findByIdWithFollowers(3L).get();
+
+        int numberOfUsersUserAIsFollowingAfterFollowingUserB = userAAfterFollowingUserB.getFollowing().size();
+        int numberOfUsersThatIsFollowingUserBAfterUserAFollowsUserB = userBAfterFollowedByUserA.getFollowers().size();
+
+        assertEquals(1, numberOfUsersThatIsFollowingUserBAfterUserAFollowsUserB);
+        assertEquals(1, numberOfUsersUserAIsFollowingAfterFollowingUserB);
+
+        mvc.perform(
+                delete("/users/3/follows")
+                    .header("Authorization", userAAuthHeader)
+            )
+            .andExpect(status().isOk());
+
+        User userAAfterUnfollowingUserB = userRepository.findByIdWithFollowing(2L).get();
+        User userBAfterUserAUnfollowed = userRepository.findByIdWithFollowers(3L).get();
+
+        int numberOfUsersUserAIsFollowingAfterUnfollowingUserB = userAAfterUnfollowingUserB.getFollowing().size();
+        int numberOfUsersThatIsFollowingUserBAfterUserAUnfollowsUserB = userBAfterUserAUnfollowed.getFollowers().size();
+
+        assertEquals(0, numberOfUsersThatIsFollowingUserBAfterUserAUnfollowsUserB);
+        assertEquals(0, numberOfUsersUserAIsFollowingAfterUnfollowingUserB);
+    }
+    @Test
+    public void givenUserAFollowsUserB_whenUserBFollowers_jsonArrayIsReturned() throws Exception {
+        RegistrationRequest userARequest = new RegistrationRequest();
+        userARequest.setUsername("kaybee1");
+        userARequest.setEmail("sonkaybee@gmail.com");
+        userARequest.setPassword("1234");
+        AuthenticationResponse authenticationResponse = authenticationService.register(userARequest);
+
+        String userAAuthHeader = "Bearer " + authenticationResponse.getToken();
+
+        RegistrationRequest userBRequest = new RegistrationRequest();
+        userBRequest.setUsername("kaybee2");
+        userBRequest.setEmail("sonkaybee@gmail.com");
+        userBRequest.setPassword("1234");
+
+        AuthenticationResponse userBAuthenticationResponse = authenticationService.register(userBRequest);
+        String userBAuthHeader = "Bearer " + userBAuthenticationResponse.getToken();
+        userService.followUser(userAAuthHeader, 3L);
+        mvc.perform(
+            get("/users/followers")
+                .header("Authorization", userBAuthHeader)
+        )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.*", hasSize(1)))
+            .andExpect(jsonPath("$[0].username", is("kaybee1")));
+    }
+    @Test
+    public void givenUserAFollowsUserB_whenUserAFollowing_jsonArrayIsReturned() throws Exception {
+        RegistrationRequest userARequest = new RegistrationRequest();
+        userARequest.setUsername("kaybee1");
+        userARequest.setEmail("sonkaybee@gmail.com");
+        userARequest.setPassword("1234");
+        AuthenticationResponse authenticationResponse = authenticationService.register(userARequest);
+
+        String userAAuthHeader = "Bearer " + authenticationResponse.getToken();
+
+        RegistrationRequest userBRequest = new RegistrationRequest();
+        userBRequest.setUsername("kaybee2");
+        userBRequest.setEmail("sonkaybee@gmail.com");
+        userBRequest.setPassword("1234");
+
+        AuthenticationResponse userBAuthenticationResponse = authenticationService.register(userBRequest);
+        String userBAuthHeader = "Bearer " + userBAuthenticationResponse.getToken();
+        userService.followUser(userAAuthHeader, 3L);
+        mvc.perform(
+                get("/users/following")
+                    .header("Authorization", userAAuthHeader)
+            )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.*", hasSize(1)))
+            .andExpect(jsonPath("$[0].username", is("kaybee2")));
+    }
+
+    @Test
+    public void givenUserAndArticle_whenUserBookmarksArticle_thenArticleIsBookmarked() throws Exception {
+        var article = new Article("test title 1", "test content 1", userRepository.findById(1L).get(), null);
+
+        articleRepository.save(article);
+        Long articleId = 1L;
+
+        mvc.perform(
+                post("/users/bookmarks/" + articleId)
+                    .header("Authorization", authHeader)
+            )
+            .andExpect(status().isOk());
+
+
+        User userAfterBookmarking = userRepository.findByIdWithBookmarkedArticles(1L).get();
+        assertTrue(userAfterBookmarking.getBookmarkedArticles().stream()
+            .anyMatch(foundArticle -> foundArticle.getId().equals(articleId)));
+    }
+
+    @Test
+    public void givenUserAndBookmarkedArticle_whenUserUnBookmarksArticle_thenArticleIsUnBookmarked() throws Exception {
+        var article = new Article("test title 1", "test content 1", userRepository.findById(1L).get(), null);
+
+        articleRepository.save(article);
+        Long articleId = 1L;
+
+
+        userService.bookmarkArticle(articleId, authHeader);
+
+        mvc.perform(
+                delete("/users/bookmarks/" + articleId)
+                    .header("Authorization", authHeader)
+            )
+            .andExpect(status().isOk());
+
+
+        User userAfterUnBookmarking = userRepository.findByIdWithBookmarkedArticles(1L).get();
+        assertFalse(userAfterUnBookmarking.getBookmarkedArticles().stream()
+            .anyMatch(foundArticle -> foundArticle.getId().equals(articleId)));
+    }
+
+    @Test
+    public void givenUser_whenGetBookmarkedArticles_thenReturnJsonArrayOfBookmarkedArticles() throws Exception {
+        var article = new Article("test title 1", "test content 1", userRepository.findById(1L).get(), null);
+
+        articleRepository.save(article);
+        Long articleId = 1L;
+
+
+        userService.bookmarkArticle(articleId, authHeader);
+
+        mvc.perform(
+                get("/users/bookmarks")
+                    .header("Authorization", authHeader)
+            )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.*", hasSize(greaterThan(0))))
+            .andExpect(jsonPath("$[0].id", is(notNullValue())))
+            .andExpect(jsonPath("$[0].title", is(notNullValue())));
+    }
 }

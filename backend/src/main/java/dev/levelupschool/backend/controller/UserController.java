@@ -2,6 +2,8 @@ package dev.levelupschool.backend.controller;
 import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
 import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
+import dev.levelupschool.backend.data.dto.response.ArticleDTO;
+import dev.levelupschool.backend.data.dto.response.UserDTO;
 import dev.levelupschool.backend.data.model.Article;
 import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.service.interfaces.UserService;
@@ -52,11 +54,67 @@ public class UserController {
         return ResponseEntity.ok(userService.getUser(authHeader));
     }
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateAuthor(@RequestBody UpdateUserRequest updateUserRequest, @PathVariable("id") Long id){
-        return ResponseEntity.ok(userService.updateUser(updateUserRequest, id));
+    public ResponseEntity<User> updateAuthor(
+        @RequestBody UpdateUserRequest updateUserRequest,
+        @PathVariable("id") Long id,
+        HttpServletRequest httpServletRequest){
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        return ResponseEntity.ok(userService.updateUser(updateUserRequest, id, authHeader));
     }
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable("id") Long id){
-        userService.deleteUser(id);
+    public void deleteUser(
+        @PathVariable("id") Long id,
+        HttpServletRequest httpServletRequest){
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        userService.deleteUser(id, authHeader);
+    }
+    @PostMapping("{id}/follows")
+    public void followUser(
+        @PathVariable("id") Long id,
+        HttpServletRequest httpServletRequest
+    ){
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        userService.followUser(authHeader, id);
+    }
+    @DeleteMapping("{id}/follows")
+    public void unFollowUser(
+        @PathVariable("id") Long id,
+        HttpServletRequest httpServletRequest
+    ){
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        userService.unfollowUser(authHeader, id);
+    }
+    @GetMapping("/followers")
+    public ResponseEntity<List<UserDTO>> getFollowers(HttpServletRequest httpServletRequest){
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        return ResponseEntity.ok(userService.getFollowers(authHeader));
+    }
+
+    @GetMapping("/following")
+    public ResponseEntity<List<UserDTO>> getUsersFollowed(HttpServletRequest httpServletRequest){
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        return ResponseEntity.ok(userService.getUsersFollowed(authHeader));
+    }
+    @PostMapping("/bookmarks/{id}")
+    public void bookmarkArticle(
+        @PathVariable("id") Long id,
+        HttpServletRequest httpServletRequest
+    ){
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        userService.bookmarkArticle(id, authHeader);
+    }
+    @DeleteMapping("/bookmarks/{id}")
+    public void unBookmarkArticle(
+        @PathVariable("id") Long id,
+        HttpServletRequest httpServletRequest
+    ){
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        userService.unBookmarkArticle(id, authHeader);
+    }
+
+    @GetMapping("/bookmarks")
+    public ResponseEntity<List<ArticleDTO>> getBookmarkedArticles(HttpServletRequest httpServletRequest){
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        return ResponseEntity.ok(userService.getBookmarkedArticles(authHeader));
     }
 }

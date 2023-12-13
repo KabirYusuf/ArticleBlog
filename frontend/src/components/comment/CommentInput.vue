@@ -2,7 +2,7 @@
     <div class="writeComment__container">
         <form @submit.prevent="sendComment" class="writeComment__form">
             <div class="writeComment__inner">
-                <img src="../../../public/card_images/BlogImage3.jpg" alt="commenter image" class="commenter__image">
+                <img :src="commenterImage" alt="commenter image" class="commenter__image">
                 <textarea v-model="content" placeholder="Write a comment..." class="writeComment__inputField"></textarea>
                 <Button type="submit" class="writeComment__submitButton">Send</Button>
             </div>
@@ -13,7 +13,7 @@
 <script setup>
 import Button from '../inputs/Button.vue'
 import { postComment } from '../../utility/Http'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useArticleStore } from '@/store/articleStore'
 import { useRouter } from 'vue-router';
 import { defineEmits } from 'vue';
@@ -25,6 +25,14 @@ const router = useRouter();
 const userStore = useUserStore();
 
 
+const currentUser = ref(null);
+
+
+const commenterImage = computed(() => {
+    return currentUser.value?.userImage || '../../../public/profile-avatar.webp';
+});
+
+
 
 const articleStore = useArticleStore()
 const articleId = ref(articleStore.currentArticle.id)
@@ -32,12 +40,13 @@ const content = ref('')
 
 onMounted(async () => {
     await userStore.fetchUser();
+    currentUser.value = userStore.user;
 });
 
 const sendComment = async () => {
-    const currentUser = userStore.user;
+    
 
-    if (!currentUser) {
+    if (!currentUser.value) {
         return;
     }
 
@@ -45,7 +54,7 @@ const sendComment = async () => {
         articleId: articleId.value,
         content: content.value,
         createdAt: new Date().toISOString(),
-        user: currentUser
+        user: currentUser.value
     };
 
     const backendRequest = {

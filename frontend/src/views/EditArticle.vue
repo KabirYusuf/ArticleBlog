@@ -39,6 +39,13 @@
                             <label for="isPremium" class="form__label form__label--premium">Premium article</label>
                         </div>
                     </div>
+
+                    <div class="articleInfo__uploadImage" @click="toggleUploader">Upload article image</div>
+                    <ImageCropUpload ref="formData.image" :width="200" :height="200" :preview="true" lang-type="en"
+                        v-model="showUploader" :url="uploadUrl" :params="params" :headers="headers" :img-format="imgFormat"
+                        @crop-success="cropSuccess" @crop-upload-success="cropUploadSuccess"
+                        @crop-upload-fail="cropUploadFail" />
+
                 </div>
 
             </div>
@@ -64,6 +71,7 @@ import { useRoute } from 'vue-router';
 import { handleErrors } from '../utility/handleErrors';
 import { useArticleStore } from '../store/articleStore';
 import { useRouter } from 'vue-router';
+import ImageCropUpload from 'vue-image-crop-upload';
 
 const router = useRouter();
 
@@ -72,6 +80,7 @@ const slug = ref('');
 const content = ref('');
 const date = ref('');
 const isPremium = ref(false);
+const articleImageData = ref('');
 
 const route = useRoute();
 const articleId = route.params.id;
@@ -114,7 +123,8 @@ const handleSubmit = async () => {
             slug: slug.value,
             content: content.value,
             date: date.value,
-            isPremium: isPremium.value
+            isPremium: isPremium.value,
+            articleImage: articleImageData.value
         }, articleId);
 
         router.push({ name: 'my-profile' });
@@ -129,4 +139,30 @@ const handleSubmit = async () => {
         handleErrors(error)
     }
 };
+const showUploader = ref(false);
+const imgDataUrl = ref('');
+const imgFormat = 'png';
+const params = ref({});
+const headers = ref({});
+
+const toggleUploader = () => {
+    showUploader.value = !showUploader.value;
+}
+
+const cropSuccess = (imgDataUrlParam, field) => {
+    imgDataUrl.value = imgDataUrlParam;
+
+    const base64Image = imgDataUrlParam.replace(/^data:image\/[a-z]+;base64,/, '');
+
+    articleImageData.value = base64Image;
+    showUploader.value = false;
+}
+
+const cropUploadSuccess = (jsonData, field) => {
+    console.log('Upload success:', jsonData);
+}
+
+const cropUploadFail = (status, field) => {
+    console.error('Upload fail:', status);
+}
 </script>

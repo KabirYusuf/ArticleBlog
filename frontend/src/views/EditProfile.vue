@@ -3,8 +3,8 @@
         <div class="myProfileHeader__content">
             <div class="myProfileHeader__inner">
 
-                <img @click="toggleUploader" src="../../public/profile-avatar.webp" alt="profile-image"
-                    class="profileHeader__image">
+                <img @click="toggleUploader" :src="userImageUrl" alt="profile-image" class="profileHeader__image"
+                    style="cursor: pointer;">
 
                 <ImageCropUpload ref="formData.image" :width="200" :height="200" :preview="true" lang-type="en"
                     v-model="showUploader" :url="uploadUrl" :params="params" :headers="headers" :img-format="imgFormat"
@@ -27,9 +27,11 @@
             <label for="firstName" class="form__label">First Name</label>
             <InputField id="firstNname" type="text" placeholder="first name" v-model:value="firstName"
                 class="input__field" />
+            <p style="color: red;" v-if="firstNameError" class="error-message">{{ firstNameError }}</p>
 
             <label for="lastName" class="form__label">Last Name</label>
             <InputField id="lastNname" type="text" placeholder="last name" v-model:value="lastName" class="input__field" />
+            <p style="color: red;" v-if="lastNameError" class="error-message">{{ lastNameError }}</p>
 
             <label for="password" class="form__label">Password</label>
             <InputField id="password" type="password" placeholder="Password" v-model:value="password"
@@ -38,6 +40,7 @@
             <label for="repeat-password" class="form__label">Repeat Password</label>
             <InputField id="repeat-password" type="password" placeholder="Password" v-model:value="repeatPassword"
                 class="input__field" />
+            <p style="color: red;" v-if="passwordError" class="error-message">{{ passwordError }}</p>
 
             <Button type="submit" class="form__submitButton">Update</Button>
         </form>
@@ -57,6 +60,7 @@ import { updateUser } from '../utility/userApiService';
 import Swal from 'sweetalert2'
 import { useRouter } from 'vue-router';
 import ImageCropUpload from 'vue-image-crop-upload';
+import { handleErrors } from '../utility/handleErrors';
 
 
 
@@ -68,7 +72,11 @@ const firstName = ref('')
 const lastName = ref('')
 const password = ref('')
 const repeatPassword = ref('')
-const message = ref('')
+const profileImageData = ref('');
+
+const firstNameError = ref('');
+const lastNameError = ref('');
+const passwordError = ref('');
 
 
 onMounted(async () => {
@@ -88,27 +96,27 @@ const fullName = computed(() => {
 
 
 const handleSubmit = async () => {
-    message.value = '';
 
+    firstNameError.value = '';
+    lastNameError.value = '';
+    passwordError.value = '';
 
-    if (!password.value || !firstName.value || !lastName.value) {
-        message.value = 'Please fill in all fields';
+    let isFormInvalid = false;
+    if (!firstName.value) {
+        firstNameError.value = 'First Name cannot be empty';
+        isFormInvalid = true;
+    }
+    if (!lastName.value) {
+        lastNameError.value = 'Last Name cannot be empty';
+        isFormInvalid = true;
+    }
 
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: message.value
-        });
+    if (isFormInvalid) {
         return;
     }
 
     if (password.value !== repeatPassword.value) {
-        message.value = 'Password mismatch';
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: message.value
-        });
+        passwordError.value = 'Password mismatch';
         return;
     }
 
@@ -116,7 +124,8 @@ const handleSubmit = async () => {
         const response = await updateUser({
             password: password.value,
             firstName: firstName.value,
-            lastName: lastName.value
+            lastName: lastName.value,
+            userImage: profileImageData.value
         }, userStore.user.id);
 
         await Swal.fire({
@@ -128,13 +137,10 @@ const handleSubmit = async () => {
         router.push('/my-profile');
 
     } catch (error) {
-        const errorMessage = error.response?.data?.errors
-            ? Object.values(error.response.data.errors)[0]
-            : 'An error occurred';
-        Swal.fire({
-            icon: 'error',
-            title: 'Unsuccessful',
-            text: errorMessage
+        handleErrors(error, {
+            firstName: firstNameError,
+            lastName: lastNameError,
+            password: passwordError
         });
     }
 
@@ -153,6 +159,10 @@ const toggleUploader = () => {
 
 const cropSuccess = (imgDataUrlParam, field) => {
     imgDataUrl.value = imgDataUrlParam;
+
+    const base64Image = imgDataUrlParam.replace(/^data:image\/[a-z]+;base64,/, '');
+
+    profileImageData.value = base64Image;
     showUploader.value = false;
 }
 
@@ -163,5 +173,9 @@ const cropUploadSuccess = (jsonData, field) => {
 const cropUploadFail = (status, field) => {
     console.error('Upload fail:', status);
 }
+
+const userImageUrl = computed(() => {
+    return userStore.user?.userImage || '../../public/profile-avatar.webp';
+});
 
 </script>

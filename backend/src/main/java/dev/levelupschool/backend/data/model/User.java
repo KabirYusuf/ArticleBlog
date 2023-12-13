@@ -1,6 +1,7 @@
 package dev.levelupschool.backend.data.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import dev.levelupschool.backend.data.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,8 +10,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.hateoas.server.core.Relation;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "users", schema = "public")
@@ -44,5 +44,40 @@ public class User {
     @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "user")
     private List<Comment> comments;
+    private String userImage;
+    @ManyToMany
+    @JoinTable(
+        name = "followers_following",
+        joinColumns = @JoinColumn(name = "follower_id"),
+        inverseJoinColumns = @JoinColumn(name = "followed_id")
+    )
+    Set<User> following = new HashSet<>();
+
+    @ManyToMany(mappedBy = "following")
+    Set<User> followers = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+        name = "user_bookmarked_articles",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "article_id")
+    )
+    private Set<Article> bookmarkedArticles = new HashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<UserArticleReaction> reactions = new HashSet<>();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id != null && id.equals(user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
 }

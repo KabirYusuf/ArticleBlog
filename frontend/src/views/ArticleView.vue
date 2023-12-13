@@ -14,8 +14,7 @@
 
             <div class="articleAuthorInfo">
                 <div class="author__Info author--nameAndImage">
-                    <img v-if="currentArticle?.user.image" :src="currentArticle?.user.image" alt="authorImage">
-                    <img v-else src="../../public/Image.jpg" alt="Article author image" class="article__authorImage">
+                    <img :src="authorImage" alt="authorImage" class="article__authorImage">
                     <div class="author__nameAndProfession">
                         <p class="author__name">{{ fullName }}</p>
                         <p class="author__profession">Thinker & Designer</p>
@@ -72,6 +71,10 @@ const fullName = computed(() => {
         return `${currentArticle.value.user.firstName} ${currentArticle.value.user.lastName}`;
     }
     return '';
+});
+
+const authorImage = computed(() => {
+    return currentArticle.value?.user?.userImage || '../../public/profile-avatar.webp';
 });
 
 

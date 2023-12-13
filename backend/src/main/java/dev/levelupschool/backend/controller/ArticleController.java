@@ -1,12 +1,14 @@
 package dev.levelupschool.backend.controller;
 
 import dev.levelupschool.backend.data.dto.request.CreateArticleRequest;
+import dev.levelupschool.backend.data.dto.request.ReactionRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateArticleRequest;
 import dev.levelupschool.backend.data.dto.response.CreateArticleResponse;
 import dev.levelupschool.backend.data.model.Article;
 import dev.levelupschool.backend.service.interfaces.ArticleService;
 import dev.levelupschool.backend.util.ArticleResourceAssembler;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.EntityModel;
@@ -53,7 +55,7 @@ public class ArticleController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Article> update(
-        @RequestBody UpdateArticleRequest updateArticleRequest,
+        @RequestBody @Valid UpdateArticleRequest updateArticleRequest,
         @PathVariable Long id,
         HttpServletRequest httpServletRequest) {
         String authHeader = httpServletRequest.getHeader("Authorization");
@@ -66,5 +68,20 @@ public class ArticleController {
         HttpServletRequest httpServletRequest) {
         String authHeader = httpServletRequest.getHeader("Authorization");
         articleService.deleteArticle(id, authHeader);
+    }
+    @PostMapping("{id}/react")
+    public void reactToArticle(
+        @RequestBody ReactionRequest reactionRequest,
+        @PathVariable Long id,
+        HttpServletRequest httpServletRequest) {
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        articleService.reactToArticle(id, reactionRequest.getReactionType(), authHeader);
+    }
+    @DeleteMapping("{id}/react")
+    public void removeReaction(
+        @PathVariable Long id,
+        HttpServletRequest httpServletRequest) {
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        articleService.removeReaction(id, authHeader);
     }
 }

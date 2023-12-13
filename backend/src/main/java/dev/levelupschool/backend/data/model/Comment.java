@@ -95,3 +95,4 @@ public class Comment {
         return String.format("Comment[id=%d, article.id=%d, content='%s']", id, article.getId(), content);
     }
 }
+

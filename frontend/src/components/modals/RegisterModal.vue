@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 import { useUserStore } from '../../store/userStore';
 import { useModalStore } from '../../store/modalStore';
 import { useRouter } from 'vue-router';
+import { handleErrors } from '../../utility/handleErrors';
 
 const userStore = useUserStore();
 const modalStore = useModalStore();
@@ -59,17 +60,9 @@ const handleSubmit = async () => {
         router.push('/');
 
     } catch (error) {
-
-        if (!error.response.data.errors) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Unsuccessful',
-                text: error.response.data
-            });
-        } else
-            if (error.response.data.errors['password']) {
-                passwordError.value = error.response.data.errors['password'];
-            }
+        handleErrors(error, {
+            password: passwordError
+        });
 
     }
 };

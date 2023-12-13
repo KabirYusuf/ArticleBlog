@@ -1,13 +1,19 @@
 package dev.levelupschool.backend.data.model;
 
+import dev.levelupschool.backend.data.model.enums.ReactionType;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.hateoas.server.core.Relation;
 
+
+import java.util.HashSet;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "articles", schema = "public")
@@ -25,7 +31,44 @@ public class Article {
     @JoinColumn(name = "user_id")
     private User user;
 
+    private String articleImage;
+    @ManyToMany(mappedBy = "bookmarkedArticles")
+    private Set<User> bookmarkedByUsers = new HashSet<>();
+
+    public Set<UserArticleReaction> getReactions() {
+        return reactions;
+    }
+
+    public void setReactions(Set<UserArticleReaction> reactions) {
+        this.reactions = reactions;
+    }
+
+    @OneToMany(mappedBy = "article")
+    private Set<UserArticleReaction> reactions = new HashSet<>();
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public Set<User> getBookmarkedByUsers() {
+        return bookmarkedByUsers;
+    }
+
+    public void setBookmarkedByUsers(Set<User> bookmarkedByUsers) {
+        this.bookmarkedByUsers = bookmarkedByUsers;
+    }
+
+    public String getArticleImage() {
+        return articleImage;
+    }
+
+    public void setArticleImage(String articleImage) {
+        this.articleImage = articleImage;
+    }
+
+
     public LocalDateTime getCreatedAt() {
+
         return createdAt;
     }
 
@@ -46,6 +89,7 @@ public class Article {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
+
     public User getUser() {
         return user;
     }
@@ -54,10 +98,11 @@ public class Article {
         this.user = user;
     }
 
-    public Article(String title, String content, User user) {
+    public Article(String title, String content, User user, String articleImage) {
         this.title = title;
         this.content = content;
         this.user = user;
+        this.articleImage = articleImage;
     }
 
     public Article() {

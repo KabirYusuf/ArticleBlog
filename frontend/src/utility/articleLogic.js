@@ -33,5 +33,3 @@ export const cards = computed(() => {
 export const handleArticleClick = (articleId, router) => {
     router.push({ name: 'article', params: { id: articleId } });
 };
-
-
