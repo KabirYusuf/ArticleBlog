@@ -23,6 +23,16 @@ services:
             - '${GEO_GATEWAY_PORT:-8042}:8000'
         networks:
             - levelup
+    payment-gateway:
+        build:
+            context: ./backend/payment-gateway
+            dockerfile: Dockerfile
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        ports:
+            - '${PAYMENT_GATEWAY_PORT:-8052}:8000'
+        networks:
+            - levelup
     pgsql:
         image: 'postgres:15'
         ports:
