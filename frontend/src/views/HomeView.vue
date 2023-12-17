@@ -13,6 +13,12 @@ const firstCard = computed(() => {
   return cards.value.length > 0 ? cards.value[0] : null;
 });
 
+const lastEightCards = computed(() => {
+  const totalCards = cards.value.length;
+  const startIndex = totalCards - 8 < 0 ? 0 : totalCards - 8;
+  return cards.value.slice(startIndex).reverse();
+});
+
 
 const editorsPicks = ref([
   {
@@ -59,7 +65,7 @@ const editorsPicks = ref([
     </ul>
     <div class="popularTopics__card">
 
-      <PopularTopicCard v-for="card in cards.slice(0, 8)" :key="card.id" :card="card" />
+      <PopularTopicCard v-for="card in lastEightCards" :key="card.id" :card="card" />
 
     </div>
   </section>
