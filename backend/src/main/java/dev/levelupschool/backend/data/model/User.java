@@ -66,6 +66,7 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private Set<UserArticleReaction> reactions = new HashSet<>();
+    private boolean isPremium;
 
     @Override
     public boolean equals(Object o) {

@@ -1,5 +1,6 @@
 package dev.levelupschool.backend.controller;
 import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
+import dev.levelupschool.backend.data.dto.request.PaymentDetails;
 import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
 import dev.levelupschool.backend.data.dto.response.ArticleDTO;
@@ -116,5 +117,10 @@ public class UserController {
     public ResponseEntity<List<ArticleDTO>> getBookmarkedArticles(HttpServletRequest httpServletRequest){
         String authHeader = httpServletRequest.getHeader("Authorization");
         return ResponseEntity.ok(userService.getBookmarkedArticles(authHeader));
+    }
+    @PostMapping("/premium")
+    public ResponseEntity<String> becomePremium(@RequestBody PaymentDetails paymentDetails, HttpServletRequest httpServletRequest ){
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        return ResponseEntity.ok(userService.becomePremium(paymentDetails, authHeader));
     }
 }

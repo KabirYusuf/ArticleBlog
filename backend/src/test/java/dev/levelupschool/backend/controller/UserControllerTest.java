@@ -2,6 +2,7 @@ package dev.levelupschool.backend.controller;
 
 import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
 
+import dev.levelupschool.backend.data.dto.request.PaymentDetails;
 import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
 import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
@@ -15,10 +16,12 @@ import dev.levelupschool.backend.security.JwtAuthenticationFilter;
 import dev.levelupschool.backend.security.JwtService;
 import dev.levelupschool.backend.security.SecuredUser;
 import dev.levelupschool.backend.service.auth.AuthenticationService;
+import dev.levelupschool.backend.service.interfaces.PaymentService;
 import dev.levelupschool.backend.service.interfaces.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -53,8 +56,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @AutoConfigureMockMvc(addFilters = false)
 @SpringBootTest
@@ -82,6 +84,8 @@ class UserControllerTest {
     private RegistrationRequest registrationRequest;
     @MockBean
     private JwtService jwtService;
+    @MockBean
+    private PaymentService paymentService;
 //    @Container
 //    @ServiceConnection
 //    static PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer("postgres:16-alpine")
@@ -326,4 +330,55 @@ class UserControllerTest {
             .andExpect(jsonPath("$[0].id", is(notNullValue())))
             .andExpect(jsonPath("$[0].title", is(notNullValue())));
     }
+
+    @Test
+    public void givenPaymentDetails_whenPaymentSucceeds_thenUserBecomesPremium() throws Exception {
+
+        PaymentDetails paymentDetails = new PaymentDetails();
+        User user = userRepository.findById(1L).get();
+        assertFalse(user.isPremium());
+
+        when(paymentService.processPayment(ArgumentMatchers.any())).thenReturn(true);
+
+
+        mvc.perform(
+                post("/users/premium")
+                    .header("Authorization", "Bearer token")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(asJsonString(paymentDetails))
+            )
+            .andExpect(status().isOk())
+            .andExpect(content().string("Payment successful and premium status updated."));
+
+
+        User updatedUser = userRepository.findById(1L).get();
+        assertTrue(updatedUser.isPremium());
+    }
+
+    @Test
+    public void givenPaymentDetails_whenPaymentFails_thenUserRemainsNonPremium() throws Exception {
+
+        PaymentDetails paymentDetails = new PaymentDetails();
+        User user = userRepository.findById(1L).get();
+        assertFalse(user.isPremium());
+
+        when(paymentService.processPayment(ArgumentMatchers.any())).thenReturn(false);
+
+
+        mvc.perform(
+                post("/users/premium")
+                    .header("Authorization", "Bearer token")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(asJsonString(paymentDetails))
+            )
+            .andExpect(status().isOk())
+            .andExpect(content().string("Payment was not successful. Please try again."));
+
+
+        User updatedUser = userRepository.findById(1L).get();
+        assertFalse(updatedUser.isPremium());
+    }
+
+
+
 }

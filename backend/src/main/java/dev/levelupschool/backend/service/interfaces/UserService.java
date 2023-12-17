@@ -1,9 +1,6 @@
 package dev.levelupschool.backend.service.interfaces;
 
-import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
-import dev.levelupschool.backend.data.dto.request.CreateUserRequest;
-import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
-import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
+import dev.levelupschool.backend.data.dto.request.*;
 import dev.levelupschool.backend.data.dto.response.ArticleDTO;
 import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
 import dev.levelupschool.backend.data.dto.response.CreateUserResponse;
@@ -11,6 +8,7 @@ import dev.levelupschool.backend.data.dto.response.UserDTO;
 import dev.levelupschool.backend.data.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -30,6 +28,7 @@ public interface UserService {
     List<UserDTO> getUsersFollowed(String authHeader);
     void bookmarkArticle(Long articleId, String authHeader);
     void unBookmarkArticle(Long articleId, String authHeader);
-    public List<ArticleDTO> getBookmarkedArticles(String authHeader);
+    List<ArticleDTO> getBookmarkedArticles(String authHeader);
+    String becomePremium(PaymentDetails paymentDetails, String authHeader);
 
 }

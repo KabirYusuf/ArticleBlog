@@ -5,10 +5,15 @@ from fastapi import status
 
 CardType = str
 
-def process_payment(payment_details: PaymentDetails) -> dict:
-    # TODO: actual processing would go here
-    return JSONResponse({}, status_code=status.HTTP_200_OK)
+def process_payment(payment_details: PaymentDetails) -> JSONResponse:
+    try:
+        # TODO:To Implement actual payment processing logic
+        
+        return JSONResponse(content={"success": True, "message": "Payment processed successfully."}, status_code=status.HTTP_200_OK)
+    except Exception as e:
 
+        return JSONResponse(content={"success": False, "message": str(e)}, status_code=status.HTTP_400_BAD_REQUEST)
+    
 def validate_card_number(payment_details: PaymentDetails) -> CardType:
     normalized_card_number = payment_details.card_number.replace(" ", "")
 
