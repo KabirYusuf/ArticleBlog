@@ -1,11 +1,12 @@
 package dev.levelupschool.backend.service.implementation;
 
 import com.google.gson.Gson;
-import com.squareup.okhttp.*;
+
 import dev.levelupschool.backend.data.dto.request.PaymentDetails;
 import dev.levelupschool.backend.exception.PaymentProcessingException;
 import dev.levelupschool.backend.service.interfaces.PaymentService;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

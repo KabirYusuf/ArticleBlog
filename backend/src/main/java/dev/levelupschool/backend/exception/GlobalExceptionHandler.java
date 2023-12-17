@@ -77,4 +77,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(e.getMessage(), e.getStatus());
     }
 
+    @ResponseBody
+    @ExceptionHandler(GeoException.class)
+    ResponseEntity<String> handleGeoException(GeoException geoException) {
+        return new ResponseEntity<>(geoException.getMessage(), geoException.getStatus());
+
+    }
+
 }

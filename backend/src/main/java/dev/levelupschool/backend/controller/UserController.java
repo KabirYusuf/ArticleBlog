@@ -120,7 +120,7 @@ public class UserController {
     }
     @PostMapping("/premium")
     public ResponseEntity<String> becomePremium(@RequestBody PaymentDetails paymentDetails, HttpServletRequest httpServletRequest ){
-        String authHeader = httpServletRequest.getHeader("Authorization");
-        return ResponseEntity.ok(userService.becomePremium(paymentDetails, authHeader));
+
+        return ResponseEntity.ok(userService.becomePremium(paymentDetails, httpServletRequest));
     }
 }

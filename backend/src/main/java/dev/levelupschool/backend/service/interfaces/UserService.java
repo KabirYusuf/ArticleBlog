@@ -6,6 +6,7 @@ import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
 import dev.levelupschool.backend.data.dto.response.CreateUserResponse;
 import dev.levelupschool.backend.data.dto.response.UserDTO;
 import dev.levelupschool.backend.data.model.User;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,6 @@ public interface UserService {
     void bookmarkArticle(Long articleId, String authHeader);
     void unBookmarkArticle(Long articleId, String authHeader);
     List<ArticleDTO> getBookmarkedArticles(String authHeader);
-    String becomePremium(PaymentDetails paymentDetails, String authHeader);
+    String becomePremium(PaymentDetails paymentDetails, HttpServletRequest httpServletRequest);
 
 }

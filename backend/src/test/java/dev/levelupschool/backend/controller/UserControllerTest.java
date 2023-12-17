@@ -12,10 +12,12 @@ import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.model.enums.Role;
 import dev.levelupschool.backend.data.repository.ArticleRepository;
 import dev.levelupschool.backend.data.repository.UserRepository;
+import dev.levelupschool.backend.exception.GeoException;
 import dev.levelupschool.backend.security.JwtAuthenticationFilter;
 import dev.levelupschool.backend.security.JwtService;
 import dev.levelupschool.backend.security.SecuredUser;
 import dev.levelupschool.backend.service.auth.AuthenticationService;
+import dev.levelupschool.backend.service.interfaces.GeoService;
 import dev.levelupschool.backend.service.interfaces.PaymentService;
 import dev.levelupschool.backend.service.interfaces.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -86,6 +88,9 @@ class UserControllerTest {
     private JwtService jwtService;
     @MockBean
     private PaymentService paymentService;
+    @MockBean
+    private GeoService geoService;
+
 //    @Container
 //    @ServiceConnection
 //    static PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer("postgres:16-alpine")
@@ -338,6 +343,8 @@ class UserControllerTest {
         User user = userRepository.findById(1L).get();
         assertFalse(user.isPremium());
 
+        when(geoService.getLocationInfo(anyString())).thenReturn("Nigeria");
+
         when(paymentService.processPayment(ArgumentMatchers.any())).thenReturn(true);
 
 
@@ -362,6 +369,8 @@ class UserControllerTest {
         User user = userRepository.findById(1L).get();
         assertFalse(user.isPremium());
 
+        when(geoService.getLocationInfo(anyString())).thenReturn("Nigeria");
+
         when(paymentService.processPayment(ArgumentMatchers.any())).thenReturn(false);
 
 
@@ -379,6 +388,26 @@ class UserControllerTest {
         assertFalse(updatedUser.isPremium());
     }
 
+    @Test
+    public void givenPaymentDetailsFromBannedCountry_whenAttemptToBecomePremium_thenThrowGeoException() throws Exception {
+        PaymentDetails paymentDetails = new PaymentDetails();
+        when(geoService.getLocationInfo(anyString())).thenReturn("Canada");
+        when(geoService.isCountryBanned(anyString())).thenReturn(true);
+        when(paymentService.processPayment(ArgumentMatchers.any())).thenReturn(true);
+
+        mvc.perform(
+                post("/users/premium")
+                    .header("Authorization", "Bearer token")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(asJsonString(paymentDetails))
+            )
+            .andExpect(status().isForbidden())
+            .andExpect(result -> assertTrue(result.getResolvedException() instanceof GeoException))
+            .andExpect(content().string(containsString("Access from your country is not allowed")));
+
+        User user = userRepository.findById(1L).get();
+        assertFalse(user.isPremium());
+    }
 
 
 }
