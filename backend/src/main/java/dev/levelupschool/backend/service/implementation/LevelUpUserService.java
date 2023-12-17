@@ -1,5 +1,6 @@
 package dev.levelupschool.backend.service.implementation;
 
+import dev.levelupschool.backend.data.dto.request.PaymentDetails;
 import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
 import dev.levelupschool.backend.data.dto.response.ArticleDTO;
@@ -9,15 +10,22 @@ import dev.levelupschool.backend.data.model.enums.Role;
 import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.repository.ArticleRepository;
 import dev.levelupschool.backend.data.repository.UserRepository;
+import dev.levelupschool.backend.exception.GeoException;
 import dev.levelupschool.backend.exception.ModelNotFoundException;
 import dev.levelupschool.backend.exception.UserException;
 import dev.levelupschool.backend.security.JwtService;
 import dev.levelupschool.backend.service.interfaces.FileStorageService;
+import dev.levelupschool.backend.service.interfaces.GeoService;
+import dev.levelupschool.backend.service.interfaces.PaymentService;
 import dev.levelupschool.backend.service.interfaces.UserService;
 import dev.levelupschool.backend.util.Converter;
+import dev.levelupschool.backend.util.HttpUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,17 +46,23 @@ public class LevelUpUserService implements UserService {
     private final JwtService jwtService;
     private final FileStorageService fileStorageService;
     private ArticleRepository articleRepository;
+    private final PaymentService paymentService;
+    private final GeoService geoService;
     public LevelUpUserService(
         UserRepository userRepository,
         PasswordEncoder passwordEncoder,
         JwtService jwtService,
         FileStorageService fileStorageService,
-        ArticleRepository articleRepository){
+        ArticleRepository articleRepository,
+        PaymentService paymentService,
+        GeoService geoService){
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.fileStorageService = fileStorageService;
         this.articleRepository = articleRepository;
+        this.paymentService = paymentService;
+        this.geoService = geoService;
     }
 
     @Override
@@ -229,5 +243,24 @@ public class LevelUpUserService implements UserService {
             .stream()
             .map(ArticleDTO::new)
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public String becomePremium(PaymentDetails paymentDetails, HttpServletRequest httpServletRequest) {
+        String authHeader = httpServletRequest.getHeader("Authorization");
+        User user = getUser(authHeader);
+        String ipAddress = HttpUtil.getClientIpAddress(httpServletRequest);
+        String country = geoService.getLocationInfo(ipAddress);
+
+        if (geoService.isCountryBanned(country)){
+            throw new GeoException("Access from your country is not allowed", HttpStatus.FORBIDDEN);
+        }
+        if (paymentService.processPayment(paymentDetails)) {
+            user.setPremium(true);
+            userRepository.save(user);
+            return"Payment successful and premium status updated.";
+        } else {
+            return "Payment was not successful. Please try again.";
+        }
     }
 }

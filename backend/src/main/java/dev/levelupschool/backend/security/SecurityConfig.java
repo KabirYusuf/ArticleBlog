@@ -8,6 +8,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
@@ -37,14 +38,16 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity){
         try {
             httpSecurity
-                .csrf()
-                .disable()
+                .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(exceptionHandlingConfigurer -> {
                     exceptionHandlingConfigurer.authenticationEntryPoint(authenticationEntryPoint);
                     exceptionHandlingConfigurer.accessDeniedHandler(accessDeniedHandler);
                 })
                 .authorizeHttpRequests((authz) -> authz
-                    .requestMatchers("/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/articles/**", "/users/**", "/comments/**").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login").permitAll()
+                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                    .requestMatchers("/app-usage/**").hasAuthority(Role.ADMIN.name())
                     .anyRequest().authenticated()
                 )
                 .sessionManagement(session-> session

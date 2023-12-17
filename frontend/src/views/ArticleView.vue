@@ -29,7 +29,7 @@
             </div>
             <p class="comment__title">Comments:</p>
 
-            <CommentInput @commentSent="handleNewComment" />
+            <CommentInput v-if="userStore.isLoggedIn" @commentSent="handleNewComment" />
 
             <Comment v-for="comment in formattedComments" :comment="comment" :key="comment.id" />
         </div>
@@ -59,11 +59,12 @@ import Comment from "../components/comment/Comment.vue"
 import { timeSince } from '../utility/dateAndTimeLogic';
 import { formatDate } from '../utility/dateAndTimeLogic';
 import CommentInput from '../components/comment/CommentInput.vue'
+import { useUserStore } from '../store/userStore';
 
 
 const route = useRoute();
 const articleStore = useArticleStore();
-
+const userStore = useUserStore();
 const currentArticle = computed(() => articleStore.currentArticle);
 
 const fullName = computed(() => {

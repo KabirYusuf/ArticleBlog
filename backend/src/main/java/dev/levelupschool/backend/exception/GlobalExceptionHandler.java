@@ -1,6 +1,7 @@
 package dev.levelupschool.backend.exception;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -50,7 +51,7 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     Map<String, Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, Object> errors = new HashMap<>();
 
@@ -67,6 +68,19 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.GATEWAY_TIMEOUT)
     String handleCommunicationException(CommunicationException communicationException) {
         return communicationException.getMessage();
+
+    }
+
+    @ExceptionHandler(PaymentProcessingException.class)
+    @ResponseBody
+    public ResponseEntity<String> handlePaymentProcessingException(PaymentProcessingException e) {
+        return new ResponseEntity<>(e.getMessage(), e.getStatus());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(GeoException.class)
+    ResponseEntity<String> handleGeoException(GeoException geoException) {
+        return new ResponseEntity<>(geoException.getMessage(), geoException.getStatus());
 
     }
 

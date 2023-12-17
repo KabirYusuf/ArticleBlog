@@ -18,6 +18,7 @@ import { useArticleStore } from '@/store/articleStore'
 import { useRouter } from 'vue-router';
 import { defineEmits } from 'vue';
 import { useUserStore } from '../../store/userStore'
+import {handleErrors} from '../../utility/handleErrors'
 
 const emits = defineEmits(['commentSent']);
 
@@ -67,7 +68,7 @@ const sendComment = async () => {
         content.value = '';
         emits('commentSent', fullComment);
     } catch (error) {
-        console.error(error.message);
+        handleErrors(error)
     }
 };
 

@@ -2,8 +2,11 @@ package dev.levelupschool.backend.data.model;
 
 import dev.levelupschool.backend.data.model.enums.ReactionType;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.hateoas.server.core.Relation;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,6 +28,27 @@ public class Article {
     private User user;
 
     private String articleImage;
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
     @ManyToMany(mappedBy = "bookmarkedArticles")
     private Set<User> bookmarkedByUsers = new HashSet<>();
 
