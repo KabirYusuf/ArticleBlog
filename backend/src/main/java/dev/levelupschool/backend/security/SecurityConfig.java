@@ -2,10 +2,12 @@ package dev.levelupschool.backend.security;
 
 import dev.levelupschool.backend.data.model.enums.Role;
 import dev.levelupschool.backend.exception.SecurityException;
+import dev.levelupschool.backend.security.oauth2.CustomOAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -22,16 +24,19 @@ public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final AccessDeniedHandler accessDeniedHandler;
     private final AuthenticationEntryPoint authenticationEntryPoint;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     public SecurityConfig(
         JwtAuthenticationFilter jwtAuthenticationFilter,
         AuthenticationProvider authenticationProvider,
         AccessDeniedHandler accessDeniedHandler,
-        AuthenticationEntryPoint authenticationEntryPoint){
+        AuthenticationEntryPoint authenticationEntryPoint,
+        CustomOAuth2UserService customOAuth2UserService){
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.authenticationProvider = authenticationProvider;
         this.accessDeniedHandler = accessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
+        this.customOAuth2UserService = customOAuth2UserService;
     }
 
     @Bean
@@ -44,16 +49,22 @@ public class SecurityConfig {
                     exceptionHandlingConfigurer.accessDeniedHandler(accessDeniedHandler);
                 })
                 .authorizeHttpRequests((authz) -> authz
-                    .requestMatchers(HttpMethod.GET, "/articles/**", "/users/**", "/comments/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/articles/**", "/users/**", "/comments/**", "/oauth2/**", "/").permitAll()
                     .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login").permitAll()
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .requestMatchers("/app-usage/**").hasAuthority(Role.ADMIN.name())
                     .anyRequest().authenticated()
                 )
                 .sessionManagement(session-> session
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                    .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login(Customizer.withDefaults())
+                .oauth2Login(oauth2 -> oauth2
+                    .userInfoEndpoint(userInfo -> userInfo
+                        .userService(customOAuth2UserService)
+                    )
+                );
         } catch (Exception e) {
             throw new SecurityException(e.getMessage());
         }
