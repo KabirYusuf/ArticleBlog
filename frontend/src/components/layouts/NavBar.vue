@@ -36,6 +36,10 @@
   <Modal v-if="modalStore.showRegister">
     <RegisterModal />
   </Modal>
+
+    <Modal v-if="modalStore.showEmailVerification">
+        <EmailVerificationModal />
+    </Modal>
 </template>
 
 <script setup>
@@ -46,6 +50,7 @@ import { useModalStore } from "@/store/modalStore";
 import HambugerMenu from "../hamburger/HambugerMenu.vue";
 import { useUserStore } from "../../store/userStore";
 import { useRouter } from 'vue-router';
+import EmailVerificationModal from "@/components/modals/EmailVerificationModal.vue";
 
 
 const modalStore = useModalStore();

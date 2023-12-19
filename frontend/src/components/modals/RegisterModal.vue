@@ -2,16 +2,11 @@
 import { ref } from 'vue';
 import InputField from '../inputs/InputField.vue';
 import Button from '../inputs/Button.vue';
-import { register } from '../../utility/Auth';
-import Swal from 'sweetalert2';
-import { useUserStore } from '../../store/userStore';
-import { useModalStore } from '../../store/modalStore';
-import { useRouter } from 'vue-router';
-import { handleErrors } from '../../utility/handleErrors';
+import { register } from '@/utility/Auth';
+import { useModalStore } from '@/store/modalStore';
+import { handleErrors } from '@/utility/handleErrors';
 
-const userStore = useUserStore();
 const modalStore = useModalStore();
-const router = useRouter();
 
 const email = ref('');
 const firstName = ref('');
@@ -46,18 +41,12 @@ const handleSubmit = async () => {
             firstName: firstName.value,
             lastName: lastName.value
         });
+        console.log(response)
         localStorage.setItem('token', response.data.token);
-        userStore.logIn();
 
         modalStore.closeModal();
 
-        Swal.fire({
-            icon: 'success',
-            title: 'Success',
-            text: response.data.message
-        });
-
-        router.push('/');
+        modalStore.openModal("emailVerification")
 
     } catch (error) {
         handleErrors(error, {
