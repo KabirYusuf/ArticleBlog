@@ -18,8 +18,8 @@
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: $whiteColor;
-    padding: 10px 25px;
-    max-width: 350px;
+    padding: 10px 25px 25px;
+    width: 550px;
     border-radius: 10px;
     max-height: 719px;
 }
@@ -45,4 +45,9 @@
     font-weight: 700;
     line-height: 25px;
     margin-bottom: 10px;
+}
+
+.modalContent__description {
+    font: -webkit-small-control;
+    font-family: auto;
 }

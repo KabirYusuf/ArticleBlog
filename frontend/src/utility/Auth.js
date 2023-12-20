@@ -4,11 +4,19 @@ export const http = axios.create({
     baseURL: `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_BACKEND_PORT}`
 });
 
-export const register = async (data)=>{
+export const register = async (data) => {
     return await http.post('/auth/register', data);
 }
 export const login = async (data) => {
     return await http.post('/auth/login', data)
+}
+
+export const verifyEmail = async (data) => {
+    const rawToken = localStorage.getItem('token');
+    const config = {
+        Authorization: 'Bearer ' + rawToken
+    }
+    return await http.put('/auth/verify', data, {headers: config})
 }
 
 

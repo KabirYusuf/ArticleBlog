@@ -18,7 +18,7 @@ export function handleErrors(error, fieldErrors = {}) {
 
   let errorMessage = 'An error occurred';
   if (error.response && error.response.data) {
-    errorMessage = error.response.data.message || error.response.data;
+    errorMessage = error.response.data.Message || error.response.data;
   }
 
   Swal.fire({
