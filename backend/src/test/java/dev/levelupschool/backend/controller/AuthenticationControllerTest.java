@@ -19,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -46,6 +47,8 @@ class AuthenticationControllerTest {
     @Autowired
     private UserRepository userRepository;
     private AuthenticationRequest authenticationRequest;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     private RegistrationRequest registrationRequest;
     @MockBean
@@ -89,7 +92,7 @@ class AuthenticationControllerTest {
 
         User user = new User();
         user.setUsername("kaybee");
-        user.setPassword("a12345A45@");
+        user.setPassword(passwordEncoder.encode("a12345A45@"));
         user.setRoles(Set.of(Role.USER));
         user.setVerified(true);
         userRepository.save(user);

@@ -55,8 +55,8 @@ const handleSubmit = async () => {
         router.push('/');
 
     } catch (error) {
-        const message = error.response.data.Message; // Temporary solution
-        if (error.response.status === 401 && message.includes('User is disabled')) {
+        const message = error.response.data.message; // Temporary solution
+        if (error.response.status === 401 && message.includes('Verification')) {
             modalStore.closeModal();
             modalStore.openModal("emailVerification")
         }

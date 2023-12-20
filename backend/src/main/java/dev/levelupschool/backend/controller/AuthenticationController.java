@@ -29,7 +29,7 @@ public class AuthenticationController {
     }
 
     @PutMapping("/verify")
-    public ResponseEntity<String> verifyUser(
+    public ResponseEntity<AuthenticationResponse> verifyUser(
         @RequestBody @Valid VerifyUserRequest verifyUserRequest,
         HttpServletRequest httpServletRequest){
         String authHeader = httpServletRequest.getHeader("Authorization");
