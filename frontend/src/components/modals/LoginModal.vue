@@ -1,13 +1,15 @@
 <script setup>
-import { ref } from 'vue';
-import { useModalStore } from '@/store/modalStore';
+import {ref} from 'vue';
+import {useModalStore} from '@/store/modalStore';
 import InputField from '../inputs/InputField.vue'
 import Button from '../inputs/Button.vue'
-import { login } from '@/utility/Auth'
+import {login} from '@/utility/Auth'
 import Swal from 'sweetalert2'
-import { useUserStore } from '@/store/userStore'
-import { useRouter } from 'vue-router';
-import { handleErrors } from '@/utility/handleErrors';
+import {useUserStore} from '@/store/userStore'
+import {useRouter} from 'vue-router';
+import {handleErrors} from '@/utility/handleErrors';
+import SocialButton from "@/components/socials/SocialButton.vue";
+import FormTemplate from "@/components/modals/FormTemplate.vue";
 
 const userStore = useUserStore();
 const router = useRouter();
@@ -77,16 +79,20 @@ const handleSubmit = async () => {
     <p v-if="message" style="color: red"> {{ message }} </p>
 
 
-    <form @submit.prevent="handleSubmit">
-        <label for="username" class="form__label">Username</label>
-        <InputField id="username" type="text" placeholder="username" v-model:value="username" class="input__field"
-            :focus="handleChange" />
-        <p v-if="usernameError" style="color: red;">{{ usernameError }}</p>
+    <FormTemplate>
+        <form @submit.prevent="handleSubmit">
+            <label for="username" class="form__label">Username</label>
+            <InputField id="username" type="text" placeholder="username" v-model:value="username"
+                        class="input__field"
+                        :focus="handleChange"/>
+            <p v-if="usernameError" style="color: red;">{{ usernameError }}</p>
 
-        <label for="loginPassword" class="form__label">Password</label>
-        <InputField id="loginPassword" type="password" placeholder="Password" v-model:value="password" class="input__field"
-            :focus="handleChange" />
-        <p v-if="passwordError" style="color: red;">{{ passwordError }}</p>
-        <Button type="submit" class="form__submitButton">Log in</Button>
-    </form>
+            <label for="loginPassword" class="form__label">Password</label>
+            <InputField id="loginPassword" type="password" placeholder="Password" v-model:value="password"
+                        class="input__field"
+                        :focus="handleChange"/>
+            <p v-if="passwordError" style="color: red;">{{ passwordError }}</p>
+            <Button type="submit" class="form__submitButton">Log in</Button>
+        </form>
+    </FormTemplate>
 </template>
