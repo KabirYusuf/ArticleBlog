@@ -31,7 +31,6 @@ const handleSubmit = async () => {
     }
 
     try {
-        console.log(verification.value, 'verification.value')
         const response = await verifyEmail({
             verificationToken: verification.value,
         });
@@ -44,7 +43,7 @@ const handleSubmit = async () => {
             text: response.data.message
         });
 
-        modalStore.closeVerificationModal();
+        modalStore.closeModal();
 
         router.push('/');
 

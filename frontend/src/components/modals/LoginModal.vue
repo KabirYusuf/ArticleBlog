@@ -1,13 +1,13 @@
 <script setup>
 import { ref } from 'vue';
-import { useModalStore } from '../../store/modalStore';
+import { useModalStore } from '@/store/modalStore';
 import InputField from '../inputs/InputField.vue'
 import Button from '../inputs/Button.vue'
-import { login } from '../../utility/Auth'
+import { login } from '@/utility/Auth'
 import Swal from 'sweetalert2'
-import { useUserStore } from '../../store/userStore'
+import { useUserStore } from '@/store/userStore'
 import { useRouter } from 'vue-router';
-import { handleErrors } from '../../utility/handleErrors';
+import { handleErrors } from '@/utility/handleErrors';
 
 const userStore = useUserStore();
 const router = useRouter();
@@ -53,6 +53,12 @@ const handleSubmit = async () => {
         router.push('/');
 
     } catch (error) {
+        const message = error.response.data.Message; // Temporary solution
+        if (error.response.status === 401 && message.includes('User is disabled')) {
+            modalStore.closeModal();
+            modalStore.openModal("emailVerification")
+        }
+
         handleErrors(error, {
             username: usernameError,
             password: passwordError

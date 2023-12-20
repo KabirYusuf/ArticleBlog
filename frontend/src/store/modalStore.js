@@ -21,10 +21,7 @@ export const useModalStore = defineStore("modal", {
         closeModal() {
             this.showLogin = false;
             this.showRegister = false;
-        },
-
-        closeVerificationModal() {
             this.showEmailVerification = false;
-        }
+        },
     },
 });

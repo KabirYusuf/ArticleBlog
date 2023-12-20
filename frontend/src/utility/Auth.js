@@ -16,7 +16,6 @@ export const verifyEmail = async (data) => {
     const config = {
         Authorization: 'Bearer ' + rawToken
     }
-    console.log(config)
     return await http.put('/auth/verify', data, {headers: config})
 }
 

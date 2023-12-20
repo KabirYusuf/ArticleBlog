@@ -6,7 +6,7 @@ import MyProfile from '@/views/MyProfile.vue'
 import EditProfile from '@/views/EditProfile.vue'
 import AddArticle from '@/views/AddArticle.vue'
 import EditArticle from '@/views/EditArticle.vue'
-import { useUserStore } from "../store/userStore";
+import { useUserStore } from "@/store/userStore";
 
 
 const router = createRouter({
@@ -16,55 +16,62 @@ const router = createRouter({
             path: "/",
             name: "home",
             component: HomeView,
+            meta: { isUserVerified: true }
         },
 
         {
             path: '/view-all-articles',
-            name: 'viewAllArticles', 
+            name: 'viewAllArticles',
             component: ViewAllArticles,
-            
+            meta: { isUserVerified: true }
         },
         {
             path: '/article/:id',
             name: 'article',
             component: ArticleView,
-            
+            meta: { isUserVerified: true }
           },
           {
             path: '/my-profile',
             name: 'my-profile',
             component: MyProfile,
-            meta: { requiresAuth: true }
+            meta: { requiresAuth: true, isUserVerified: true }
           },
           {
             path: '/edit-profile',
             name: 'edit-profile',
             component: EditProfile,
-            meta: { requiresAuth: true }
+            meta: { requiresAuth: true, isUserVerified: true }
           },
           {
             path: '/add-new-article',
             name: 'add-new-article',
             component: AddArticle,
-            meta: { requiresAuth: true }
+            meta: { requiresAuth: true, isUserVerified: true }
           },
           {
             path: '/edit-article/:id',
             name: 'edit-article',
             component: EditArticle,
-            meta: { requiresAuth: true }
+            meta: { requiresAuth: true, isUserVerified: true }
           },
     ],
 });
 
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore();
+
+  const isUserVerified = to.matched.some(record => record.meta.isUserVerified);
+  if (isUserVerified && !userStore.isUserVerified) {
+      next()
+  }
+
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
 
   if (requiresAuth && !userStore.isLoggedIn) {
       next({ name: 'home' });
   } else {
-      next(); 
+      next();
   }
 });
 

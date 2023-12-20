@@ -4,6 +4,7 @@ import { getUser } from '../utility/userApiService';
 export const useUserStore = defineStore('user', {
     state: () => ({
         isLoggedIn: !!localStorage.getItem('token'),
+        isUserVerified: null,
         user: null,
     }),
     actions: {
@@ -21,6 +22,15 @@ export const useUserStore = defineStore('user', {
         logIn() {
             this.isLoggedIn = true;
 
+        },
+        async isUserVerified() {
+            const response = await getUser();
+            if (response?.verified) {
+                this.isUserVerified = true;
+            }
+
+            this.logOut()
+            this.isUserVerified = false;
         },
         logOut() {
             this.isLoggedIn = false;

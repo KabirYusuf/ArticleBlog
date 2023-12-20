@@ -41,7 +41,7 @@ const handleSubmit = async () => {
             firstName: firstName.value,
             lastName: lastName.value
         });
-        console.log(response)
+
         localStorage.setItem('token', response.data.token);
 
         modalStore.closeModal();
