@@ -2,6 +2,8 @@ package dev.levelupschool.backend.security;
 
 import dev.levelupschool.backend.data.model.enums.Role;
 import dev.levelupschool.backend.exception.SecurityException;
+import dev.levelupschool.backend.security.oauth2.CustomAuthenticationErrorHandler;
+import dev.levelupschool.backend.security.oauth2.CustomAuthenticationSuccessHandler;
 import dev.levelupschool.backend.security.oauth2.CustomOAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,18 +27,22 @@ public class SecurityConfig {
     private final AccessDeniedHandler accessDeniedHandler;
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomAuthenticationSuccessHandler authenticationSuccessHandler;
+    private final CustomAuthenticationErrorHandler authenticationErrorHandler;
 
     public SecurityConfig(
         JwtAuthenticationFilter jwtAuthenticationFilter,
         AuthenticationProvider authenticationProvider,
         AccessDeniedHandler accessDeniedHandler,
         AuthenticationEntryPoint authenticationEntryPoint,
-        CustomOAuth2UserService customOAuth2UserService){
+        CustomOAuth2UserService customOAuth2UserService, CustomAuthenticationSuccessHandler authenticationSuccessHandler, CustomAuthenticationErrorHandler authenticationErrorHandler){
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.authenticationProvider = authenticationProvider;
         this.accessDeniedHandler = accessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.customOAuth2UserService = customOAuth2UserService;
+        this.authenticationSuccessHandler = authenticationSuccessHandler;
+        this.authenticationErrorHandler = authenticationErrorHandler;
     }
 
     @Bean
@@ -61,6 +67,8 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(Customizer.withDefaults())
                 .oauth2Login(oauth2 -> oauth2
+                    .successHandler(authenticationSuccessHandler)
+                    .failureHandler(authenticationErrorHandler)
                     .userInfoEndpoint(userInfo -> userInfo
                         .userService(customOAuth2UserService)
                     )
