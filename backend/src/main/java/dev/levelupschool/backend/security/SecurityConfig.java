@@ -50,7 +50,7 @@ public class SecurityConfig {
                 })
                 .authorizeHttpRequests((authz) -> authz
                     .requestMatchers(HttpMethod.GET, "/articles/**", "/users/**", "/comments/**", "/oauth2/**", "/").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login").permitAll()
+                    .requestMatchers("/auth/**").permitAll()
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .requestMatchers("/app-usage/**").hasAuthority(Role.ADMIN.name())
                     .anyRequest().authenticated()

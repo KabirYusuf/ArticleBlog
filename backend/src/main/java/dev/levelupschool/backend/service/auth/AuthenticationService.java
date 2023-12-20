@@ -188,17 +188,21 @@ public class AuthenticationService {
 //    }
 
     @Transactional
-    public AuthenticationResponse verifyEmail(VerifyUserRequest verifyUserRequest, String authHeader) {
-        User foundUser = userService.getUser(authHeader);
+    public AuthenticationResponse verifyEmail(VerifyUserRequest verifyUserRequest) {
+//        User foundUser = userService.getUser(authHeader);
         VerificationToken foundToken = verificationTokenService.findByToken(verifyUserRequest.getVerificationToken());
 
         if (foundToken == null || foundToken.getExpiredAt().isBefore(LocalDateTime.now())) {
             throw new UserException("Invalid token provided");
         }
 
-        if (!Objects.equals(foundUser.getId(), foundToken.getUserId())) {
-            throw new UserException("Invalid token");
-        }
+        User foundUser = userService.findUserById(foundToken.getUserId());
+
+
+
+//        if (!Objects.equals(foundUser.getId(), foundToken.getUserId())) {
+//            throw new UserException("Invalid token");
+//        }
 
         foundUser.setVerified(true);
         verificationTokenService.deleteToken(foundToken.getId());
