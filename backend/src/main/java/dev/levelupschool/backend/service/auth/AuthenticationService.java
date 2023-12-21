@@ -1,9 +1,6 @@
 package dev.levelupschool.backend.service.auth;
 
-import dev.levelupschool.backend.data.dto.request.AuthenticationRequest;
-import dev.levelupschool.backend.data.dto.request.NotificationRequest;
-import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
-import dev.levelupschool.backend.data.dto.request.VerifyUserRequest;
+import dev.levelupschool.backend.data.dto.request.*;
 import dev.levelupschool.backend.data.dto.response.AuthenticationResponse;
 import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.model.VerificationToken;
@@ -16,9 +13,6 @@ import dev.levelupschool.backend.service.interfaces.UserService;
 import dev.levelupschool.backend.service.notification.LevelUpEmailSenderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +20,6 @@ import org.thymeleaf.context.Context;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Service
 @Slf4j
@@ -41,19 +34,12 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthenticationService(
-        JwtService jwtService,
-        UserService userService,
-        VerificationTokenService verificationTokenService,
-        AuthenticationManager authenticationManager,
-        LevelUpEmailSenderService levelUpEmailSenderService,
-        PasswordEncoder passwordEncoder
-    ){
+    public AuthenticationService(JwtService jwtService, UserService userService, VerificationTokenService verificationTokenService, LevelUpEmailSenderService levelUpEmailSenderService, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder) {
         this.jwtService = jwtService;
         this.userService = userService;
         this.verificationTokenService = verificationTokenService;
-        this.authenticationManager = authenticationManager;
         this.levelUpEmailSenderService = levelUpEmailSenderService;
+        this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -170,23 +156,6 @@ public class AuthenticationService {
 
         levelUpEmailSenderService.sendEmailNotification(notificationRequest);
     }
-//    @Transactional
-//    public String verifyEmail(VerifyUserRequest verifyUserRequest, String authHeader){
-//        User foundUser = userService.getUser(authHeader);
-//        VerificationToken foundToken = verificationTokenService.findByToken(verifyUserRequest.getVerificationToken());
-//
-//        if (foundToken == null || foundToken.getExpiredAt().isBefore(LocalDateTime.now()))throw new UserException("Invalid token provided");
-//
-//        if (!Objects.equals(foundUser.getId(), foundToken.getUserId()))throw new UserException("Invalid token");
-//
-//        foundUser.setVerified(true);
-//
-//        verificationTokenService.deleteToken(foundToken.getId());
-//
-//        return "Account Successfully Verified";
-//
-//    }
-
     @Transactional
     public AuthenticationResponse verifyEmail(VerifyUserRequest verifyUserRequest) {
 //        User foundUser = userService.getUser(authHeader);
@@ -219,4 +188,13 @@ public class AuthenticationService {
     }
 
 
+    @Transactional
+    public String createPassword(CreatePasswordRequest request, String authHeader) {
+        User user = userService.getUser(authHeader);
+        if (request.getPassword() != null && user != null) {
+            String passwordEncoded = passwordEncoder.encode(request.getPassword());
+            user.setPassword(passwordEncoded);
+        }
+        return "Password Successfully created";
+    }
 }

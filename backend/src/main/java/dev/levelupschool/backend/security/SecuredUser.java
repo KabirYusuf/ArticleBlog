@@ -13,6 +13,7 @@ public class SecuredUser implements UserDetails {
     public SecuredUser(User user){
         this.user = user;
     }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
@@ -31,6 +32,18 @@ public class SecuredUser implements UserDetails {
     @Override
     public String getUsername() {
         return user.getUsername();
+    }
+
+    public String getEmail() {
+        return user.getEmail();
+    }
+
+    public String getFirstName() {
+        return user.getFirstName();
+    }
+
+    public String getLastName() {
+        return user.getLastName();
     }
 
     @Override

@@ -1,6 +1,8 @@
 package dev.levelupschool.backend.controller;
 
 import dev.levelupschool.backend.security.oauth2.CustomOAuth2User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,15 +16,16 @@ import java.util.Map;
 @RestController
 @RequestMapping("/oauth2")
 public class OAuth2Controller {
+    private final Logger logger = LoggerFactory.getLogger(OAuth2Controller.class);
     @GetMapping("/loginSuccess")
     public ResponseEntity<?> getLoginInfo(@AuthenticationPrincipal OAuth2User principal) {
         if (principal instanceof CustomOAuth2User) {
             String token = ((CustomOAuth2User) principal).getToken();
-
             return ResponseEntity.ok().body(Map.of("token", token));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
+
 
 //    @GetMapping()
 //    public ResponseEntity<?> root(@AuthenticationPrincipal OAuth2User principal) {

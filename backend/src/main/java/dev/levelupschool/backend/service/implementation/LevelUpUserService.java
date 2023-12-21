@@ -1,5 +1,6 @@
 package dev.levelupschool.backend.service.implementation;
 
+import dev.levelupschool.backend.data.dto.request.CreatePasswordRequest;
 import dev.levelupschool.backend.data.dto.request.PaymentDetails;
 import dev.levelupschool.backend.data.dto.request.RegistrationRequest;
 import dev.levelupschool.backend.data.dto.request.UpdateUserRequest;
