@@ -7,6 +7,7 @@ import EditProfile from '@/views/EditProfile.vue'
 import AddArticle from '@/views/AddArticle.vue'
 import EditArticle from '@/views/EditArticle.vue'
 import { useUserStore } from "@/store/userStore";
+import OauthSuccess from '@/views/OauthSuccess.vue';
 
 
 const router = createRouter({
@@ -55,6 +56,11 @@ const router = createRouter({
             component: EditArticle,
             meta: { requiresAuth: true, isUserVerified: true }
           },
+          {
+            path: '/oauth-success',
+            name: 'OauthSuccess',
+            component: OauthSuccess,
+        },
     ],
 });
 
