@@ -5,7 +5,6 @@ import dev.levelupschool.backend.exception.SecurityException;
 import dev.levelupschool.backend.security.oauth2.CustomAuthenticationErrorHandler;
 import dev.levelupschool.backend.security.oauth2.CustomAuthenticationSuccessHandler;
 import dev.levelupschool.backend.security.oauth2.CustomOAuth2UserService;
-import dev.levelupschool.backend.security.oauth2.CustomOauth2SuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -28,9 +27,8 @@ public class SecurityConfig {
     private final AccessDeniedHandler accessDeniedHandler;
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final CustomOAuth2UserService customOAuth2UserService;
-//    private final CustomAuthenticationSuccessHandler authenticationSuccessHandler;
+    private final CustomAuthenticationSuccessHandler authenticationSuccessHandler;
     private final CustomAuthenticationErrorHandler authenticationErrorHandler;
-    private final CustomOauth2SuccessHandler customOauth2SuccessHandler;
 
     public SecurityConfig(
         JwtAuthenticationFilter jwtAuthenticationFilter,
@@ -38,14 +36,14 @@ public class SecurityConfig {
         AccessDeniedHandler accessDeniedHandler,
         AuthenticationEntryPoint authenticationEntryPoint,
         CustomOAuth2UserService customOAuth2UserService,
-        CustomOauth2SuccessHandler customOauth2SuccessHandler,
+        CustomAuthenticationSuccessHandler authenticationSuccessHandler,
         CustomAuthenticationErrorHandler authenticationErrorHandler){
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.authenticationProvider = authenticationProvider;
         this.accessDeniedHandler = accessDeniedHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.customOAuth2UserService = customOAuth2UserService;
-        this.customOauth2SuccessHandler = customOauth2SuccessHandler;
+        this.authenticationSuccessHandler = authenticationSuccessHandler;
         this.authenticationErrorHandler = authenticationErrorHandler;
     }
 
@@ -71,7 +69,7 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(Customizer.withDefaults())
                 .oauth2Login(oauth2 -> oauth2
-                    .successHandler(customOauth2SuccessHandler)
+                    .successHandler(authenticationSuccessHandler)
                     .failureHandler(authenticationErrorHandler)
                     .userInfoEndpoint(userInfo -> userInfo
                         .userService(customOAuth2UserService)
