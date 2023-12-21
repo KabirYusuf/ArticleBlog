@@ -55,7 +55,7 @@ import { useRoute } from 'vue-router';
 import { useArticleStore } from '../store/articleStore'
 import Header from "@/components/layouts/Header.vue"
 import Footer from "@/components/layouts/Footer.vue"
-import Comment from "../components/comment/Comment.vue"
+import Comment from "@/components/comment/Comment.vue"
 import { timeSince } from '../utility/dateAndTimeLogic';
 import { formatDate } from '../utility/dateAndTimeLogic';
 import CommentInput from '../components/comment/CommentInput.vue'
