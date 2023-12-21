@@ -1,7 +1,6 @@
 package dev.levelupschool.backend.security.oauth2;
 
 import dev.levelupschool.backend.data.model.User;
-import dev.levelupschool.backend.data.model.enums.Role;
 import dev.levelupschool.backend.data.repository.UserRepository;
 import dev.levelupschool.backend.security.JwtService;
 import dev.levelupschool.backend.security.SecuredUser;
@@ -12,31 +11,33 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 
 @Component
 public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     @Value("${OAUTH_SUCCESS_REDIRECT}")
     private String redirectUrl;
+    private final UserRepository userRepository;
     private final JwtService jwtService;
-    private UserUtil userUtil;
+    private final UserUtil userUtil;
 
-    public CustomAuthenticationSuccessHandler(JwtService jwtService) {
+    public CustomAuthenticationSuccessHandler(UserRepository userRepository, JwtService jwtService, UserUtil userUtil) {
+        this.userRepository = userRepository;
         this.jwtService = jwtService;
+        this.userUtil = userUtil;
     }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
+
         String token = "";
         if (authentication.getPrincipal() instanceof DefaultOidcUser oidcUser) {
+
             String email = oidcUser.getAttribute("email");
             String name = "";
             Map<String, Object> attributes = oidcUser.getAttributes();
