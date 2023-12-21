@@ -1,7 +1,6 @@
 package dev.levelupschool.backend.security.oauth2;
 
 import dev.levelupschool.backend.data.model.User;
-import dev.levelupschool.backend.data.model.enums.Role;
 import dev.levelupschool.backend.data.repository.UserRepository;
 import dev.levelupschool.backend.security.JwtService;
 import dev.levelupschool.backend.security.SecuredUser;
@@ -15,8 +14,6 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 
 @Service
 @Slf4j
@@ -28,7 +25,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     @Autowired
     private UserRepository userRepository;
 
-    private UserUtil userUtil;
+    private final UserUtil userUtil;
+
+    public CustomOAuth2UserService(UserUtil userUtil) {
+        this.userUtil = userUtil;
+    }
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {

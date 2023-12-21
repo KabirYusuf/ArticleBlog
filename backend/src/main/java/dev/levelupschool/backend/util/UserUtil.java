@@ -3,10 +3,12 @@ package dev.levelupschool.backend.util;
 import dev.levelupschool.backend.data.model.User;
 import dev.levelupschool.backend.data.model.enums.Role;
 import dev.levelupschool.backend.data.repository.UserRepository;
+import org.springframework.stereotype.Component;
 
 import java.util.Set;
 import java.util.UUID;
 
+@Component
 public class UserUtil {
     private final UserRepository userRepository;
 
