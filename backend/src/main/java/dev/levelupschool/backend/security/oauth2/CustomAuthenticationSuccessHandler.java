@@ -1,22 +1,58 @@
 package dev.levelupschool.backend.security.oauth2;
 
+import dev.levelupschool.backend.data.model.User;
+import dev.levelupschool.backend.data.model.enums.Role;
+import dev.levelupschool.backend.data.repository.UserRepository;
+import dev.levelupschool.backend.security.JwtService;
+import dev.levelupschool.backend.security.SecuredUser;
+import dev.levelupschool.backend.util.UserUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 @Component
-public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     @Value("${OAUTH_SUCCESS_REDIRECT}")
-    private String frontendUrl;
+    private String redirectUrl;
+    private final JwtService jwtService;
+    private UserUtil userUtil;
+
+    public CustomAuthenticationSuccessHandler(JwtService jwtService) {
+        this.jwtService = jwtService;
+    }
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
-        response.sendRedirect(frontendUrl);
+        String token = "";
+        if (authentication.getPrincipal() instanceof DefaultOidcUser oidcUser) {
+            String email = oidcUser.getAttribute("email");
+            String name = "";
+            Map<String, Object> attributes = oidcUser.getAttributes();
+            if (oidcUser.getAttribute("given_name") != null) {
+                name = oidcUser.getAttribute("given_name");
+                User user = userUtil.processOAuth2User(email, name);
+                token = jwtService.generateToken(new SecuredUser(user));
+                new CustomOAuth2User(oidcUser.getAuthorities(), attributes, "email", token);
+                redirectUrl += token;
+            }
+        }
+        else{
+            CustomOAuth2User oauthUser = (CustomOAuth2User) authentication.getPrincipal();
+            token = oauthUser.getToken();
+            redirectUrl += token;
+        }
+        getRedirectStrategy().sendRedirect(request, response, redirectUrl);
     }
 }

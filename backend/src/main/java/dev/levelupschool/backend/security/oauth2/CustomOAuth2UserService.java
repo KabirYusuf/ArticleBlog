@@ -5,6 +5,7 @@ import dev.levelupschool.backend.data.model.enums.Role;
 import dev.levelupschool.backend.data.repository.UserRepository;
 import dev.levelupschool.backend.security.JwtService;
 import dev.levelupschool.backend.security.SecuredUser;
+import dev.levelupschool.backend.util.UserUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -27,6 +28,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     @Autowired
     private UserRepository userRepository;
 
+    private UserUtil userUtil;
+
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
@@ -36,7 +39,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String email = extractEmail(attributes, registrationId);
         String name = extractName(attributes, registrationId);
 
-        User user = processOAuth2User(email, name);
+        User user = userUtil.processOAuth2User(email, name);
         String token = jwtService.generateToken(new SecuredUser(user));
         return new CustomOAuth2User(oAuth2User.getAuthorities(), attributes, "email", token);
     }
@@ -54,24 +57,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if ("google".equals(registrationId)) {
             return (String) attributes.get("name");
         } else if ("gitlab".equals(registrationId)) {
-            // Adjust according to GitLab's attribute structure
             return (String) attributes.get("name");
         }
         return null;
-    }
-
-    private User processOAuth2User(String email, String name) {
-        User user = userRepository.findUsersByUsernameIgnoreCase(email).orElse(null);
-        if (user == null) {
-            user = new User();
-            user.setEmail(email);
-            user.setUsername(email);
-            user.setFirstName(name);
-            user.setPassword(UUID.randomUUID().toString());
-            user.setVerified(true);
-            user.setRoles(Set.of(Role.USER));
-            userRepository.save(user);
-        }
-        return user;
     }
 }
