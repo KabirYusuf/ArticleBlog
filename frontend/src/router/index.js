@@ -8,6 +8,7 @@ import AddArticle from '@/views/AddArticle.vue'
 import EditArticle from '@/views/EditArticle.vue'
 import { useUserStore } from "@/store/userStore";
 import OauthSuccess from '@/views/OauthSuccess.vue';
+import OauthFailed from "@/views/OauthFailed.vue";
 
 
 const router = createRouter({
@@ -60,6 +61,11 @@ const router = createRouter({
             path: '/oauth-success',
             name: 'OauthSuccess',
             component: OauthSuccess,
+        },
+        {
+            path: '/oauth-failed',
+            name: 'OauthFailed',
+            component: OauthFailed,
         },
     ],
 });
