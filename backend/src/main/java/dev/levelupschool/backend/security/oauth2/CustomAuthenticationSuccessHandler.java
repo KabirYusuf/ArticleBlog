@@ -79,7 +79,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             CustomOAuth2User oauthUser = (CustomOAuth2User) authentication.getPrincipal();
             token = oauthUser.getToken();
         }
-        
+
         String dynamicRedirectUrl = redirectUrl + token;
         getRedirectStrategy().sendRedirect(request, response, dynamicRedirectUrl);
     }

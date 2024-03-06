@@ -1,8 +1,8 @@
-# LevelUp Blogging Platform
+# Blogging Platform
 
 Developed by Yusuf Kabir Adekunle
 
-Welcome to the LevelUp Blogging Platform, a comprehensive blogging solution featuring a Vue.js frontend and a Java Spring Boot with FastAPI backend. This platform utilizes a microservices architecture, with distinct services for geolocation and payment processing.
+Welcome to the Blogging Platform, a comprehensive blogging solution featuring a Vue.js frontend and a Java Spring Boot with FastAPI backend. This platform utilizes a microservices architecture, with distinct services for geolocation and payment processing. This is a project I built when I was training to be a full stack engineer. The project setup was done by our instructor, I collaborated with two other students of the academy to demonstrate our collaboration skills. I designed over 90% of the project myself.
 
 ## Table of Contents
 
@@ -12,7 +12,6 @@ Welcome to the LevelUp Blogging Platform, a comprehensive blogging solution feat
   - [Running the Application](#running-the-application)
 - [Features](#features)
 - [Testing](#testing)
-- [CI/CD](#cicd)
 - [Contact](#contact)
 
 ## Getting Started
@@ -25,6 +24,7 @@ Follow these instructions to set up and run the LevelUp Blogging Platform.
 - Java Development Kit (JDK) and Maven for the Spring Boot application.
 - IntelliJ IDEA or equivalent IDE for Java development.
 - Vs code
+- Docker Desktop (Windows & Mac)
 
 ### Environment Setup
 
@@ -60,11 +60,6 @@ Comprehensive unit and integration tests can be run with:
 
 mvn test
 
-## CI/CD
-
-The project incorporates a Jenkins server for continuous integration and delivery, ensuring all tests pass and that branch names and commit messages meet specified conventions.
-
-
 ## Contact
 
-For inquiries or support, contact kabir.yusuf@internetbrands.com
+For inquiries or support, contact kabiryusuf2307@gmail.com
